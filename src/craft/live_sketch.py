@@ -1,6 +1,6 @@
 """live-sketch - a web server that displays sketches that update in real time."""
 
-import calendar
+import queue
 import sys
 import time
 from flask import Flask, request, Response
@@ -9,6 +9,9 @@ app = Flask(__name__)
 
 # In-memory storage: {"sketch_id": (svg_string, timestamp)}
 sketches = {}
+
+# SSE listeners: {"sketch_id": [queue, queue, ...]}
+listeners = {}
 
 PAGE_HTML = """\
 <!DOCTYPE html>
@@ -41,7 +44,7 @@ PAGE_HTML = """\
     <div id="empty">no sketch yet</div>
   </div>
   <script>
-    var lastModified = null;
+    var lastUpdate = null;
 
     function timeAgo(seconds) {{
       if (seconds < 5)  return "just now";
@@ -52,41 +55,31 @@ PAGE_HTML = """\
       return Math.floor(seconds / 3600) + " hours ago";
     }}
 
-    function poll() {{
-      var headers = {{}};
-      if (lastModified) {{
-        headers["If-Modified-Since"] = lastModified;
-      }}
-      fetch("/{sketch_id}.svg", {{ headers: headers }})
-        .then(function(response) {{
-          if (response.status === 200) {{
-            lastModified = response.headers.get("Last-Modified");
-            return response.text();
-          }}
-          return null;
-        }})
-        .then(function(svg) {{
-          if (svg !== null) {{
-            document.getElementById("drawing").innerHTML = svg;
-          }}
-        }});
-    }}
-
     function updateAgo() {{
-      if (lastModified) {{
-        var then = new Date(lastModified).getTime();
-        var seconds = (Date.now() - then) / 1000;
+      if (lastUpdate) {{
+        var seconds = (Date.now() - lastUpdate) / 1000;
         document.getElementById("ago").textContent = timeAgo(seconds);
       }}
     }}
 
-    setInterval(poll, 1000);
+    var source = new EventSource("/{sketch_id}/events");
+    source.onmessage = function(event) {{
+      document.getElementById("drawing").innerHTML = event.data;
+      lastUpdate = Date.now();
+      updateAgo();
+    }};
+
     setInterval(updateAgo, 1000);
-    poll();
   </script>
 </body>
 </html>
 """
+
+
+def notify_listeners(sketch_id, svg):
+    """Push SVG to all clients listening on this sketch."""
+    for q in listeners.get(sketch_id, []):
+        q.put(svg)
 
 
 @app.route("/<sketch_id>")
@@ -96,37 +89,53 @@ def view(sketch_id):
     return Response(html, content_type="text/html")
 
 
+@app.route("/<sketch_id>/events")
+def events(sketch_id):
+    """SSE stream for live updates."""
+    q = queue.Queue()
+
+    # Register this client
+    if sketch_id not in listeners:
+        listeners[sketch_id] = []
+    listeners[sketch_id].append(q)
+
+    # Send the current SVG immediately if it exists
+    if sketch_id in sketches:
+        svg, _ = sketches[sketch_id]
+        q.put(svg)
+
+    def stream():
+        try:
+            while True:
+                svg = q.get()
+                # SSE format: each line prefixed with "data: ", blank line to end
+                lines = svg.replace("\n", "\ndata: ")
+                yield f"data: {lines}\n\n"
+        finally:
+            listeners[sketch_id].remove(q)
+
+    return Response(stream(), content_type="text/event-stream")
+
+
 @app.route("/<sketch_id>.svg", methods=["GET"])
 def get_svg(sketch_id):
-    """Return the SVG, supporting If-Modified-Since."""
+    """Return the current SVG."""
     if sketch_id not in sketches:
         return Response("not found\n", status=404)
 
-    svg, modified = sketches[sketch_id]
-    last_modified = time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime(modified))
-
-    # Check If-Modified-Since
-    ims = request.headers.get("If-Modified-Since")
-    if ims:
-        ims_time = calendar.timegm(time.strptime(ims, "%a, %d %b %Y %H:%M:%S GMT"))
-        if modified <= ims_time:
-            return Response(status=304, headers={"Last-Modified": last_modified})
-
-    return Response(
-        svg,
-        content_type="image/svg+xml",
-        headers={"Last-Modified": last_modified},
-    )
+    svg, _ = sketches[sketch_id]
+    return Response(svg, content_type="image/svg+xml")
 
 
 @app.route("/<sketch_id>.svg", methods=["PUT"])
 def put_svg(sketch_id):
-    """Upload or replace an SVG."""
+    """Upload or replace an SVG and notify all listeners."""
     svg = request.get_data(as_text=True)
     if not svg.strip():
         return Response("empty body\n", status=400)
 
-    sketches[sketch_id] = (svg, int(time.time()))
+    sketches[sketch_id] = (svg, time.time())
+    notify_listeners(sketch_id, svg)
     return Response("ok\n", status=200)
 
 
@@ -140,7 +149,7 @@ def main():
             sys.exit(1)
 
     print(f"live-sketch: serving on http://localhost:{port}")
-    app.run(host="127.0.0.1", port=port)
+    app.run(host="127.0.0.1", port=port, threaded=True)
 
 
 if __name__ == "__main__":
