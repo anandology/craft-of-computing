@@ -3,10 +3,11 @@ name = "craft-of-computing"
 version = "0.1.0"
 description = "Tools for the Craft of Computing course"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = ["flask"]
 
 [project.scripts]
 sketch = "craft.sketch:main"
+live-sketch = "craft.live_sketch:main"
 
 [build-system]
 requires = ["setuptools>=64"]
