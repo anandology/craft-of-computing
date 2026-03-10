@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """sketch - generate simple images using shell commands."""
 
+import os
 import sys
+import urllib.request
 
 
 USAGE = """\
@@ -14,6 +16,7 @@ Commands:
   stroke color            Set stroke color
   fill color              Set fill color
   render [file]           Render .sk to SVG (reads stdin if no file)
+  live [file]             Render and push to live-sketch server
 
 Run sketch command --help for details on a specific command."""
 
@@ -101,6 +104,26 @@ ARGUMENTS
 EXAMPLE
   sketch render drawing.sk
   cat drawing.sk | sketch render""",
+
+    "live": """\
+USAGE
+  sketch live [file]
+
+  Render a .sk file and push the SVG to a live-sketch server.
+  If no file is given, reads from stdin.
+
+  The server URL is read from the SKETCH_LIVE_URL environment variable.
+  Set it to point to your live-sketch page, for example:
+
+    export SKETCH_LIVE_URL=http://localhost:8080/demo
+
+ARGUMENTS
+  file  Path to a .sk file (optional)
+
+EXAMPLE
+  export SKETCH_LIVE_URL=http://localhost:8080/demo
+  sketch live drawing.sk
+  cat drawing.sk | sketch live""",
 }
 
 
@@ -246,6 +269,73 @@ def cmd_render(args):
     print("</svg>")
 
 
+def cmd_live(args):
+    if len(args) > 1:
+        error(f"live: expected 0 or 1 arguments, got {len(args)}\n\n{HELP['live']}")
+
+    url = os.environ.get("SKETCH_LIVE_URL")
+    if not url:
+        error(
+            "live: SKETCH_LIVE_URL is not set\n\n"
+            "Set it to the URL of your live-sketch page:\n\n"
+            "  export SKETCH_LIVE_URL=http://localhost:8080/demo"
+        )
+
+    # Read .sk from file or stdin
+    if len(args) == 1:
+        try:
+            with open(args[0]) as f:
+                lines = f.readlines()
+        except FileNotFoundError:
+            error(f"live: file not found: {args[0]}")
+        except IsADirectoryError:
+            error(f"live: is a directory: {args[0]}")
+    else:
+        lines = sys.stdin.readlines()
+
+    stroke = "black"
+    fill = "none"
+    elements = []
+
+    for lineno, raw in enumerate(lines, 1):
+        raw = raw.strip()
+        if not raw or raw.startswith("#"):
+            continue
+
+        tokens = raw.split()
+        cmd = tokens[0]
+        rest = tokens[1:]
+
+        if cmd == "stroke":
+            if len(rest) == 1:
+                stroke = rest[0]
+        elif cmd == "fill":
+            if len(rest) == 1:
+                fill = rest[0]
+        elif cmd in SHAPE_RENDERERS:
+            expected, renderer = SHAPE_RENDERERS[cmd]
+            if len(rest) == expected:
+                try:
+                    parts = [float(v) for v in rest]
+                    elements.append(renderer(parts, stroke, fill))
+                except ValueError:
+                    pass
+
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS_W} {CANVAS_H}">\n'
+    for el in elements:
+        svg += el + "\n"
+    svg += "</svg>\n"
+
+    # PUT the SVG to the live-sketch server
+    svg_url = url.rstrip("/") + ".svg"
+    req = urllib.request.Request(svg_url, data=svg.encode(), method="PUT")
+    try:
+        urllib.request.urlopen(req)
+        print(f"pushed to {url}")
+    except urllib.error.URLError as e:
+        error(f"live: could not reach {svg_url}: {e.reason}")
+
+
 COMMANDS = {
     "line": cmd_line,
     "circle": cmd_circle,
@@ -253,6 +343,7 @@ COMMANDS = {
     "stroke": cmd_stroke,
     "fill": cmd_fill,
     "render": cmd_render,
+    "live": cmd_live,
 }
 
 
