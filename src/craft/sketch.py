@@ -11,6 +11,25 @@ CANVAS_W = 400
 CANVAS_H = 400
 
 
+def style_options(fn):
+    """Common style options for all shape commands."""
+    fn = click.option("--stroke-width", envvar="SKETCH_STROKE_WIDTH", default="1",
+                       help="Stroke width")(fn)
+    fn = click.option("--fill", envvar="SKETCH_FILL", default="none",
+                       help="Fill color")(fn)
+    fn = click.option("--stroke", envvar="SKETCH_STROKE", default="black",
+                       help="Outline color")(fn)
+    return fn
+
+
+def format_style(stroke, fill, stroke_width):
+    """Format style key=value pairs."""
+    parts = [f"stroke={stroke}", f"fill={fill}"]
+    if stroke_width != "1":
+        parts.append(f"stroke-width={stroke_width}")
+    return " ".join(parts)
+
+
 @click.group()
 def sketch():
     """Generate simple images using shell commands."""
@@ -22,20 +41,24 @@ def sketch():
 @click.argument("y1", type=float)
 @click.argument("x2", type=float)
 @click.argument("y2", type=float)
-def line(x1, y1, x2, y2):
+@style_options
+def line(x1, y1, x2, y2, stroke, fill, stroke_width):
     """Draw a line from (x1, y1) to (x2, y2)."""
-    click.echo(f"line x1={x1:g} y1={y1:g} x2={x2:g} y2={y2:g}")
+    style = format_style(stroke, fill, stroke_width)
+    click.echo(f"line x1={x1:g} y1={y1:g} x2={x2:g} y2={y2:g} {style}")
 
 
 @sketch.command()
 @click.argument("cx", type=float)
 @click.argument("cy", type=float)
 @click.argument("radius", type=float)
-def circle(cx, cy, radius):
+@style_options
+def circle(cx, cy, radius, stroke, fill, stroke_width):
     """Draw a circle with center at (cx, cy) and the given radius."""
     if radius <= 0:
         raise click.BadParameter("must be positive", param_hint="'radius'")
-    click.echo(f"circle cx={cx:g} cy={cy:g} radius={radius:g}")
+    style = format_style(stroke, fill, stroke_width)
+    click.echo(f"circle cx={cx:g} cy={cy:g} radius={radius:g} {style}")
 
 
 @sketch.command()
@@ -43,27 +66,15 @@ def circle(cx, cy, radius):
 @click.argument("y", type=float)
 @click.argument("width", type=float)
 @click.argument("height", type=float)
-def rectangle(x, y, width, height):
+@style_options
+def rectangle(x, y, width, height, stroke, fill, stroke_width):
     """Draw a rectangle with its top-left corner at (x, y)."""
     if width <= 0:
         raise click.BadParameter("must be positive", param_hint="'width'")
     if height <= 0:
         raise click.BadParameter("must be positive", param_hint="'height'")
-    click.echo(f"rectangle x={x:g} y={y:g} width={width:g} height={height:g}")
-
-
-@sketch.command()
-@click.argument("color")
-def stroke(color):
-    """Set the outline color for subsequent shapes."""
-    click.echo(f"stroke {color}")
-
-
-@sketch.command()
-@click.argument("color")
-def fill(color):
-    """Set the fill color for subsequent shapes."""
-    click.echo(f"fill {color}")
+    style = format_style(stroke, fill, stroke_width)
+    click.echo(f"rectangle x={x:g} y={y:g} width={width:g} height={height:g} {style}")
 
 
 # --- Rendering ---
@@ -79,11 +90,25 @@ def parse_attrs(tokens):
     return attrs
 
 
+def svg_style(attrs):
+    """Build common SVG style attributes."""
+    style = f' stroke="{attrs.get("stroke", "black")}"'
+    fill = attrs.get("fill")
+    if fill and fill != "none":
+        style += f' fill="{fill}"'
+    else:
+        style += ' fill="none"'
+    stroke_width = attrs.get("stroke-width")
+    if stroke_width and stroke_width != "1":
+        style += f' stroke-width="{stroke_width}"'
+    return style
+
+
 def render_line(attrs):
     return (
         f'  <line x1="{attrs["x1"]}" y1="{attrs["y1"]}"'
         f' x2="{attrs["x2"]}" y2="{attrs["y2"]}"'
-        f' stroke="{attrs.get("stroke", "black")}" />'
+        f'{svg_style(attrs)} />'
     )
 
 
@@ -91,8 +116,7 @@ def render_circle(attrs):
     return (
         f'  <circle cx="{attrs["cx"]}" cy="{attrs["cy"]}"'
         f' r="{attrs["radius"]}"'
-        f' stroke="{attrs.get("stroke", "black")}"'
-        f' fill="{attrs.get("fill", "none")}" />'
+        f'{svg_style(attrs)} />'
     )
 
 
@@ -100,8 +124,7 @@ def render_rectangle(attrs):
     return (
         f'  <rect x="{attrs["x"]}" y="{attrs["y"]}"'
         f' width="{attrs["width"]}" height="{attrs["height"]}"'
-        f' stroke="{attrs.get("stroke", "black")}"'
-        f' fill="{attrs.get("fill", "none")}" />'
+        f'{svg_style(attrs)} />'
     )
 
 
@@ -114,8 +137,6 @@ SHAPE_KEYS = {
 
 def render_sk(lines):
     """Parse .sk lines and return SVG string."""
-    current_stroke = "black"
-    current_fill = "none"
     elements = []
 
     for lineno, raw in enumerate(lines, 1):
@@ -127,17 +148,7 @@ def render_sk(lines):
         cmd = tokens[0]
         rest = tokens[1:]
 
-        if cmd == "stroke":
-            if len(rest) != 1:
-                click.echo(f"render: line {lineno}: stroke expects 1 argument, skipping", err=True)
-                continue
-            current_stroke = rest[0]
-        elif cmd == "fill":
-            if len(rest) != 1:
-                click.echo(f"render: line {lineno}: fill expects 1 argument, skipping", err=True)
-                continue
-            current_fill = rest[0]
-        elif cmd in SHAPE_KEYS:
+        if cmd in SHAPE_KEYS:
             required_keys, renderer = SHAPE_KEYS[cmd]
             attrs = parse_attrs(rest)
             if attrs is None:
@@ -147,9 +158,6 @@ def render_sk(lines):
             if missing:
                 click.echo(f"render: line {lineno}: {cmd} missing {', '.join(missing)}, skipping", err=True)
                 continue
-            # Apply current stroke/fill as defaults
-            attrs.setdefault("stroke", current_stroke)
-            attrs.setdefault("fill", current_fill)
             elements.append(renderer(attrs))
         else:
             click.echo(f"render: line {lineno}: unknown command '{cmd}', skipping", err=True)
