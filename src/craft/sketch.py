@@ -24,7 +24,7 @@ def sketch():
 @click.argument("y2", type=float)
 def line(x1, y1, x2, y2):
     """Draw a line from (x1, y1) to (x2, y2)."""
-    click.echo(f"line {x1:g} {y1:g} {x2:g} {y2:g}")
+    click.echo(f"line x1={x1:g} y1={y1:g} x2={x2:g} y2={y2:g}")
 
 
 @sketch.command()
@@ -35,7 +35,7 @@ def circle(cx, cy, radius):
     """Draw a circle with center at (cx, cy) and the given radius."""
     if radius <= 0:
         raise click.BadParameter("must be positive", param_hint="'radius'")
-    click.echo(f"circle {cx:g} {cy:g} {radius:g}")
+    click.echo(f"circle cx={cx:g} cy={cy:g} radius={radius:g}")
 
 
 @sketch.command()
@@ -49,7 +49,7 @@ def rectangle(x, y, width, height):
         raise click.BadParameter("must be positive", param_hint="'width'")
     if height <= 0:
         raise click.BadParameter("must be positive", param_hint="'height'")
-    click.echo(f"rectangle {x:g} {y:g} {width:g} {height:g}")
+    click.echo(f"rectangle x={x:g} y={y:g} width={width:g} height={height:g}")
 
 
 @sketch.command()
@@ -68,25 +68,47 @@ def fill(color):
 
 # --- Rendering ---
 
-def render_line(parts, stroke, fill):
-    x1, y1, x2, y2 = parts
-    return f'  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}" />'
+def parse_attrs(tokens):
+    """Parse key=value tokens into a dict."""
+    attrs = {}
+    for token in tokens:
+        if "=" not in token:
+            return None
+        key, value = token.split("=", 1)
+        attrs[key] = value
+    return attrs
 
 
-def render_circle(parts, stroke, fill):
-    cx, cy, r = parts
-    return f'  <circle cx="{cx}" cy="{cy}" r="{r}" stroke="{stroke}" fill="{fill}" />'
+def render_line(attrs):
+    return (
+        f'  <line x1="{attrs["x1"]}" y1="{attrs["y1"]}"'
+        f' x2="{attrs["x2"]}" y2="{attrs["y2"]}"'
+        f' stroke="{attrs.get("stroke", "black")}" />'
+    )
 
 
-def render_rectangle(parts, stroke, fill):
-    x, y, w, h = parts
-    return f'  <rect x="{x}" y="{y}" width="{w}" height="{h}" stroke="{stroke}" fill="{fill}" />'
+def render_circle(attrs):
+    return (
+        f'  <circle cx="{attrs["cx"]}" cy="{attrs["cy"]}"'
+        f' r="{attrs["radius"]}"'
+        f' stroke="{attrs.get("stroke", "black")}"'
+        f' fill="{attrs.get("fill", "none")}" />'
+    )
 
 
-SHAPE_RENDERERS = {
-    "line": (4, render_line),
-    "circle": (3, render_circle),
-    "rectangle": (4, render_rectangle),
+def render_rectangle(attrs):
+    return (
+        f'  <rect x="{attrs["x"]}" y="{attrs["y"]}"'
+        f' width="{attrs["width"]}" height="{attrs["height"]}"'
+        f' stroke="{attrs.get("stroke", "black")}"'
+        f' fill="{attrs.get("fill", "none")}" />'
+    )
+
+
+SHAPE_KEYS = {
+    "line": (["x1", "y1", "x2", "y2"], render_line),
+    "circle": (["cx", "cy", "radius"], render_circle),
+    "rectangle": (["x", "y", "width", "height"], render_rectangle),
 }
 
 
@@ -115,17 +137,20 @@ def render_sk(lines):
                 click.echo(f"render: line {lineno}: fill expects 1 argument, skipping", err=True)
                 continue
             current_fill = rest[0]
-        elif cmd in SHAPE_RENDERERS:
-            expected, renderer = SHAPE_RENDERERS[cmd]
-            if len(rest) != expected:
-                click.echo(f"render: line {lineno}: {cmd} expects {expected} arguments, skipping", err=True)
+        elif cmd in SHAPE_KEYS:
+            required_keys, renderer = SHAPE_KEYS[cmd]
+            attrs = parse_attrs(rest)
+            if attrs is None:
+                click.echo(f"render: line {lineno}: {cmd} has invalid key=value pairs, skipping", err=True)
                 continue
-            try:
-                parts = [float(v) for v in rest]
-            except ValueError:
-                click.echo(f"render: line {lineno}: {cmd} has non-numeric arguments, skipping", err=True)
+            missing = [k for k in required_keys if k not in attrs]
+            if missing:
+                click.echo(f"render: line {lineno}: {cmd} missing {', '.join(missing)}, skipping", err=True)
                 continue
-            elements.append(renderer(parts, current_stroke, current_fill))
+            # Apply current stroke/fill as defaults
+            attrs.setdefault("stroke", current_stroke)
+            attrs.setdefault("fill", current_fill)
+            elements.append(renderer(attrs))
         else:
             click.echo(f"render: line {lineno}: unknown command '{cmd}', skipping", err=True)
 
