@@ -1,185 +1,72 @@
-#!/usr/bin/env python3
 """sketch - generate simple images using shell commands."""
 
 import os
 import sys
 import urllib.request
 
+import click
 
-USAGE = """\
-Usage: sketch command [args...]
-
-Commands:
-  line x1 y1 x2 y2       Draw a line
-  circle cx cy r          Draw a circle
-  rectangle x y w h       Draw a rectangle
-  stroke color            Set stroke color
-  fill color              Set fill color
-  render [file]           Render .sk to SVG (reads stdin if no file)
-  live [file]             Render and push to live-sketch server
-
-Run sketch command --help for details on a specific command."""
 
 CANVAS_W = 400
 CANVAS_H = 400
 
-HELP = {
-    "line": """\
-USAGE
-  sketch line x1 y1 x2 y2
 
-  Draw a line from point (x1, y1) to point (x2, y2).
-
-ARGUMENTS
-  x1  X coordinate of the start point
-  y1  Y coordinate of the start point
-  x2  X coordinate of the end point
-  y2  Y coordinate of the end point
-
-EXAMPLE
-  sketch line 10 20 200 150""",
-
-    "circle": """\
-USAGE
-  sketch circle cx cy radius
-
-  Draw a circle with center at (cx, cy) and the given radius.
-
-ARGUMENTS
-  cx      X coordinate of the center
-  cy      Y coordinate of the center
-  radius  Radius of the circle (must be positive)
-
-EXAMPLE
-  sketch circle 200 200 50""",
-
-    "rectangle": """\
-USAGE
-  sketch rectangle x y width height
-
-  Draw a rectangle with its top-left corner at (x, y).
-
-ARGUMENTS
-  x       X coordinate of the top-left corner
-  y       Y coordinate of the top-left corner
-  width   Width of the rectangle (must be positive)
-  height  Height of the rectangle (must be positive)
-
-EXAMPLE
-  sketch rectangle 50 50 100 80""",
-
-    "stroke": """\
-USAGE
-  sketch stroke color
-
-  Set the outline color for shapes drawn after this command.
-
-ARGUMENTS
-  color  A color name (red, blue, green, ...) or hex (#ff0000)
-
-EXAMPLE
-  sketch stroke red""",
-
-    "fill": """\
-USAGE
-  sketch fill color
-
-  Set the fill color for shapes drawn after this command.
-
-ARGUMENTS
-  color  A color name (red, blue, green, ...) or hex (#ff0000)
-
-EXAMPLE
-  sketch fill blue""",
-
-    "render": """\
-USAGE
-  sketch render [file]
-
-  Render a .sk file to SVG. If no file is given, reads from stdin.
-
-ARGUMENTS
-  file  Path to a .sk file (optional)
-
-EXAMPLE
-  sketch render drawing.sk
-  cat drawing.sk | sketch render""",
-
-    "live": """\
-USAGE
-  sketch live [file]
-
-  Render a .sk file and push the SVG to a live-sketch server.
-  If no file is given, reads from stdin.
-
-  The server URL is read from the SKETCH_LIVE_URL environment variable.
-  Set it to point to your live-sketch page, for example:
-
-    export SKETCH_LIVE_URL=http://localhost:8080/demo
-
-ARGUMENTS
-  file  Path to a .sk file (optional)
-
-EXAMPLE
-  export SKETCH_LIVE_URL=http://localhost:8080/demo
-  sketch live drawing.sk
-  cat drawing.sk | sketch live""",
-}
+@click.group()
+def sketch():
+    """Generate simple images using shell commands."""
+    pass
 
 
-def error(msg):
-    print(f"sketch: {msg}", file=sys.stderr)
-    sys.exit(1)
+@sketch.command()
+@click.argument("x1", type=float)
+@click.argument("y1", type=float)
+@click.argument("x2", type=float)
+@click.argument("y2", type=float)
+def line(x1, y1, x2, y2):
+    """Draw a line from (x1, y1) to (x2, y2)."""
+    click.echo(f"line {x1:g} {y1:g} {x2:g} {y2:g}")
 
 
-def parse_floats(args, count, label):
-    if len(args) != count:
-        error(f"{label}: expected {count} arguments, got {len(args)}\n\n{HELP[label]}")
-    values = []
-    for i, a in enumerate(args):
-        try:
-            values.append(float(a))
-        except ValueError:
-            error(f"{label}: argument {i+1} must be a number, got '{a}'\n\n{HELP[label]}")
-    return values
+@sketch.command()
+@click.argument("cx", type=float)
+@click.argument("cy", type=float)
+@click.argument("radius", type=float)
+def circle(cx, cy, radius):
+    """Draw a circle with center at (cx, cy) and the given radius."""
+    if radius <= 0:
+        raise click.BadParameter("must be positive", param_hint="'radius'")
+    click.echo(f"circle {cx:g} {cy:g} {radius:g}")
 
 
-def cmd_line(args):
-    x1, y1, x2, y2 = parse_floats(args, 4, "line")
-    print(f"line {x1:g} {y1:g} {x2:g} {y2:g}")
+@sketch.command()
+@click.argument("x", type=float)
+@click.argument("y", type=float)
+@click.argument("width", type=float)
+@click.argument("height", type=float)
+def rectangle(x, y, width, height):
+    """Draw a rectangle with its top-left corner at (x, y)."""
+    if width <= 0:
+        raise click.BadParameter("must be positive", param_hint="'width'")
+    if height <= 0:
+        raise click.BadParameter("must be positive", param_hint="'height'")
+    click.echo(f"rectangle {x:g} {y:g} {width:g} {height:g}")
 
 
-def cmd_circle(args):
-    cx, cy, r = parse_floats(args, 3, "circle")
-    if r <= 0:
-        error(f"circle: radius must be positive\n\n{HELP['circle']}")
-    print(f"circle {cx:g} {cy:g} {r:g}")
+@sketch.command()
+@click.argument("color")
+def stroke(color):
+    """Set the outline color for subsequent shapes."""
+    click.echo(f"stroke {color}")
 
 
-def cmd_rectangle(args):
-    x, y, w, h = parse_floats(args, 4, "rectangle")
-    if w <= 0:
-        error(f"rectangle: width must be positive\n\n{HELP['rectangle']}")
-    if h <= 0:
-        error(f"rectangle: height must be positive\n\n{HELP['rectangle']}")
-    print(f"rectangle {x:g} {y:g} {w:g} {h:g}")
+@sketch.command()
+@click.argument("color")
+def fill(color):
+    """Set the fill color for subsequent shapes."""
+    click.echo(f"fill {color}")
 
 
-def cmd_stroke(args):
-    if len(args) != 1:
-        error(f"stroke: expected 1 argument, got {len(args)}\n\n{HELP['stroke']}")
-    if not args[0]:
-        error(f"stroke: color must not be empty\n\n{HELP['stroke']}")
-    print(f"stroke {args[0]}")
-
-
-def cmd_fill(args):
-    if len(args) != 1:
-        error(f"fill: expected 1 argument, got {len(args)}\n\n{HELP['fill']}")
-    if not args[0]:
-        error(f"fill: color must not be empty\n\n{HELP['fill']}")
-    print(f"fill {args[0]}")
-
+# --- Rendering ---
 
 def render_line(parts, stroke, fill):
     x1, y1, x2, y2 = parts
@@ -202,32 +89,11 @@ SHAPE_RENDERERS = {
     "rectangle": (4, render_rectangle),
 }
 
-RENDER_HELP = {
-    "line": "line x1 y1 x2 y2          e.g. line 10 20 200 150",
-    "circle": "circle cx cy radius        e.g. circle 200 200 50",
-    "rectangle": "rectangle x y width height  e.g. rectangle 50 50 100 80",
-    "stroke": "stroke color               e.g. stroke red",
-    "fill": "fill color                 e.g. fill blue",
-}
 
-
-def cmd_render(args):
-    if len(args) > 1:
-        error(f"render: expected 0 or 1 arguments, got {len(args)}\n\n{HELP['render']}")
-
-    if len(args) == 1:
-        try:
-            with open(args[0]) as f:
-                lines = f.readlines()
-        except FileNotFoundError:
-            error(f"render: file not found: {args[0]}")
-        except IsADirectoryError:
-            error(f"render: is a directory: {args[0]}")
-    else:
-        lines = sys.stdin.readlines()
-
-    stroke = "black"
-    fill = "none"
+def render_sk(lines):
+    """Parse .sk lines and return SVG string."""
+    current_stroke = "black"
+    current_fill = "none"
     elements = []
 
     for lineno, raw in enumerate(lines, 1):
@@ -241,130 +107,83 @@ def cmd_render(args):
 
         if cmd == "stroke":
             if len(rest) != 1:
-                print(f"sketch: render: line {lineno}: stroke expects 1 argument, skipping\n  usage: {RENDER_HELP['stroke']}", file=sys.stderr)
+                click.echo(f"render: line {lineno}: stroke expects 1 argument, skipping", err=True)
                 continue
-            stroke = rest[0]
+            current_stroke = rest[0]
         elif cmd == "fill":
             if len(rest) != 1:
-                print(f"sketch: render: line {lineno}: fill expects 1 argument, skipping\n  usage: {RENDER_HELP['fill']}", file=sys.stderr)
+                click.echo(f"render: line {lineno}: fill expects 1 argument, skipping", err=True)
                 continue
-            fill = rest[0]
+            current_fill = rest[0]
         elif cmd in SHAPE_RENDERERS:
             expected, renderer = SHAPE_RENDERERS[cmd]
             if len(rest) != expected:
-                print(f"sketch: render: line {lineno}: {cmd} expects {expected} arguments, skipping\n  usage: {RENDER_HELP[cmd]}", file=sys.stderr)
+                click.echo(f"render: line {lineno}: {cmd} expects {expected} arguments, skipping", err=True)
                 continue
             try:
                 parts = [float(v) for v in rest]
             except ValueError:
-                print(f"sketch: render: line {lineno}: {cmd} has non-numeric arguments, skipping\n  usage: {RENDER_HELP[cmd]}", file=sys.stderr)
+                click.echo(f"render: line {lineno}: {cmd} has non-numeric arguments, skipping", err=True)
                 continue
-            elements.append(renderer(parts, stroke, fill))
+            elements.append(renderer(parts, current_stroke, current_fill))
         else:
-            print(f"sketch: render: line {lineno}: unknown command '{cmd}', skipping", file=sys.stderr)
-
-    print(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS_W} {CANVAS_H}">')
-    for el in elements:
-        print(el)
-    print("</svg>")
-
-
-def cmd_live(args):
-    if len(args) > 1:
-        error(f"live: expected 0 or 1 arguments, got {len(args)}\n\n{HELP['live']}")
-
-    url = os.environ.get("SKETCH_LIVE_URL")
-    if not url:
-        error(
-            "live: SKETCH_LIVE_URL is not set\n\n"
-            "Set it to the URL of your live-sketch page:\n\n"
-            "  export SKETCH_LIVE_URL=http://localhost:8080/demo"
-        )
-
-    # Read .sk from file or stdin
-    if len(args) == 1:
-        try:
-            with open(args[0]) as f:
-                lines = f.readlines()
-        except FileNotFoundError:
-            error(f"live: file not found: {args[0]}")
-        except IsADirectoryError:
-            error(f"live: is a directory: {args[0]}")
-    else:
-        lines = sys.stdin.readlines()
-
-    stroke = "black"
-    fill = "none"
-    elements = []
-
-    for lineno, raw in enumerate(lines, 1):
-        raw = raw.strip()
-        if not raw or raw.startswith("#"):
-            continue
-
-        tokens = raw.split()
-        cmd = tokens[0]
-        rest = tokens[1:]
-
-        if cmd == "stroke":
-            if len(rest) == 1:
-                stroke = rest[0]
-        elif cmd == "fill":
-            if len(rest) == 1:
-                fill = rest[0]
-        elif cmd in SHAPE_RENDERERS:
-            expected, renderer = SHAPE_RENDERERS[cmd]
-            if len(rest) == expected:
-                try:
-                    parts = [float(v) for v in rest]
-                    elements.append(renderer(parts, stroke, fill))
-                except ValueError:
-                    pass
+            click.echo(f"render: line {lineno}: unknown command '{cmd}', skipping", err=True)
 
     svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS_W} {CANVAS_H}">\n'
     for el in elements:
         svg += el + "\n"
-    svg += "</svg>\n"
+    svg += "</svg>"
+    return svg
 
-    # PUT the SVG to the live-sketch server
+
+def read_sk(file):
+    """Read .sk content from a file path or stdin."""
+    if file:
+        return open(file).readlines()
+    return sys.stdin.readlines()
+
+
+@sketch.command()
+@click.argument("file", required=False, type=click.Path(exists=True))
+def render(file):
+    """Render a .sk file to SVG. Reads from stdin if no file is given."""
+    lines = read_sk(file)
+    click.echo(render_sk(lines))
+
+
+@sketch.command()
+@click.argument("file", required=False, type=click.Path(exists=True))
+def live(file):
+    """Render and push to a live-sketch server.
+
+    Reads from stdin if no file is given.
+
+    The server URL is read from the SKETCH_LIVE_URL environment variable:
+
+        export SKETCH_LIVE_URL=http://localhost:8080/demo
+    """
+    url = os.environ.get("SKETCH_LIVE_URL")
+    if not url:
+        raise click.UsageError(
+            "SKETCH_LIVE_URL is not set\n\n"
+            "Set it to the URL of your live-sketch page:\n\n"
+            "  export SKETCH_LIVE_URL=http://localhost:8080/demo"
+        )
+
+    lines = read_sk(file)
+    svg = render_sk(lines)
+
     svg_url = url.rstrip("/") + ".svg"
     req = urllib.request.Request(svg_url, data=svg.encode(), method="PUT")
     try:
         urllib.request.urlopen(req)
-        print(f"pushed to {url}")
+        click.echo(f"pushed to {url}")
     except urllib.error.URLError as e:
-        error(f"live: could not reach {svg_url}: {e.reason}")
-
-
-COMMANDS = {
-    "line": cmd_line,
-    "circle": cmd_circle,
-    "rectangle": cmd_rectangle,
-    "stroke": cmd_stroke,
-    "fill": cmd_fill,
-    "render": cmd_render,
-    "live": cmd_live,
-}
+        raise click.ClickException(f"could not reach {svg_url}: {e.reason}")
 
 
 def main():
-    if len(sys.argv) < 2:
-        error(USAGE)
-
-    cmd = sys.argv[1]
-    if cmd in ("-h", "--help"):
-        print(USAGE)
-        sys.exit(0)
-
-    if cmd not in COMMANDS:
-        error(f"unknown command '{cmd}'\n\n{USAGE}")
-
-    args = sys.argv[2:]
-    if args and args[0] in ("-h", "--help"):
-        print(HELP[cmd])
-        sys.exit(0)
-
-    COMMANDS[cmd](args)
+    sketch()
 
 
 if __name__ == "__main__":
