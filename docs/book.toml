@@ -1,0 +1,6 @@
+[book]
+title = "Craft of Computing"
+authors = ["Jerome"]
+
+[output.html]
+git-repository-url = ""

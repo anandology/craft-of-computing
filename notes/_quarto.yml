@@ -1,0 +1,26 @@
+project:
+  type: book
+
+book:
+  title: "The Craft of Computing"
+  author: "Norah Jones"
+  date: "3/10/2026"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - sketch.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+  # pdf:
+  #   documentclass: scrreprt
+
+
+
