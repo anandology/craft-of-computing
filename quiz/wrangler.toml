@@ -4,6 +4,10 @@ compatibility_date = "2026-08-02"
 
 # Generates src/quizzes.json from quizzes/*.yml before bundling, so a remote
 # build that only runs `wrangler deploy` still compiles the YAML.
+# watch_dir is left at its default so editing the Worker still hot-reloads.
+# The build writes into that same directory, which would loop, except
+# scripts/build.mjs skips the write when the content is unchanged — so the
+# second build of any cycle is a no-op and the reloading stops.
 [build]
 command = "node scripts/build.mjs"
 

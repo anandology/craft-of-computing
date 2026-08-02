@@ -8,7 +8,7 @@ questions:
     q: What is your mother tongue?
 
   - id: medium
-    q: What was the medium of instruction until 10th?
+    q: What was the medium of instruction until 10th class?
     opts: [English, Regional language, Mixed]
 
   - id: years

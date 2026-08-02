@@ -120,15 +120,28 @@ case-insensitively with whitespace collapsed, capped at ten and capitalised for 
 - [x] A submitted `<script>` tag appears as characters, not markup
 - [x] A dropped poll leaves the last numbers on screen instead of an error
 
+### [DONE] in-slides: the results are a slide in the presentation
+
+Serve `/<quiz>/slide`: results filling the left two thirds, and a QR code for the answer
+page, the URL and the response count on the right third. Generate the QR in the Worker as
+inline SVG rather than fetching an image, so a projector with a flaky network still shows
+it, and force dark-on-white regardless of page theme because a tinted QR scans unreliably.
+
+Show one question by default — four are clipped at 16:9 — with `?q=<id>` to choose and
+`?q=all` to override.
+
+**Acceptance Criteria:**
+
+- [x] Columns are exactly 2fr/1fr and neither axis scrolls at 1600x900
+- [x] The default renders one question; `?q=all` renders the whole quiz
+- [x] The QR renders about 300px on a 1600x900 projector and stays dark-on-white in
+      both light and dark themes
+- [x] The URL shown is the real origin, so it is right on workers.dev or a custom domain
+
 ## Backlog
 
 Unvetted ideas, not scheduled work. Nothing here is a task until it is approved and moved
 up to `## Tasks`. Each is cheap to add later because none of them changes the schema.
-
-**in-slides.** Render a QR code for the answer page, large enough to scan from the back of
-the room, and serve a view holding only that code and the live chart, sized to sit in an
-iframe on a slide. Reading a URL aloud costs class time; switching tabs breaks the talk.
-The embedding half depends on what the slides are built in, which is still undecided.
 
 **question-types.** Free text is a poor fit for a question with a known long answer list,
 such as Indian states: it invites spelling variants that only case folding repairs. A

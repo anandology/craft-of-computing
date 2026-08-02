@@ -3,6 +3,7 @@
 // Quizzes come from quizzes/*.yml via scripts/build.mjs. Filename is the slug:
 // quizzes/q0.yml -> /q0 to vote, /q0/results to watch.
 import quizzes from "./quizzes.json";
+import qrcode from "qrcode-generator";
 
 type Question = { id: string; q: string; opts?: string[] };
 type Quiz = { title: string; questions: Question[] };
@@ -29,6 +30,8 @@ export default {
     if (action === "mine" && req.method === "GET")
       return mine(env, slug, url.searchParams.get("voter") ?? "");
     if (action === "results" && req.method === "GET") return page(resultsPage(slug, quiz));
+    if (action === "slide" && req.method === "GET")
+      return page(slidePage(slug, quiz, url.origin, url.searchParams.get("q") ?? undefined));
     if (action === "results.json" && req.method === "GET") return results(env, slug);
 
     return notFound();
@@ -176,6 +179,43 @@ button:disabled { opacity: .45; cursor: default; }
 .bar b { font-variant-numeric: tabular-nums; opacity: .7; font-weight: 600; }
 .muted { opacity: .6; font-size: .85rem; margin: 0 0 8px; }
 a { color: #4f7cff; }
+
+/* --- slide: results at 2/3, join panel at 1/3, sized for a projector --- */
+body:has(.slide) { max-width: none; padding: 0; height: 100vh; overflow: hidden; }
+.slide { display: grid; grid-template-columns: 2fr 1fr; height: 100vh; }
+.panel { padding: 3.5vh 3vw; overflow: hidden;
+         display: flex; flex-direction: column; justify-content: center; }
+.panel h1 { font-size: clamp(1.5rem, 2.6vw, 3rem); margin: 0 0 3vh; }
+.panel .q { margin: 0 0 3.2vh; }
+.panel h2 { font-size: clamp(1rem, 1.5vw, 1.9rem); margin: 0 0 1.4vh; opacity: .75;
+            font-weight: 500; }
+/* Counts sit in text ink beside the bar, so identity never rests on the fill. */
+.panel .bar { margin-bottom: .9vh; gap: 1.2vw; }
+.panel .bar span { padding: .9vh 1vw; font-size: clamp(.95rem, 1.5vw, 1.9rem); }
+.panel .bar span::before { background: color-mix(in srgb, #4f7cff 42%, transparent); }
+.panel .bar b { font-size: clamp(.95rem, 1.5vw, 1.9rem); opacity: .85; }
+
+.join { display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 2.5vh; padding: 3vh 2vw;
+        background: color-mix(in srgb, currentColor 6%, transparent);
+        border-left: 1px solid color-mix(in srgb, currentColor 12%, transparent); }
+.join .qr { background: #fff; padding: 1.4vh; border-radius: 12px; line-height: 0;
+            box-shadow: 0 2px 16px rgb(0 0 0 / .14); }
+.join .qr svg { width: min(22vw, 34vh); height: auto; display: block; }
+.join .url { margin: 0; font-size: clamp(.9rem, 1.35vw, 1.7rem); font-weight: 600;
+             text-align: center; overflow-wrap: anywhere; }
+.join .count { margin: 0; font-size: clamp(1.6rem, 3.4vw, 4rem); font-weight: 700;
+               line-height: 1; }
+.join .count small { display: block; font-size: clamp(.7rem, 1vw, 1.1rem); font-weight: 500;
+                     opacity: .55; margin-top: .6vh; letter-spacing: .04em;
+                     text-transform: uppercase; }
+
+/* Stacks if the slide is ever opened on a phone. */
+@media (max-width: 700px) {
+  .slide { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .join { border-left: 0; border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+          flex-direction: row; gap: 4vw; }
+}
 `;
 
 const shell = (title: string, body: string, script = "") => `<!doctype html>
@@ -348,8 +388,14 @@ function resultsPage(slug: string, quiz: Quiz): string {
   const body = `<h1>${esc(quiz.title)}</h1>
 <p class="muted"><span id="n">0</span> responses &middot; answer at <b>/${slug}</b></p>
 <div id="out"></div>`;
-  const script = `
-const QUIZ = ${embed(quiz.questions)};
+  return shell(quiz.title + " — results", body, pollScript(slug, quiz.questions));
+}
+
+// Shared by the results page and the slide: fills #out with a section per
+// question and #n with the response count, re-polling every two seconds.
+function pollScript(slug: string, questions: Question[]): string {
+  return `
+const QUIZ = ${embed(questions)};
 const out = document.getElementById("out");
 
 function bar(label, n, max, cap) {
@@ -394,5 +440,46 @@ async function tick() {
 }
 
 tick(); setInterval(tick, 2000);`;
-  return shell(quiz.title + " — results", body, script);
 }
+
+// Dark modules on a forced-white card: a QR inverted or tinted by the page
+// theme is unreliable on some scanners, and this one is read from across a room.
+function qrSvg(text: string): string {
+  const qr = qrcode(0, "M");
+  qr.addData(text);
+  qr.make();
+  const n = qr.getModuleCount();
+  let d = "";
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++)
+      if (qr.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`;
+  return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges" aria-hidden="true">
+<path d="${d}" fill="#000"/></svg>`;
+}
+
+// One question fills a slide; four get clipped at 16:9. So `?q=<id>` picks one,
+// `?q=all` forces the whole quiz onto one slide, and the default is the first.
+function slidePage(slug: string, quiz: Quiz, origin: string, only?: string): string {
+  const questions =
+    only === "all"
+      ? quiz.questions
+      : only
+        ? quiz.questions.filter((q) => q.id === only)
+        : quiz.questions.slice(0, 1);
+  const url = origin + "/" + slug;
+  const shown = url.replace(/^https?:\/\//, "");
+
+  const body = `<div class="slide">
+  <div class="panel">
+    <h1>${esc(quiz.title)}</h1>
+    <div id="out"></div>
+  </div>
+  <aside class="join">
+    <div class="qr">${qrSvg(url)}</div>
+    <p class="url">${esc(shown)}</p>
+    <p class="count"><span id="n">0</span> <small>responses</small></p>
+  </aside>
+</div>`;
+  return shell(quiz.title + " — slide", body, pollScript(slug, questions));
+}
+

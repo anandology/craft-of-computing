@@ -1,6 +1,6 @@
 // quizzes/*.yml -> src/quizzes.json
 // Runs before deploy, so a typo in the YAML fails here rather than in class.
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { parse } from "yaml";
 
@@ -30,5 +30,14 @@ for (const file of readdirSync(SRC).filter((f) => /\.ya?ml$/.test(f)).sort()) {
   quizzes[slug] = { title: quiz.title, questions: quiz.questions };
 }
 
-writeFileSync(OUT, JSON.stringify(quizzes, null, 2) + "\n");
-console.log(`${OUT}: ${Object.keys(quizzes).length} quizzes (${Object.keys(quizzes).join(", ")})`);
+// Only write when the content actually changed. Rewriting an identical file
+// still bumps its mtime, which is enough to retrigger a watching dev server.
+const next = JSON.stringify(quizzes, null, 2) + "\n";
+const names = Object.keys(quizzes);
+
+if (existsSync(OUT) && readFileSync(OUT, "utf8") === next) {
+  console.log(`${OUT}: unchanged (${names.length} quizzes)`);
+} else {
+  writeFileSync(OUT, next);
+  console.log(`${OUT}: ${names.length} quizzes (${names.join(", ")})`);
+}

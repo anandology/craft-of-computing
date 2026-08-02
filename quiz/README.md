@@ -43,6 +43,18 @@ scale questions stay in order instead of being resorted by popularity. Free text
 is grouped case-insensitively (`Telugu` and `telugu` are one bar), whitespace is
 collapsed, and only the top 10 are shown.
 
+## On a slide
+
+`/q0/slide` is a full-screen view for the projector: results fill the left two
+thirds, and a QR code, the answer URL and the response count sit on the right.
+It shows one question, because four get clipped at 16:9.
+
+    /q0/slide           first question
+    /q0/slide?q=years   that question
+    /q0/slide?q=all     the whole quiz on one slide, clips if it is long
+
+Put it on a slide with an iframe, or just open it full-screen on the projector.
+
 ## Deploy
 
     npx wrangler d1 create quiz          # paste database_id into wrangler.toml
