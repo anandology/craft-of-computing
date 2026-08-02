@@ -1,0 +1,5 @@
+node_modules/
+.wrangler/
+
+# generated from quizzes/*.yml by scripts/build.mjs
+src/quizzes.json

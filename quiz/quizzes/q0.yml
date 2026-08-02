@@ -1,0 +1,21 @@
+title: About You
+
+questions:
+  - id: state
+    q: Which state are you from?
+
+  - id: tongue
+    q: What is your mother tongue?
+
+  - id: medium
+    q: What was the medium of instruction until 10th?
+    opts: [English, Regional language, Mixed]
+
+  - id: years
+    q: How long have you been using a computer?
+    opts:
+      - a few months
+      - less than a year
+      - less than 2 years
+      - less than 5 years
+      - more than 5 years

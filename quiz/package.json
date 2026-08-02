@@ -1,0 +1,15 @@
+{
+  "name": "quiz",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260801.1",
+    "wrangler": "^4.118.0",
+    "yaml": "^2.6.1"
+  }
+}

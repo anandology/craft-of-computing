@@ -1,0 +1,8 @@
+name = "quiz"
+main = "src/index.ts"
+compatibility_date = "2026-08-02"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "quiz"
+database_id = "PASTE_FROM_wrangler_d1_create"

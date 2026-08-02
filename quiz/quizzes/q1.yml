@@ -1,0 +1,7 @@
+# A single question renders on its own, Mentimeter-style.
+title: Programming experience
+
+questions:
+  - id: prog
+    q: Have you written a program before?
+    opts: [Never, A little, Fairly comfortable]
