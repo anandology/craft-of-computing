@@ -2,7 +2,12 @@ name = "quiz"
 main = "src/index.ts"
 compatibility_date = "2026-08-02"
 
+# Generates src/quizzes.json from quizzes/*.yml before bundling, so a remote
+# build that only runs `wrangler deploy` still compiles the YAML.
+[build]
+command = "node scripts/build.mjs"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "quiz"
-database_id = "PASTE_FROM_wrangler_d1_create"
+database_id = "3649db34-6e9a-4a00-86c3-f7dd6d88506e"
