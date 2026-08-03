@@ -210,6 +210,18 @@ body:has(.slide) { max-width: none; padding: 0; height: 100vh; overflow: hidden;
                      opacity: .55; margin-top: .6vh; letter-spacing: .04em;
                      text-transform: uppercase; }
 
+/* Recessive: the room is looking at the bars, not at the controls.
+   Not .nav — that class already belongs to the vote page's stepper. */
+.join .step { display: flex; align-items: center; gap: 1.2vw; opacity: .55; line-height: 1; }
+.join .step:hover { opacity: 1; }
+.join .step button { font: inherit; line-height: 1; cursor: pointer; width: auto;
+                     margin: 0;  /* the global button rule carries a 28px top margin */
+                     font-size: clamp(1.1rem, 1.8vw, 2.2rem); padding: .2em .5em;
+                     color: inherit; background: none; border-radius: 8px;
+                     border: 1px solid color-mix(in srgb, currentColor 22%, transparent); }
+.join .step #pos { font-size: clamp(.75rem, 1.1vw, 1.2rem); font-variant-numeric: tabular-nums;
+                   letter-spacing: .04em; }
+
 /* Stacks if the slide is ever opened on a phone. */
 @media (max-width: 700px) {
   .slide { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
@@ -393,10 +405,22 @@ function resultsPage(slug: string, quiz: Quiz): string {
 
 // Shared by the results page and the slide: fills #out with a section per
 // question and #n with the response count, re-polling every two seconds.
-function pollScript(slug: string, questions: Question[]): string {
+// `start` turns on the slide's stepper: every question is rendered and polled,
+// but only one is visible at a time. -1 shows them all.
+function pollScript(slug: string, questions: Question[], start = -1): string {
   return `
 const QUIZ = ${embed(questions)};
 const out = document.getElementById("out");
+let cur = ${start};
+
+function show() {
+  if (cur < 0) return;
+  [...out.children].forEach((el, i) => { el.hidden = i !== cur; });
+  document.getElementById("pos").textContent = (cur + 1) + " / " + QUIZ.length;
+}
+// Clamped, not wrapping: a presenter's clicker should stop at the last question
+// rather than silently jump back to the first.
+function move(d) { cur = Math.max(0, Math.min(QUIZ.length - 1, cur + d)); show(); }
 
 function bar(label, n, max, cap) {
   const d = document.createElement("div"); d.className = "bar";
@@ -437,6 +461,17 @@ async function tick() {
     frag.append(sec);
   }
   out.replaceChildren(frag);
+  show();  // sections are rebuilt each poll, so re-apply which one is visible
+}
+
+if (cur >= 0) {
+  document.getElementById("prev").onclick = () => move(-1);
+  document.getElementById("next").onclick = () => move(1);
+  // A presentation clicker sends arrows or page keys; take both.
+  addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") move(1);
+    else if (e.key === "ArrowLeft" || e.key === "PageUp") move(-1);
+  });
 }
 
 tick(); setInterval(tick, 2000);`;
@@ -457,17 +492,16 @@ function qrSvg(text: string): string {
 <path d="${d}" fill="#000"/></svg>`;
 }
 
-// One question fills a slide; four get clipped at 16:9. So `?q=<id>` picks one,
-// `?q=all` forces the whole quiz onto one slide, and the default is the first.
+// One question fills a slide; four get clipped at 16:9. So the slide polls the
+// whole quiz but shows one question, stepped with the arrows or a clicker.
+// `?q=<id>` opens at that question, `?q=all` puts them all on one slide.
 function slidePage(slug: string, quiz: Quiz, origin: string, only?: string): string {
-  const questions =
-    only === "all"
-      ? quiz.questions
-      : only
-        ? quiz.questions.filter((q) => q.id === only)
-        : quiz.questions.slice(0, 1);
+  const all = only === "all";
+  const found = only && !all ? quiz.questions.findIndex((q) => q.id === only) : 0;
+  const at = Math.max(0, found);  // an unknown ?q= just opens at the first
   const url = origin + "/" + slug;
   const shown = url.replace(/^https?:\/\//, "");
+  const stepped = !all && quiz.questions.length > 1;
 
   const body = `<div class="slide">
   <div class="panel">
@@ -478,8 +512,15 @@ function slidePage(slug: string, quiz: Quiz, origin: string, only?: string): str
     <div class="qr">${qrSvg(url)}</div>
     <p class="url">${esc(shown)}</p>
     <p class="count"><span id="n">0</span> <small>responses</small></p>
+    ${stepped
+      ? `<nav class="step">
+      <button id="prev" aria-label="Previous question">&lsaquo;</button>
+      <span id="pos"></span>
+      <button id="next" aria-label="Next question">&rsaquo;</button>
+    </nav>`
+      : ""}
   </aside>
 </div>`;
-  return shell(quiz.title + " — slide", body, pollScript(slug, questions));
+  return shell(quiz.title + " — slide", body, pollScript(slug, quiz.questions, stepped ? at : -1));
 }
 

@@ -127,13 +127,19 @@ page, the URL and the response count on the right third. Generate the QR in the 
 inline SVG rather than fetching an image, so a projector with a flaky network still shows
 it, and force dark-on-white regardless of page theme because a tinted QR scans unreliably.
 
-Show one question by default — four are clipped at 16:9 — with `?q=<id>` to choose and
-`?q=all` to override.
+Show one question at a time — four are clipped at 16:9. The slide polls the whole quiz and
+hides all but the current question, so stepping between them costs no request and no reload.
+Step with the arrow and page keys, since a presentation clicker sends those, or with the
+arrows beside a `2 / 4` counter in the join panel. `?q=<id>` opens at a question and `?q=all`
+puts them all on one slide.
 
 **Acceptance Criteria:**
 
 - [x] Columns are exactly 2fr/1fr and neither axis scrolls at 1600x900
 - [x] The default renders one question; `?q=all` renders the whole quiz
+- [x] Arrows and clicker keys move one question at a time and stop at both ends rather
+      than wrapping; the counter follows; a poll landing mid-talk does not reset the view
+- [x] The results page is unaffected: it still shows every question at once
 - [x] The QR renders about 300px on a 1600x900 projector and stays dark-on-white in
       both light and dark themes
 - [x] The URL shown is the real origin, so it is right on workers.dev or a custom domain
