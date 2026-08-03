@@ -133,6 +133,11 @@ Step with the arrow and page keys, since a presentation clicker sends those, or 
 arrows beside a `2 / 4` counter in the join panel. `?q=<id>` opens at a question and `?q=all`
 puts them all on one slide.
 
+The QR also expands to fill the screen, for the "everyone scan this" moment at the start of a
+class: click it or press `f`, and `?qr` opens there so it can be its own slide in a deck. The
+panel is top-aligned rather than centred, because centring re-balances the column per question
+and makes the title jump as the slide is stepped.
+
 **Acceptance Criteria:**
 
 - [x] Columns are exactly 2fr/1fr and neither axis scrolls at 1600x900
@@ -140,6 +145,8 @@ puts them all on one slide.
 - [x] Arrows and clicker keys move one question at a time and stop at both ends rather
       than wrapping; the counter follows; a poll landing mid-talk does not reset the view
 - [x] The results page is unaffected: it still shows every question at once
+- [x] The QR fills the screen on click, `f` or `?qr`, keeps counting while it is up, and
+      closes on click, `f`, `Esc` or the next click of the clicker
 - [x] The QR renders about 300px on a 1600x900 projector and stays dark-on-white in
       both light and dark themes
 - [x] The URL shown is the real origin, so it is right on workers.dev or a custom domain

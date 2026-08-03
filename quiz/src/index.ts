@@ -31,7 +31,10 @@ export default {
       return mine(env, slug, url.searchParams.get("voter") ?? "");
     if (action === "results" && req.method === "GET") return page(resultsPage(slug, quiz));
     if (action === "slide" && req.method === "GET")
-      return page(slidePage(slug, quiz, url.origin, url.searchParams.get("q") ?? undefined));
+      return page(
+        slidePage(slug, quiz, url.origin, url.searchParams.get("q") ?? undefined,
+                  url.searchParams.has("qr")),
+      );
     if (action === "results.json" && req.method === "GET") return results(env, slug);
 
     return notFound();
@@ -205,8 +208,23 @@ body:has(.slide) { max-width: none; padding: 0; height: 100vh; overflow: hidden;
         background: color-mix(in srgb, currentColor 6%, transparent);
         border-left: 1px solid color-mix(in srgb, currentColor 12%, transparent); }
 .join .qr { background: #fff; padding: 1.4vh; border-radius: 12px; line-height: 0;
+            width: auto; margin: 0; border: 0; cursor: zoom-in;
             box-shadow: 0 2px 16px rgb(0 0 0 / .14); }
 .join .qr svg { width: min(22vw, 34vh); height: auto; display: block; }
+
+/* Full-screen QR for the "everyone scan this" slide at the start of a class.
+   White ground and dark ink regardless of theme, same as the small one. */
+.big { position: fixed; inset: 0; z-index: 10; cursor: zoom-out;
+       background: #fff; color: #111;
+       display: flex; flex-direction: column; align-items: center; justify-content: center;
+       gap: 3vh; padding: 4vh; }
+.big[hidden] { display: none; }
+.big .qr { line-height: 0; }
+.big .qr svg { width: min(58vh, 58vw); height: auto; display: block; }
+.big .url { margin: 0; font-weight: 700; font-size: clamp(1.4rem, 4vw, 4.5rem);
+            text-align: center; overflow-wrap: anywhere; }
+.big .count { margin: 0; font-size: clamp(1rem, 1.6vw, 2rem); opacity: .5; }
+.big .count small { font-size: inherit; }
 .join .url { margin: 0; font-size: clamp(.9rem, 1.35vw, 1.7rem); font-weight: 600;
              text-align: center; overflow-wrap: anywhere; }
 .join .count { margin: 0; font-size: clamp(1.6rem, 3.4vw, 4rem); font-weight: 700;
@@ -403,7 +421,7 @@ function review() {
 
 function resultsPage(slug: string, quiz: Quiz): string {
   const body = `<h1>${esc(quiz.title)}</h1>
-<p class="muted"><span id="n">0</span> responses &middot; answer at <b>/${slug}</b></p>
+<p class="muted"><span class="n">0</span> responses &middot; answer at <b>/${slug}</b></p>
 <div id="out"></div>`;
   return shell(quiz.title + " — results", body, pollScript(slug, quiz.questions));
 }
@@ -425,7 +443,11 @@ function show() {
 }
 // Clamped, not wrapping: a presenter's clicker should stop at the last question
 // rather than silently jump back to the first.
-function move(d) { cur = Math.max(0, Math.min(QUIZ.length - 1, cur + d)); show(); }
+function move(d) {
+  if (cur < 0) return;  // ?q=all and the results page show everything at once
+  cur = Math.max(0, Math.min(QUIZ.length - 1, cur + d));
+  show();
+}
 
 function bar(label, n, max, cap) {
   const d = document.createElement("div"); d.className = "bar";
@@ -442,7 +464,8 @@ async function tick() {
   let data;
   try { data = await (await fetch("/${slug}/results.json")).json(); }
   catch { return; }  // a dropped poll is not worth showing an error for
-  document.getElementById("n").textContent = data.voters;
+  // Two copies on the slide: the join panel and the full-screen QR.
+  for (const el of document.querySelectorAll(".n")) el.textContent = data.voters;
 
   const frag = document.createDocumentFragment();
   for (const q of QUIZ) {
@@ -469,15 +492,31 @@ async function tick() {
   show();  // sections are rebuilt each poll, so re-apply which one is visible
 }
 
+const big = document.getElementById("big");
+function zoom(on) { if (big) big.hidden = !on; }
+
+if (big) {
+  document.getElementById("zoom").onclick = () => zoom(true);
+  big.onclick = () => zoom(false);
+}
+
 if (cur >= 0) {
   document.getElementById("prev").onclick = () => move(-1);
   document.getElementById("next").onclick = () => move(1);
-  // A presentation clicker sends arrows or page keys; take both.
-  addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") move(1);
-    else if (e.key === "ArrowLeft" || e.key === "PageUp") move(-1);
-  });
 }
+
+// A presentation clicker sends arrows or page keys; take both. Stepping while
+// the QR fills the screen puts the results back, which is what the next click
+// after "everyone scan this" is meant to do.
+addEventListener("keydown", (e) => {
+  const zoomed = big && !big.hidden;
+  if (e.key === "f" || e.key === "Escape") zoom(e.key === "f" && !zoomed);
+  else if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+    if (zoomed) zoom(false); else move(1);
+  } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+    if (zoomed) zoom(false); else move(-1);
+  }
+});
 
 tick(); setInterval(tick, 2000);`;
 }
@@ -499,8 +538,10 @@ function qrSvg(text: string): string {
 
 // One question fills a slide; four get clipped at 16:9. So the slide polls the
 // whole quiz but shows one question, stepped with the arrows or a clicker.
-// `?q=<id>` opens at that question, `?q=all` puts them all on one slide.
-function slidePage(slug: string, quiz: Quiz, origin: string, only?: string): string {
+// `?q=<id>` opens at that question, `?q=all` puts them all on one slide, and
+// `?qr` opens with the QR full-screen, which is the slide to start a class on.
+function slidePage(slug: string, quiz: Quiz, origin: string, only?: string,
+                   openQr = false): string {
   const all = only === "all";
   const found = only && !all ? quiz.questions.findIndex((q) => q.id === only) : 0;
   const at = Math.max(0, found);  // an unknown ?q= just opens at the first
@@ -514,9 +555,10 @@ function slidePage(slug: string, quiz: Quiz, origin: string, only?: string): str
     <div id="out"></div>
   </div>
   <aside class="join">
-    <div class="qr">${qrSvg(url)}</div>
+    <button id="zoom" class="qr" title="Show the QR full screen (f)"
+            aria-label="Show the QR full screen">${qrSvg(url)}</button>
     <p class="url">${esc(shown)}</p>
-    <p class="count"><span id="n">0</span> <small>responses</small></p>
+    <p class="count"><span class="n">0</span> <small>responses</small></p>
     ${stepped
       ? `<nav class="step">
       <button id="prev" aria-label="Previous question">&lsaquo;</button>
@@ -525,6 +567,11 @@ function slidePage(slug: string, quiz: Quiz, origin: string, only?: string): str
     </nav>`
       : ""}
   </aside>
+</div>
+<div id="big" class="big"${openQr ? "" : " hidden"}>
+  <div class="qr">${qrSvg(url)}</div>
+  <p class="url">${esc(shown)}</p>
+  <p class="count"><span class="n">0</span> <small>joined so far</small></p>
 </div>`;
   return shell(quiz.title + " — slide", body, pollScript(slug, quiz.questions, stepped ? at : -1));
 }

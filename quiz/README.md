@@ -53,9 +53,14 @@ Move between questions with `←` / `→` (a presentation clicker's page keys wo
 too) or the arrows under the count, which also show `2 / 4`. Every question is
 polled whether or not it is on screen, so stepping is instant.
 
+Click the QR, or press `f`, to blow it up to fill the screen for "everyone scan
+this" at the start of a class — it keeps counting joiners while it is up. Click
+it again, or press `f`, `Esc`, or simply advance, to go back to the results.
+
     /q0/slide           opens at the first question
     /q0/slide?q=years   opens at that question
     /q0/slide?q=all     the whole quiz on one slide, clips if it is long
+    /q0/slide?qr        opens with the QR already full screen
 
 Put it on a slide with an iframe, or just open it full-screen on the projector.
 
