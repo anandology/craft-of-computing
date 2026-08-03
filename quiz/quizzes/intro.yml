@@ -1,10 +1,10 @@
-title: About You
+title: Tell Something About You
 
 questions:
   - id: state
     q: Which state are you from?
 
-  - id: tongue
+  - id: lang
     q: What is your mother tongue?
 
   - id: medium
@@ -18,4 +18,4 @@ questions:
       - less than a year
       - less than 2 years
       - less than 5 years
-      - more than 5 years
+      - more than 4 years
