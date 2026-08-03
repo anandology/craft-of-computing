@@ -183,8 +183,13 @@ a { color: #4f7cff; }
 /* --- slide: results at 2/3, join panel at 1/3, sized for a projector --- */
 body:has(.slide) { max-width: none; padding: 0; height: 100vh; overflow: hidden; }
 .slide { display: grid; grid-template-columns: 2fr 1fr; height: 100vh; }
-.panel { padding: 3.5vh 3vw; overflow: hidden;
-         display: flex; flex-direction: column; justify-content: center; }
+/* Top-aligned, not centred: centring re-balances the column for every question,
+   so the title and the question text visibly jump as the slide is stepped. */
+.panel { padding: 9vh 3vw 3.5vh; overflow: hidden;
+         display: flex; flex-direction: column; justify-content: flex-start; }
+/* Every question on one slide has no room to spare, and overflows a long quiz.
+   It still starts at the top: centring would push the title off-screen too. */
+.panel.all { padding-top: 3.5vh; }
 .panel h1 { font-size: clamp(1.5rem, 2.6vw, 3rem); margin: 0 0 3vh; }
 .panel .q { margin: 0 0 3.2vh; }
 .panel h2 { font-size: clamp(1rem, 1.5vw, 1.9rem); margin: 0 0 1.4vh; opacity: .75;
@@ -504,7 +509,7 @@ function slidePage(slug: string, quiz: Quiz, origin: string, only?: string): str
   const stepped = !all && quiz.questions.length > 1;
 
   const body = `<div class="slide">
-  <div class="panel">
+  <div class="panel${all ? " all" : ""}">
     <h1>${esc(quiz.title)}</h1>
     <div id="out"></div>
   </div>
