@@ -1,6 +1,6 @@
 [book]
-title = "Craft of Computing"
-authors = ["Jerome"]
+title = "The Craft of Computing"
+authors = ["Anand Chitipothu"]
 
 [output.html]
 git-repository-url = ""

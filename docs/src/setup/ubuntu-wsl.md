@@ -1,0 +1,36 @@
+# Installing Ubuntu on Windows using WSL
+
+_Windows Subsystem for Linux_, shortly called as WSL, is a feature of Microsoft Windows that supports installing a linux distributting running inside Windows.
+
+Follow the following instructions to install Ubuntu on your Windows computer using WSL.
+
+Please note that only Windows 10 version 2004 and higher or Windows 11 support this.
+
+**Step 1: Open Windows Power Shell**
+
+Enter Windows Power Shell in the system search bar and open the application.
+
+**Step 2: Install Ubuntu using WSL**
+
+WSL is Windows Subsystem for Linux and it supports running Linux inside Windows. For this course we’ll be using the Linux distribution Ubuntu 26.04.
+
+Run the following command in the power shell to download and install Ubuntu.
+
+```
+wsl --install
+```
+
+Please make sure you have a fast internet connection as this step downloads more than 1GB of data.
+
+**Step 3: Open Ubuntu Terminal**
+
+Enter Ubuntu in the system search bar and open the application.
+
+You’ll should see a Ubuntu terminal.
+
+That’s all! You are now ready to code.
+
+
+## References
+
+* [How to install Linux on Windows with WSL -- Microsoft Documentation](https://learn.microsoft.com/en-us/windows/wsl/install)

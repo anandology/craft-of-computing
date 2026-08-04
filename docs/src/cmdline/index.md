@@ -1,0 +1,6 @@
+# Introduction to the Command-line
+
+```
+$ echo hello 
+hello 
+```
