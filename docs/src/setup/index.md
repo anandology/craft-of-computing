@@ -11,7 +11,20 @@ Linux comes with most developer tools preinstalled.
 Open a Terminal and run the following command to to install all the software.
 
 ```
+sudo apt update
 sudo apt install python3 curl figlet cowsay
+```
+
+After that you will be able to use figlet.
+
+```
+$ figlet "welcome to linux"
+              _                            _          _ _                  
+__      _____| | ___ ___  _ __ ___   ___  | |_ ___   | (_)_ __  _   ___  __
+\ \ /\ / / _ \ |/ __/ _ \| '_ ` _ \ / _ \ | __/ _ \  | | | '_ \| | | \ \/ /
+ \ V  V /  __/ | (_| (_) | | | | | |  __/ | || (_) | | | | | | | |_| |>  < 
+  \_/\_/ \___|_|\___\___/|_| |_| |_|\___|  \__\___/  |_|_|_| |_|\__,_/_/\_\
+                                               
 ```
 
 ## Windows

@@ -23,3 +23,4 @@
 
 - [Setup Instructions](setup/index.md)
   - [Installing Ubuntu on Windows using WSL Instructions](setup/ubuntu-wsl.md)
+- [Group Project Ideas](notes/group-projects.md)
