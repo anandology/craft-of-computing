@@ -1,0 +1,191 @@
+/* @theme craft */
+/* @size 16:9 1280px 720px */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --ink: #1A1A1A;
+  --body-text: #2B2E33;
+  --white: #FFFFFF;
+  --tint-a: #EEF3F8;
+  --tint-b: #DCE6F0;
+  --rule: #B9C6D4;
+  --accent: #2C5F8A;
+  --muted: #6B7280;
+}
+
+section {
+  width: 1280px;
+  height: 720px;
+  padding: 76px 96px;
+  background: var(--white);
+  color: var(--body-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 30px;
+  line-height: 1.55;
+  box-sizing: border-box;
+}
+
+/* ---------- Typography ---------- */
+
+h1, h2, h3 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 30px 0;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: 50px; }
+h2 { font-size: 36px; }
+
+strong { font-weight: 700; color: var(--ink); }
+
+a { color: var(--accent); text-decoration: underline; }
+
+ul, ol { padding-left: 1em; margin: 0; }
+li { margin-bottom: 16px; }
+li::marker { color: var(--accent); }
+
+code {
+  font-family: 'Courier New', monospace;
+  background: var(--tint-a);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
+pre {
+  background: #F4F6F8;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 24px 28px;
+}
+
+pre code { background: none; padding: 0; font-size: 0.68em; }
+
+/* ---------- Content page heading rule ---------- */
+
+section:not(.title):not(.section) h1 {
+  position: relative;
+  padding-bottom: 24px;
+}
+
+section:not(.title):not(.section) h1::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 90px;
+  height: 4px;
+  background: var(--accent);
+}
+
+/* ---------- Title page ---------- */
+
+section.title {
+  background: linear-gradient(160deg, var(--tint-a) 0%, var(--tint-b) 100%);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+section.title h1 {
+  font-size: 66px;
+  margin-bottom: 22px;
+}
+
+section.title .subtitle {
+  font-weight: 400;
+  font-size: 26px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+section.title .rule {
+  width: 110px;
+  height: 4px;
+  background: var(--accent);
+}
+
+/* ---------- Section divider page ---------- */
+
+section.section {
+  background: linear-gradient(160deg, var(--tint-a) 0%, var(--tint-b) 100%);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+section.section .label {
+  font-weight: 600;
+  font-size: 24px;
+  color: var(--accent);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+section.section h1 {
+  font-size: 54px;
+  max-width: 880px;
+  margin-bottom: 28px;
+}
+
+section.section .rule {
+  width: 90px;
+  height: 4px;
+  background: var(--accent);
+}
+
+/* ---------- Tables ---------- */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.85em;
+  margin-top: 8px;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+th {
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--tint-a);
+  border-bottom: 2px solid var(--accent);
+}
+
+tr:last-child td { border-bottom: none; }
+
+
+/* ---------- Utility: smaller text for dense slides ---------- */
+
+section.smaller-text table {
+  font-size: 0.68em;
+}
+
+section.smaller-text th,
+section.smaller-text td {
+  padding: 12px 16px;
+}
+
+/* ---------- Footer / pagination ---------- */
+
+footer {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+section::after {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: var(--muted);
+}

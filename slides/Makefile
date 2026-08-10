@@ -6,7 +6,7 @@ PDF_TARGETS=$(SOURCES:%.md=pdf/%.pdf)
 
 TARGETS=$(HTML_TARGETS) $(PDF_TARGETS)
 
-MARP  := $(shell command -v marp || echo "npx --yes @marp-team/marp-cli")
+MARP  := marp --theme craft-theme.css
 CHROME ?= $(shell command -v chromium || command -v google-chrome || command -v chrome || echo "")
 export CHROME_PATH := $(CHROME)
 
