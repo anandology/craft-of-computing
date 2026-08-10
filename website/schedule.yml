@@ -1,0 +1,277 @@
+# Schedule data for the class schedule table in schedule.qmd.
+#
+# One entry per table row. `times` and `topics` are lists; each item is
+# rendered on its own line, so the two Monday slots line up across columns.
+# Times are quoted because they contain a colon.
+
+- week: Week 1
+  day: Mon
+  date: Aug 03, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Course overview
+    - Discussion on evolution of computers
+
+- week: Week 1
+  day: Tue
+  date: Aug 04, 2026
+  times:
+    - "3:50 pm - 5:50 pm"
+  session: Class / Lab session
+  topics:
+    - Installing Ubuntu
+    - Preparation for group presentation
+
+- week: Week 2
+  day: Mon
+  date: Aug 10, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Introduction to the command line (Session 1)
+    - Preparation for group presentation
+
+- week: Week 2
+  day: Tue
+  date: Aug 11, 2026
+  times:
+    - "3:50 pm - 5:50 pm"
+  session: Class / Lab session
+  topics:
+    - Introduction to the command line (Session 2)
+    - In-class Reflection
+
+- week: Week 3
+  day: Mon
+  date: Aug 17, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Creative use of the command line, pipes and filters (Session 1)
+    - Group Presentations
+
+- week: Week 3
+  day: Tue
+  date: Aug 18, 2026
+  times:
+    - "3:50 pm - 5:50 pm"
+  session: Class / Lab session
+  topics:
+    - Creative use of the command line, pipes and filters (Session 2)
+
+- week: Week 4
+  day: Mon
+  date: Aug 24, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Writing Shell Scripts (Session 1)
+
+- week: Week 4
+  day: Tue
+  date: Aug 25, 2026
+  times:
+    - "3:50 pm - 5:50 pm"
+  session: Class / Lab session
+  topics:
+    - Writing shell scripts (Session 2)
+
+- week: Week 5
+  day: Mon
+  date: Aug 31, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Accessing a remote machine with ssh 
+    - Publishing web pages
+
+- week: Week 5
+  day: Wed
+  date: Sep 02, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    - Group project (Unit 1)
+
+- week: Week 6
+  day: Mon
+  date: Sep 07, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Introduction to Python (Session 1)
+
+- week: Week 6
+  day: Wed
+  date: Sep 09, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    - Introduction to Python (Session 2)
+
+- week: Week 7
+  day: Mon
+  date: Sep 14, 2026
+  times: []
+  holiday: true
+  session: "Holiday - no class"
+  topics: []
+
+- week: Week 7
+  day: Wed
+  date: Sep 16, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    - Iterations & Conditionals
+
+- week: Week 8
+  day: Mon
+  date: Sep 21, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Functions & Modules (Session 1)
+
+- week: Week 8
+  day: Wed
+  date: Sep 23, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    - Functions & Modules (Session 2)
+
+- week: Week 9
+  day: Mon
+  date: Sep 28, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Working with Files & APIs (Session 1)
+
+- week: Week 9
+  day: Wed
+  date: Sep 30, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    - Working with Files & APIs (Session 2)
+
+- week: Week 10
+  day: Mon
+  date: Oct 05, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Group project (Unit 2) (Session 1)
+
+- week: Week 10
+  day: Wed
+  date: Oct 07, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    - Group project (Unit 2) (Session 2)
+
+- week: Week 11
+  day: Mon
+  date: Oct 12, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - In-class test (Units 1 and 2)
+    - Introduction to ESP32 (Session 1)
+
+- week: Week 11
+  day: Wed
+  date: Oct 14, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    - Introduction to ESP32 (Session 2)
+
+- week: Week 12
+  day: Mon
+  date: Oct 19, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Basics of electronic circuits
+
+- week: Week 12
+  day: Wed
+  date: Oct 21, 2026
+  times: []
+  holiday: true
+  session: "Holiday - no class"
+  topics: []
+
+- week: Week 13
+  day: Mon
+  date: Oct 26, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - Working with Sensors (Session 1)
+
+- week: Week 13
+  day: Wed
+  date: Oct 28, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    -  Working with Sensors (Session 2)
+
+- week: Week 14
+  day: Mon
+  date: Nov 02, 2026
+  times:
+    - "8:30 am - 10:30 am"
+    - "10:40 am - 12:30 pm"
+  session: Class / Lab session
+  topics:
+    - In-class Reflection
+    - Group project (Unit 3)
+
+- week: Week 14
+  day: Wed
+  date: Nov 04, 2026
+  times:
+    - "8:30 am - 10:30 am"
+  session: Class / Lab session
+  topics:
+    - Group project (Unit 3) (contd.)
+

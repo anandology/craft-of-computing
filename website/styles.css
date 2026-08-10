@@ -1,0 +1,44 @@
+/* Schedule table */
+
+.schedule-table table {
+  font-size: 0.875rem;
+}
+
+.schedule-table th {
+  white-space: nowrap;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.schedule-table td {
+  vertical-align: middle;
+}
+
+/* Keep week, day, date and time on a single line. The Monday rows carry two
+   time ranges, but <br> breaks those regardless of nowrap. */
+.schedule-table td:nth-child(1),
+.schedule-table td:nth-child(2),
+.schedule-table td:nth-child(3),
+.schedule-table td:nth-child(4),
+.schedule-table td:nth-child(5) {
+  white-space: nowrap;
+}
+
+/* Separate the weeks. Every week is exactly two rows -- the combined Monday
+   row and the Tue/Wed row -- so every even row is the end of a week. This is
+   positional: adding a third row to any week shifts the borders below it. */
+.schedule-table tbody tr:nth-child(even) > td {
+  border-bottom: 2px solid #adb5bd;
+}
+
+/* Holiday rows are de-emphasised rather than highlighted -- they mark an
+   absence, not an event. The muting is done with text colour, not a row
+   background: the table already uses grey striping, so tinting the row would
+   read as "this is an odd row" rather than "there is no class". */
+.schedule-table tr:has(.holiday) > td {
+  color: #5c6369;
+}
+
+.holiday {
+  font-style: italic;
+  white-space: nowrap;
+}

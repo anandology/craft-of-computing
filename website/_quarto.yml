@@ -1,0 +1,48 @@
+project:
+  type: website
+  output-dir: _site
+  # Regenerates overview/_schedule-rows.md from schedule.yml before every render.
+  pre-render: gen_schedule.py
+  render:
+    # Pages that are not ready yet. These were commented out of the mdbook
+    # SUMMARY.md; drop the line to publish one.
+    - "!sketch.qmd"
+    - "!cmdline/index.qmd"
+    - "!overview/evolution-of-computers.qmd"
+    - "*.qmd"
+    - "**/*.qmd"
+
+website:
+  title: "The Craft of Computing"
+  search:
+    location: sidebar
+  sidebar:
+    style: docked
+    contents:
+      - section: "Course Overview"
+        contents:
+          - href: index.qmd
+            text: The Craft of Computing
+          - href: overview/schedule.qmd
+            text: Schedule
+      # - section: "Computing with the Command-line"
+      #   contents:
+      #     - href: cmdline/index.qmd
+      #       text: Introduction to the Command-line
+      - section: "Appendix"
+        contents:
+          - section: setup/index.qmd
+            text: Setup Instructions
+            contents:
+              - href: setup/ubuntu-wsl.qmd
+                text: Installing Ubuntu on Windows using WSL
+          - href: notes/group-projects.qmd
+            text: Group Project Ideas
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
