@@ -1,3 +1,6 @@
 /.quarto/
 **/*.quarto_ipynb
 /_site/
+
+# Copied here by craft/Makefile. (dist/ is ignored repo-wide already.)
+/install.sh

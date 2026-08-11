@@ -1,0 +1,14 @@
+# Packages the course expects on every student's machine.
+#
+# NOT INSTALLED AUTOMATICALLY YET. craft.sh currently ships this list but
+# does not act on it -- for now, installing these is done by hand. The list
+# is kept here so it is written down in one place.
+#
+# Lines starting with # are ignored. Only add what the course actually
+# uses -- anything here has to be installed on every student's machine.
+
+tree
+vim
+git
+curl
+unzip
