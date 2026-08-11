@@ -12,7 +12,7 @@
 
 set -eu
 
-BASE_URL="${CRAFT_URL:-https://craft-of-computing.anandology.com/2026}"
+BASE_URL="${CRAFT_URL:-https://craft-of-computing.anandology.com/2026/dist}"
 CRAFT="$HOME/.craft"
 MARKER_START="# >>> craft >>>"
 MARKER_END="# <<< craft <<<"

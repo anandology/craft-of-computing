@@ -18,7 +18,7 @@
 set -eu
 
 # Where releases are published.
-BASE_URL="${CRAFT_URL:-https://craft-of-computing.anandology.com/2026}"
+BASE_URL="${CRAFT_URL:-https://craft-of-computing.anandology.com/2026/dist}"
 
 # Where everything lives on this machine.
 CRAFT="$HOME/.craft"
