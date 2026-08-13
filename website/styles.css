@@ -42,3 +42,61 @@
   font-style: italic;
   white-space: nowrap;
 }
+
+/* Terminal transcripts */
+
+/* Built by session.lua from a ```session block. Commands and output are
+   interleaved, as they are on screen. */
+
+/* The theme's own code block styling, repeated here. Quarto puts it on
+   div.sourceCode, which a transcript is not -- it is a bare <pre>, so it
+   inherits none of it and has to be told. Values copied from the compiled
+   bootstrap theme; if the theme changes, these are what fall out of step. */
+pre.session {
+  background-color: rgba(233, 236, 239, 0.65);
+  border: 1px solid rgba(233, 236, 239, 0.65);
+  padding: 0.4em;
+}
+
+/* Long lines wrap rather than scroll sideways. A student reading on a phone,
+   or at a projected width, should never have to discover that the rest of a
+   command is off to the right -- a command they cannot see is one they cannot
+   type. overflow-wrap: anywhere is needed on top of pre-wrap because the long
+   lines here are download URLs, which have no spaces to break at.
+
+   The <code> has to be named as well as the <pre>: the theme sets a bare
+   "code { white-space: pre }", which beats inheritance from the parent. */
+pre.session,
+pre.session > code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* The prompt is drawn here rather than written into the block, so it is not
+   part of the page text: selecting a command line and copying it gives the
+   command alone. Nothing is stripped at copy time, so a dollar sign belonging
+   to the command -- $1, $HOME -- survives untouched. */
+pre.session .cmd::before {
+  content: "$ ";
+  color: #6c757d;
+  user-select: none;
+}
+
+/* Continuation lines of a command broken across lines with "\". They are
+   indented to sit under the command, in place of the prompt they do not get. */
+pre.session .cmd-cont::before {
+  content: "  ";
+  user-select: none;
+}
+
+/* Commands sit at full strength and output recedes. The difference is carried
+   by colour alone -- with the prompt already marking every command line, bold
+   on top of that was one signal too many. */
+pre.session .cmd,
+pre.session .cmd-cont {
+  color: #212529;
+}
+
+pre.session .out {
+  color: #5c6369;
+}

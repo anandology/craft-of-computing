@@ -1,0 +1,102 @@
+---
+title: "Practice Session: Resizing Images"
+---
+
+In this session, we'll learn how to resize images from command-line using [imagemagick](https://imagemagick.org/) tools.
+
+## The Setup
+
+First, we need to install the software packages needed to resize images. We'll be using imagemagick tool. 
+
+Install it by running the following command in your ubuntu terminal:
+
+```session
+$ sudo apt update
+$ sudo apt install imagemagick zip unzip
+```
+
+Once you install, verify the if it installed using:
+
+```session
+$ which magick
+/usr/bin/magick
+
+$ magick --version
+Version: ImageMagick 7.1.2-18 Q16 x86_64 23822 https://imagemagick.org
+Copyright: (C) 1999 ImageMagick Studio LLC
+License: https://imagemagick.org/license/
+Features: Cipher DPC Modules OpenMP(4.5)
+Delegates (built-in): bzlib djvu fftw fontconfig freetype heic jbig jng jp2 jpeg lcms lqr ltdl lzma openexr pangocairo png raw tiff webp wmf x xml zlib zstd
+Compiler: gcc (15.2)
+```
+
+## Get Started
+
+### Download Sample Images
+
+First go to your home directory.
+
+```session
+$ cd
+```
+
+Verify the `pwd`. It should say `/home/<your-name>`.
+
+```session
+$ pwd
+/home/anand
+```
+
+Download some sample images to work with. 
+
+```session
+$ wget https://craft-of-computing.anandology.com/2026/files/resize-images.zip -O resize-images.zip
+```
+
+You'll see resize-images.zip in your home directory.
+
+```session
+$ ls
+...
+resize-images.zip
+...
+```
+
+Now, unzip the downloaded zip file. We are using `unzip` with `-o` option to overwrite the existing files, so that there won't be any trouble if you run the command again.
+
+```session
+$ unzip -o resize-images.zip
+practice/resize-images/
+practice/resize-images/cat.jpg
+```
+Now you have got the sample images and they are in practice/resize-images/.
+
+### Resizing Images
+
+Before we resize the images, we need to go to that directory.
+
+```session
+$ cd practice/resize-images
+```
+
+Verify you are in the correct directory.
+
+```session
+$ pwd
+/home/anand/practice/resize-images
+```
+
+List files and make sure the required files are present.
+
+```session 
+$ ls
+cat.jpg
+```
+
+Lets find the information about the image.
+
+```session
+$ magick identify cat.jpg
+cat.jpg JPEG 2545x1692 2545x1692+0+0 8-bit sRGB 529075B 0.010u 0:00.005
+```
+

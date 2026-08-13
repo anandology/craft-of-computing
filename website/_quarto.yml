@@ -4,13 +4,20 @@ project:
   # Regenerates overview/_schedule-rows.md from schedule.yml before every render.
   pre-render: gen_schedule.py
   render:
-    # Pages that are not ready yet. These were commented out of the mdbook
-    # SUMMARY.md; drop the line to publish one.
-    - "!sketch.qmd"
-    - "!cmdline/index.qmd"
-    - "!overview/evolution-of-computers.qmd"
+    # Pages that are not ready yet live in drafts/ and are not published.
+    # Move one out of drafts/ to publish it.
+    - "!drafts/**"
     - "*.qmd"
     - "**/*.qmd"
+  # Released by craft/Makefile, not part of the site source. Listed here
+  # because the explicit render: list above means quarto would otherwise
+  # not copy them into _site.
+  resources:
+    - dist/**
+    - install.sh
+    # Built by files/Makefile from the sources in files/practice/. Only the
+    # zips are published -- the loose images they are built from are not.
+    - files/*.zip
 
 website:
   title: "The Craft of Computing"
@@ -25,10 +32,12 @@ website:
             text: The Craft of Computing
           - href: overview/schedule.qmd
             text: Schedule
-      # - section: "Computing with the Command-line"
-      #   contents:
-      #     - href: cmdline/index.qmd
-      #       text: Introduction to the Command-line
+      - section: cmdline/index.qmd
+        text: Computing with the Command-line
+        contents:
+          - href: cmdline/why.qmd
+            text: Why the command line?
+          - href: cmdline/practice-resize-images.qmd
       - section: "Appendix"
         contents:
           - section: setup/index.qmd
@@ -44,5 +53,7 @@ format:
     theme:
       - cosmo
       - brand
+    filters:
+      - session.lua
     css: styles.css
     toc: true

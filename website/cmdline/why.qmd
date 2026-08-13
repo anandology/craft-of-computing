@@ -1,0 +1,46 @@
+---
+title: "Why the command line?"
+---
+
+You may be wondering what the point of typing commands is, when you can just click, tap, or drag instead. It's a fair question — the command line looks old-fashioned, even primitive, next to a modern touchscreen. This page answers that question: we'll look at the different ways you can interact with a computer, walk through a problem where typing beats clicking, and see exactly what the command line gets you that a mouse or a finger can't.
+
+## Three ways to interact with a computer
+
+Every time you use a computer, you're having a conversation with it. You ask it to do something — open an app, move a file, resize a photo — and it does it. The interesting part isn't *what* you're asking for, but *how* you're asking.
+
+There are three broad ways to have this conversation:
+
+- **Mouse and keyboard** — you point, click, and drag your way through windows, icons, and menus. This is the world most of us grew up in: desktops and laptops with a GUI (Graphical User Interface).
+- **Touch** — you tap, swipe, and pinch directly on a screen. Phones and tablets have made this the most common way people interact with computers today.
+- **Command line** — you type instructions as text, and the computer responds with text. No icons, no windows, no dragging. Just you, a prompt, and words.
+
+The first two are visual and direct — you *see* the thing you want to act on, and you act on it with a gesture. The command line is different: you *describe* what you want, using precise, typed instructions. It feels like a step backward at first — why go back to typing when we have perfectly good mice and touchscreens? The rest of this page is really an answer to that question.
+
+## A motivating problem: resizing 100 images
+
+Imagine you've just come back from a trip with 100 photos on your laptop, and you need to resize every single one of them — say, to make them small enough to email or upload.
+
+With a GUI, you'd probably open an image editor, load a photo, resize it, save it, and close it. Then you'd do the same thing again. And again. And again — 100 times. Even if each round takes only 20 seconds, you're looking at over half an hour of repetitive clicking, and the 87th photo is exactly as tedious as the first.
+
+Now imagine instead you could describe the task *once*: "resize every image in this folder to 800 pixels wide." Instead of the computer waiting for you to perform 100 nearly identical actions, you give it one instruction and let it do the repeating. This is exactly the kind of thing the command line is good at.
+
+We haven't learned how to do this yet — that comes soon — but keep this example in mind. It captures why the command line exists at all: it isn't about doing one thing in a fancier way, it's about doing many things without doing the same work over and over.
+
+## Why the command line, then
+
+At first glance, the command line looks primitive. There's no menu to browse, no icon to recognize, no visual feedback beyond text scrolling past. You have to *remember* what to type instead of *recognizing* it on screen. So why would anyone prefer this?
+
+A few reasons:
+
+- **Automation.** A sequence of commands can be saved and re-run, exactly, as many times as you like. A sequence of clicks cannot — you'd have to redo every click by hand.
+- **Precision.** "Resize this image to 800 pixels wide" is unambiguous. "Drag this corner until it looks about right" is not.
+- **Composability.** Commands can be combined — the output of one becomes the input to another — to build up more complex behaviour from small, simple pieces. We'll explore this in detail in the next few sessions.
+- **Reach.** Almost every server, cloud machine, and embedded device in the world is operated primarily through a command line, because there's no screen to click on in the first place.
+
+None of this makes the mouse or touch *wrong* — they're often the faster, more intuitive choice for one-off, visual tasks. Picking a photo out of an album, or rearranging icons on your phone's home screen, is genuinely easier with a tap than a typed command. The command line earns its keep specifically when a task is repetitive, precise, or needs to be automated — like resizing 100 images.
+
+So: because it repeats, because it's exact, because it combines — that's why we're starting here.
+
+## What's ahead
+
+Over the next few sessions, you'll get comfortable typing commands, moving around your computer's filesystem without a mouse, and — eventually — chaining commands together to build small pipelines of your own. By the end, "resize 100 images" won't sound like a chore. It'll sound like a single sentence.

@@ -1,8 +1,16 @@
 ---
-title: "Introduction to the Command-line"
+title: "Computing with the Command-line"
 ---
 
-```
-$ echo hello 
-hello 
-```
+In this chapter, you will learn about the command line. The command line is a way to give instructions to a computer by typing words.
+
+You will learn:
+
+- What the command line is.
+- How it is different from using a mouse or touch.
+- Why the command line is useful, even though it looks simple.
+- How to move around files on your computer.
+- How to join simple commands together to do bigger tasks (this is called using pipes).
+- How to write scripts, so the computer can repeat a set of steps for you.
+
+After this chapter, typing commands will feel normal to you. You will use this skill many times during the course.

@@ -4,3 +4,7 @@ __pycache__/
 dist/
 _book/
 docs/book/
+
+# Practice session downloads, built by website/files/Makefile from the
+# sources in website/files/practice/.
+website/files/*.zip
