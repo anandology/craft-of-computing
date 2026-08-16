@@ -15,6 +15,7 @@ project:
   resources:
     - dist/**
     - install.sh
+    - images/**
     # Built by files/Makefile from the sources in files/practice/. Only the
     # zips are published -- the loose images they are built from are not.
     - files/*.zip
@@ -44,6 +45,7 @@ website:
           - href: cmdline/filesystem.qmd
           - href: cmdline/working-with-files.qmd
           - href: cmdline/wildcards.qmd
+          - href: cmdline/installing-software.qmd
           - href: cmdline/practice-resize-images.qmd
       - section: "Appendix"
         contents:

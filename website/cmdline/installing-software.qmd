@@ -1,0 +1,628 @@
+---
+title: Installing Software
+---
+
+![*Sandwich*, [xkcd #149](https://xkcd.com/149/) by Randall Munroe, used under [CC BY-NC 2.5](https://creativecommons.org/licenses/by-nc/2.5/)](/images/xkcd-149-sandwich.png){fig-alt="Two stick figures. The first says: make me a sandwich. The second: what? make it yourself. The first says: sudo make me a sandwich. The second: okay."}
+
+That joke is the whole of this chapter. There are things the computer will not
+do when you ask, and does when you ask with `sudo` in front.
+
+Along the way we will install some software we do not have yet, which is a
+skill in itself. In this chapter, we'll learn about the following commands:
+
+* `whoami` - print who you are
+* `which` - show where a command lives
+* `sudo` - run one command as the administrator
+* `apt` - install and remove software
+* `figlet`, `cowsay` - two silly programs to install
+* `zip`, `unzip` - bundle files together and take them apart
+
+The silly ones are not filler. In the next chapter we will need commands that
+produce plenty of text on demand, and these two are exactly that.
+
+## A command we do not have
+
+Let's try a command you almost certainly do not have yet.
+
+```session
+$ figlet hello
+Command 'figlet' not found, but can be installed with:
+sudo snap install figlet  # version 2.2.5+git24.202a0a8, or
+sudo apt  install figlet  # version 2.2.5-3
+sudo apt  install toilet  # version 0.3-1.4
+See 'snap info figlet' for additional versions.
+```
+
+Compare that with the error from the first chapter, when we typed `dat` by
+mistake:
+
+```session
+$ dat
+bash: dat: command not found
+```
+
+Both commands are missing, but the computer treats them differently. `dat` is
+nobody's command, so there is nothing to say about it. `figlet` is a real
+program that simply is not on this machine - and Ubuntu knows that, because it
+keeps a list of every program it could give you. So instead of stopping at
+"not found", it tells you how to get it.
+
+That is what the rest of this chapter is about. Ignore the `snap` line, and the
+suggestion of `toilet`. We will use the second one:
+
+```
+sudo apt install figlet
+```
+
+Two commands we have never seen, so let's take them one at a time - `sudo`
+first.
+
+## Who are you?
+
+The `whoami` command prints your username.
+
+```session
+$ whoami
+anand
+```
+
+No surprise there. But watch what happens when we put `sudo` in front of it:
+
+```session
+$ sudo whoami
+root
+```
+
+The same command, run by somebody else.
+
+**root** is the administrator account on a Unix machine - the one that is
+allowed to change anything, anywhere. `sudo` means "run this one command as
+root". Just this one; when it finishes, you are yourself again.
+
+::: {.callout-tip}
+You will see `root` written as `#` in documentation. A normal prompt ends in
+`$`, and a root prompt ends in `#`, so instructions written as
+
+```
+# apt install figlet
+```
+
+mean "run this as root", while a `$` means "run this as yourself". Every
+example in these notes uses `$`, and we reach for `root` only through `sudo`.
+:::
+
+## Why `sudo` is needed at all
+
+Try the install without it:
+
+```session
+$ apt install figlet
+E: Could not open lock file /var/lib/dpkg/lock-frontend - open (13: Permission denied)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), are you root?
+```
+
+Permission denied - and the message ends by asking the relevant question, *are
+you root?*
+
+Here is the reason. Everything we have made so far lived in your home
+directory, which belongs to you. Installing a program is different: it puts a
+file into `/usr/bin`, a directory shared by everyone who uses the machine. One
+person's mistake there is everybody's mistake, so the system does not let an
+ordinary user write to it.
+
+That is not an obstacle to work around. It is the reason you can experiment in
+your own directory without any fear of breaking the computer.
+
+## Your password, and the silence
+
+The first time you run a `sudo` command in a session, it asks for your
+password:
+
+```session
+$ sudo apt update
+[sudo] password for anand:
+```
+
+Type your own login password and press Enter.
+
+::: {.callout-warning}
+Nothing appears as you type - no letters, no dots, no stars. The cursor does
+not move. This is deliberate, so that nobody reading over your shoulder can
+count the characters. Type the password and press Enter even though the screen
+looks like it is ignoring you.
+:::
+
+After that, `sudo` stops asking for a few minutes, so a run of `sudo` commands
+does not mean a run of passwords.
+
+## Refreshing the list
+
+Ubuntu keeps a catalogue of the software available to you: names, versions and
+where to download each one. `sudo apt update` fetches a fresh copy of that
+catalogue.
+
+```session
+$ sudo apt update
+Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu jammy-updates InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu jammy-security InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+205 packages can be upgraded. Run 'apt list --upgradable' to see them.
+```
+
+Yours will differ - a different number of packages, and `Get:` instead of
+`Hit:` on lines where there was something new to fetch. What matters is that
+it ends without an error.
+
+Run this before installing anything, especially on a machine you have just set
+up. Without it, `apt` is working from whatever catalogue it last downloaded,
+which may be months old and may point at versions that are no longer there.
+
+::: {.callout-warning}
+`update` and `upgrade` sound alike and do different things. `sudo apt update`
+refreshes the *list*. `sudo apt upgrade` installs newer versions of everything
+you already have, which can take a long time. We only need `update` here.
+:::
+
+## Installing a package
+
+Software on Ubuntu comes in **packages**. A package is one program - or one
+library, or one set of data files - wrapped up with its name, its version, and
+a note of whatever else it needs in order to work. `apt` is the command that
+installs them.
+
+```session
+$ sudo apt install figlet
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  figlet
+0 upgraded, 1 newly installed, 0 to remove and 205 not upgraded.
+Need to get 133 kB of archives.
+After this operation, 752 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu jammy/universe amd64 figlet amd64 2.2.5-3 [133 kB]
+Fetched 133 kB in 1s (125 kB/s)
+Selecting previously unselected package figlet.
+(Reading database ... 125595 files and directories currently installed.)
+Preparing to unpack .../figlet_2.2.5-3_amd64.deb ...
+Unpacking figlet (2.2.5-3) ...
+Setting up figlet (2.2.5-3) ...
+Processing triggers for man-db (2.10.2-1) ...
+```
+
+That is a lot of output for one small program, and you do not have to read all
+of it. It says, in order: what will be installed, how much will be downloaded,
+the download itself, and then the unpacking and setting up. The last lines
+scroll past and the prompt comes back.
+
+Did it work? `which` tells you where a command lives:
+
+```session
+$ which figlet
+/usr/bin/figlet
+```
+
+There it is, in `/usr/bin` - the shared directory we were not allowed to write
+to a moment ago. `sudo` is what let `apt` put it there.
+
+## Having some fun
+
+`figlet` prints text in large letters made of ordinary characters.
+
+```session
+$ figlet hello
+ _          _ _
+| |__   ___| | | ___
+| '_ \ / _ \ | |/ _ \
+| | | |  __/ | | (_) |
+|_| |_|\___|_|_|\___/
+```
+
+It knows several styles, called fonts, and `-f` chooses one. It is an option,
+like the `-i` we gave to `cp`:
+
+```session
+$ figlet -f digital hello
++-+-+-+-+-+
+|h|e|l|l|o|
++-+-+-+-+-+
+```
+
+```session
+$ figlet -f small Craft of Computing
+  ___           __ _          __    ___                     _   _
+ / __|_ _ __ _ / _| |_   ___ / _|  / __|___ _ __  _ __ _  _| |_(_)_ _  __ _
+| (__| '_/ _` |  _|  _| / _ \  _| | (__/ _ \ '  \| '_ \ || |  _| | ' \/ _` |
+ \___|_| \__,_|_|  \__| \___/_|    \___\___/_|_|_| .__/\_,_|\__|_|_||_\__, |
+                                                 |_|                  |___/
+```
+
+Which fonts are there? A package installs more than the program itself, and
+`figlet`'s fonts are plain files sitting in `/usr/share/figlet`. We know how to
+look at a directory that is not our own, and we know how to ask for just the
+files we want:
+
+```session
+$ ls /usr/share/figlet/*.flf
+/usr/share/figlet/banner.flf    /usr/share/figlet/script.flf
+/usr/share/figlet/big.flf       /usr/share/figlet/shadow.flf
+/usr/share/figlet/block.flf     /usr/share/figlet/slant.flf
+/usr/share/figlet/bubble.flf    /usr/share/figlet/small.flf
+/usr/share/figlet/digital.flf   /usr/share/figlet/smscript.flf
+/usr/share/figlet/ivrit.flf     /usr/share/figlet/smshadow.flf
+/usr/share/figlet/lean.flf      /usr/share/figlet/smslant.flf
+/usr/share/figlet/mini.flf      /usr/share/figlet/standard.flf
+/usr/share/figlet/mnemonic.flf  /usr/share/figlet/term.flf
+```
+
+An absolute path from chapter two, and a wildcard from chapter four, used to
+poke around inside a package we installed a minute ago. Take the name of any of
+those files without the `.flf` and hand it to `-f`.
+
+## A second package, and a wrinkle
+
+```session
+$ sudo apt install cowsay
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Suggested packages:
+  filters cowsay-off
+The following NEW packages will be installed:
+  cowsay
+0 upgraded, 1 newly installed, 0 to remove and 205 not upgraded.
+Need to get 18.6 kB of archives.
+After this operation, 93.2 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu jammy/universe amd64 cowsay all 3.03+dfsg2-8 [18.6 kB]
+Fetched 18.6 kB in 1s (26.4 kB/s)
+Selecting previously unselected package cowsay.
+(Reading database ... 125611 files and directories currently installed.)
+Preparing to unpack .../cowsay_3.03+dfsg2-8_all.deb ...
+Unpacking cowsay (3.03+dfsg2-8) ...
+Setting up cowsay (3.03+dfsg2-8) ...
+Processing triggers for man-db (2.10.2-1) ...
+```
+
+```session
+$ cowsay hello
+ _______
+< hello >
+ -------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+Now the wrinkle. Ask where it went:
+
+```session
+$ which cowsay
+/usr/games/cowsay
+```
+
+Not `/usr/bin` this time, but `/usr/games`. Ubuntu keeps the frivolous programs
+apart from the serious ones, and both directories are places the shell looks
+when you type a command name. There is nothing to fix here - it is worth seeing
+only because it makes the point that a command is just a file sitting somewhere,
+and `which` will tell you where.
+
+`cowsay` has other animals, kept as files in the same way `figlet` keeps fonts:
+
+```session
+$ ls /usr/share/cowsay/cows
+apt.cow                fox.cow           sheep.cow
+bud-frogs.cow          ghostbusters.cow  skeleton.cow
+bunny.cow              gnu.cow           snowman.cow
+calvin.cow             hellokitty.cow    stegosaurus.cow
+cheese.cow             kangaroo.cow      stimpy.cow
+cock.cow               kiss.cow          suse.cow
+cower.cow              koala.cow         three-eyes.cow
+daemon.cow             kosh.cow          turkey.cow
+default.cow            luke-koala.cow    turtle.cow
+dragon-and-cow.cow     mech-and-cow.cow  tux.cow
+dragon.cow             milk.cow          unipony-smaller.cow
+duck.cow               moofasa.cow       unipony.cow
+elephant-in-snake.cow  moose.cow         vader-koala.cow
+elephant.cow           pony-smaller.cow  vader.cow
+eyes.cow               pony.cow          www.cow
+flaming-sheep.cow      ren.cow
+```
+
+`-f` picks one, exactly as it did for `figlet`:
+
+```session
+$ cowsay -f tux The command line is fun
+ _________________________
+< The command line is fun >
+ -------------------------
+   \
+    \
+        .--.
+       |o_o |
+       |:_/ |
+      //   \ \
+     (|     | )
+    /'\_   _/`\
+    \___)=(___/
+```
+
+## Installing several at once
+
+`apt install` takes as many package names as you like, in the same way `touch`
+and `rm` do. We need two more:
+
+```session
+$ sudo apt install zip unzip
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+zip is already the newest version (3.0-12build2).
+unzip is already the newest version (6.0-26ubuntu3.2).
+0 upgraded, 0 newly installed, 0 to remove and 205 not upgraded.
+```
+
+On this machine they were already there, so `apt` did nothing and said so. If
+yours installs them, that is fine too - both endings are correct.
+
+This is worth knowing in general: installing something you already have is
+harmless. When instructions tell you to run an `apt install`, you can run it
+without first working out whether you need to.
+
+## Reading about a package
+
+If you want to know what a package is before installing it, `apt show` prints
+its description. This one needs no `sudo`, because it only reads:
+
+```session
+$ apt show figlet
+Package: figlet
+Version: 2.2.5-3
+Priority: optional
+Section: universe/text
+Origin: Ubuntu
+Installed-Size: 752 kB
+Depends: libc6 (>= 2.14)
+Homepage: http://www.figlet.org/
+Download-Size: 133 kB
+APT-Sources: http://archive.ubuntu.com/ubuntu jammy/universe amd64 Packages
+Description: Make large character ASCII banners out of ordinary text
+ FIGlet (Frank, Ian & Glenn's Letters) is a program that creates large
+ characters out of ordinary screen characters.
+```
+
+Notice `Depends: libc6`. Most packages need other packages, and `apt` works
+that out and installs them too - that is the "and 3 newly installed" you
+sometimes see when you asked for one thing.
+
+## Removing a package
+
+`sudo apt remove` takes a package away again.
+
+```session
+$ sudo apt remove cowsay
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following packages will be REMOVED:
+  cowsay
+0 upgraded, 0 newly installed, 1 to remove and 205 not upgraded.
+After this operation, 93.2 kB disk space will be freed.
+Do you want to continue? [Y/n] n
+Abort.
+```
+
+We answered `n`, so nothing was removed - keep `cowsay`, we will want it in the
+next chapter.
+
+That question is worth noticing. When a command is going to affect more than
+you asked for, `apt` stops and asks first, and the capital `Y` in `[Y/n]` means
+yes is what you get if you just press Enter. Read the list above the question
+before you answer it.
+
+## zip and unzip
+
+The last two packages are useful rather than silly. `zip` bundles several files
+into one, and `unzip` takes the bundle apart. This is the same kind of `.zip`
+file you would download from a website.
+
+Let's make somewhere to work, as we did in the last chapter:
+
+```session
+$ cd
+```
+
+```session
+$ mkdir software
+```
+
+```session
+$ cd software
+```
+
+```session
+$ pwd
+/home/anand/software
+```
+
+We need some files. We have just installed two commands that produce plenty of
+text, and `>` from the first chapter puts that text into a file:
+
+```session
+$ figlet -f small week 1 > week1.txt
+$ figlet -f small week 2 > week2.txt
+$ cowsay we are learning the command line > cow.txt
+```
+
+```session
+$ ls
+cow.txt  week1.txt  week2.txt
+```
+
+```session
+$ cat week1.txt
+                _     _
+__ __ _____ ___| |__ / |
+\ V  V / -_) -_) / / | |
+ \_/\_/\___\___|_\_\ |_|
+
+```
+
+Now bundle them. The first name is the bundle to create, and the rest are the
+files to put in it:
+
+```session
+$ zip banners.zip *.txt
+  adding: cow.txt (deflated 58%)
+  adding: week1.txt (deflated 51%)
+  adding: week2.txt (deflated 55%)
+```
+
+The wildcard did its usual work: the shell replaced `*.txt` with the three
+names before `zip` ever ran. "Deflated 58%" means the file was squeezed to
+rather less than its original size, which is the other thing a zip file does.
+
+```session
+$ ls
+banners.zip  cow.txt  week1.txt  week2.txt
+```
+
+`unzip -l` lists what is inside a bundle without unpacking it:
+
+```session
+$ unzip -l banners.zip
+Archive:  banners.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+      232  2026-08-17 03:29   cow.txt
+      125  2026-08-17 03:29   week1.txt
+      135  2026-08-17 03:29   week2.txt
+---------                     -------
+      492                     3 files
+```
+
+To prove the originals really are in there, let's throw them away:
+
+```session
+$ rm *.txt
+```
+
+```session
+$ ls
+banners.zip
+```
+
+```session
+$ unzip banners.zip
+Archive:  banners.zip
+  inflating: cow.txt
+  inflating: week1.txt
+  inflating: week2.txt
+```
+
+```session
+$ ls
+banners.zip  cow.txt  week1.txt  week2.txt
+```
+
+```session
+$ cat cow.txt
+ __________________________________
+< we are learning the command line >
+ ----------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+All three came back, contents and all. One file travelled, three files came
+out of it.
+
+::: {.callout-warning}
+`unzip` writes the files into the directory you are standing in, and it does
+not ask before overwriting. Before unzipping something you downloaded, make a
+directory for it and `cd` into it. `unzip -l` first will tell you what is
+coming.
+:::
+
+## Being careful with sudo
+
+`sudo` lifts the one restriction that has been protecting you all along. The
+system stops you from damaging the machine; `sudo` says "yes, I mean it".
+
+So, two habits:
+
+* Use `sudo` when a command genuinely needs it - installing software, mostly.
+  It is not a magic word to add when something does not work.
+* Never paste a `sudo` command you found on the internet without reading it
+  first. `sudo` will run it, and it will not ask whether you understood it.
+
+The commands in this chapter are the ordinary use of `sudo`, and there is
+nothing to be nervous about. Just notice each time you type it.
+
+::: {.callout-tip}
+## On a Mac
+
+macOS has no `apt`. The usual equivalent is [Homebrew](https://brew.sh/),
+which you install once by following the instructions on its website. After
+that, `brew install figlet cowsay` does the job of this chapter's `apt`
+commands, and `brew` needs no `sudo`, because it installs into a directory
+that belongs to you. `zip` and `unzip` are already on every Mac.
+
+These notes assume Ubuntu, on a Linux machine or through WSL on Windows.
+:::
+
+## Clearing up
+
+The files can go; the packages stay, because the next chapter needs them.
+
+```session
+$ rm banners.zip cow.txt week1.txt week2.txt
+```
+
+```session
+$ ls
+```
+
+```session
+$ cd ..
+```
+
+```session
+$ rmdir software
+```
+
+```session
+$ ls software
+ls: cannot access 'software': No such file or directory
+```
+
+## Summary
+
+| Command | What it does |
+|---------|--------------|
+| `whoami` | prints your username |
+| `sudo whoami` | prints `root` - the command ran as the administrator |
+| `which figlet` | shows where a command lives |
+| `sudo apt update` | refreshes the list of available packages |
+| `sudo apt install figlet` | installs a package |
+| `sudo apt install zip unzip` | installs more than one |
+| `apt show figlet` | describes a package, without installing it |
+| `sudo apt remove cowsay` | removes a package |
+| `figlet hello` | prints `hello` in large letters |
+| `figlet -f small hello` | uses a different font |
+| `cowsay hello` | a cow says `hello` |
+| `cowsay -f tux hello` | a different animal says it |
+| `zip out.zip *.txt` | bundles the `.txt` files into `out.zip` |
+| `unzip -l out.zip` | lists what is inside, without unpacking |
+| `unzip out.zip` | unpacks it here |
+
+And the one idea to carry forward: your own files are yours to break, and the
+rest of the machine is not - which is why installing software needs `sudo`, and
+why nothing else you have done so far has.
