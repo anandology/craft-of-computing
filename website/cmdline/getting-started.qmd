@@ -1,0 +1,342 @@
+---
+title: Getting Started
+---
+
+Before we learn how to move around the file system, we need to get
+comfortable with the terminal itself: how to type a command, what happens when
+we get it wrong, and how to get out.
+
+In this chapter, we'll learn a handful of commands:
+
+* `echo` - print something
+* `date` - show the current date and time
+* `seq` - print a sequence of numbers
+* `touch` - create an empty file
+* `ls` - list files
+* `cat` - show what is inside a file
+
+Along the way we'll also learn what the computer does when we type something
+wrong, and how to repeat a command we typed earlier.
+
+## The prompt
+
+When you open the terminal, you see something like this:
+
+```session
+$
+```
+
+That `$` is called the **prompt**. It is the computer telling you that it is
+waiting for you to type something.
+
+Your own prompt probably shows a little more, like your username and the name
+of your computer:
+
+```
+anand@laptop:~$
+```
+
+That is fine. In these notes we will write just the `$`, to keep things short.
+Whenever you see a `$` in an example, it means "this is a command you type".
+You do not type the `$` itself.
+
+## echo
+
+The `echo` command prints back whatever you give it.
+
+Type this and press the **Enter** key:
+
+```session
+$ echo hello
+hello
+```
+
+Nothing happens until you press Enter. You can type a command, change your
+mind, delete it with the Backspace key, and type something else. The computer
+only reads the line once you press Enter.
+
+The word `hello` here is called an **argument** - it is the thing we are
+giving to the command. You can give `echo` more than one:
+
+```session
+$ echo hello world
+hello world
+```
+
+`echo` seems like a silly command. Why ask the computer to repeat what you
+just typed? It becomes useful later, when we want to put some text into a
+file, or when the thing being printed is not a plain word but a value the
+computer works out. We'll see both in this chapter.
+
+## date
+
+The `date` command prints the current date and time.
+
+```session
+$ date
+Mon Aug 17 01:28:52 IST 2026
+```
+
+Unlike `echo`, it needs no arguments. You just name the command, press Enter,
+and it prints its answer.
+
+That is the whole idea of the command line. You type the name of a command,
+press Enter, and the computer runs it and prints the result. Then it shows the
+prompt again, ready for the next command.
+
+## seq
+
+The `seq` command prints a sequence of numbers. Give it one number, and it
+counts from 1 up to that number:
+
+```session
+$ seq 5
+1
+2
+3
+4
+5
+```
+
+Give it two, and it counts from the first to the second:
+
+```session
+$ seq 3 7
+3
+4
+5
+6
+7
+```
+
+Give it three, and the middle one is the step - how much to add each time.
+This counts to 10 by twos:
+
+```session
+$ seq 2 2 10
+2
+4
+6
+8
+10
+```
+
+Try `seq 100` and watch a hundred numbers scroll past. It is a quick way to
+produce a lot of output, which will be useful when we want something to
+practise on.
+
+## When you type something wrong
+
+You will type commands wrongly. Everyone does. It is worth seeing what that
+looks like now, so it is not a surprise later.
+
+Suppose we meant to type `date` but typed `dat` instead:
+
+```session
+$ dat
+bash: dat: command not found
+```
+
+`bash` is the name of the program that reads your commands. It is saying that
+it looked for a command called `dat` and could not find one.
+
+Nothing is broken. Nothing was damaged. The prompt comes back, and you can
+type the command again, correctly this time.
+
+Another kind of mistake is getting the command right but giving it something
+it cannot use. `seq` counts numbers, so it does not know what to do with a
+word:
+
+```session
+$ seq hello
+seq: invalid floating point argument: 'hello'
+Try 'seq --help' for more information.
+```
+
+Again, nothing is broken. The command has told us which part it did not
+understand - `hello` - and suggested where to read more.
+
+These messages are not scary. They are the computer explaining what it could
+not do. Read them: most of the time they say exactly what went wrong.
+
+## Repeating an earlier command
+
+You do not have to retype a command you have already used.
+
+Press the **up arrow** key. The command you typed last appears at the prompt.
+Press it again, and the one before that appears. The **down arrow** goes back
+the other way.
+
+This is called the **history**. It is one of the things that makes the command
+line fast to work with once you are used to it.
+
+Try this:
+
+1. Type `echo hello` and press Enter.
+2. Type `date` and press Enter.
+3. Press the up arrow twice. You should see `echo hello` again.
+4. Press Enter to run it.
+
+You can also edit a command after bringing it back. Press the up arrow, use
+the left and right arrow keys to move along the line, fix the part that was
+wrong, and press Enter.
+
+## touch
+
+The `touch` command creates an empty file.
+
+```session
+$ touch notes.txt
+```
+
+It prints nothing. That silence means it worked - which takes some getting
+used to. Many commands are quiet when they succeed and only speak up when
+something goes wrong.
+
+So how do we know the file is really there? We need a command that lists
+files.
+
+## ls
+
+The `ls` command lists the files in the current directory.
+
+```session
+$ ls
+notes.txt
+```
+
+There it is. The file we created with `touch` exists.
+
+Let's make another one, and list them again:
+
+```session
+$ touch todo.txt
+```
+
+```session
+$ ls
+notes.txt  todo.txt
+```
+
+We'll learn much more about `ls` in the next chapter.
+
+## Putting output into a file
+
+The files we have made so far are empty. Let's put something into one.
+
+So far, every command has printed its answer on the screen. The `>` symbol
+sends that answer into a file instead.
+
+Remember `echo`, which prints what you give it:
+
+```session
+$ echo hello > hello.txt
+```
+
+Nothing is printed this time, because the word `hello` went into the file
+instead of onto the screen.
+
+Did it work? We already know how to check:
+
+```session
+$ ls
+hello.txt  notes.txt  todo.txt
+```
+
+There is `hello.txt`, alongside the two empty files we made with `touch`. So
+`>` is another way to create a file - and this one has something in it.
+
+Which leaves one question. The file exists, but how do we see what is inside
+it?
+
+## cat
+
+The `cat` command shows what is inside a file.
+
+```session
+$ cat hello.txt
+hello
+```
+
+There is the word we put in.
+
+This works with any command, not just `echo`. Remember `seq`, which prints a
+lot of numbers:
+
+```session
+$ seq 100 > numbers.txt
+```
+
+```session
+$ cat numbers.txt
+1
+2
+3
+...
+100
+```
+
+We have made a file with a hundred lines in it, without typing a hundred
+lines. That is the first hint of why the command line is worth learning: the
+computer does the repetitive part.
+
+Now let's try `cat` on `notes.txt`, the empty file we made with `touch`:
+
+```session
+$ cat notes.txt
+```
+
+Nothing. That is correct - there is nothing in it to show. An empty file is
+still a real file; it just has no contents yet.
+
+That is different from asking for a file that does not exist at all:
+
+```session
+$ cat nofile.txt
+cat: nofile.txt: No such file or directory
+```
+
+This is the error message you will see most often, and it is worth learning to
+read now. It names the command that complained (`cat`), the file it could not
+find (`nofile.txt`), and what went wrong. Nine times out of ten the cause is a
+typo in the file name, or being in a different directory than you thought.
+
+::: {.callout-warning}
+`>` replaces whatever was in the file already. If `hello.txt` had something
+in it, it is gone. Be careful with the name you type.
+:::
+
+We will use `>` a lot in the chapter on pipes and filters. For now it is
+enough to know that `>` means "put the output in this file".
+
+## Closing the terminal
+
+When you are done, type `exit`:
+
+```session
+$ exit
+```
+
+The terminal window closes. Pressing **Ctrl+D** at an empty prompt does the
+same thing.
+
+Nothing you have done is lost. The files you created are still on the
+computer, and they will be there the next time you open the terminal.
+
+## Summary
+
+| Command | What it does |
+|---------|--------------|
+| `echo hello` | prints `hello` |
+| `date` | prints the current date and time |
+| `seq 5` | prints the numbers 1 to 5 |
+| `seq 2 2 10` | counts from 2 to 10, two at a time |
+| `touch f.txt` | creates an empty file named `f.txt` |
+| `ls` | lists the files here |
+| `echo hello > f.txt` | puts `hello` into the file `f.txt` |
+| `seq 100 > f.txt` | puts the numbers 1 to 100 into `f.txt` |
+| `cat f.txt` | shows what is inside `f.txt` |
+| `exit` | closes the terminal |
+
+And one key worth remembering: the **up arrow**, which brings back the
+previous command.
