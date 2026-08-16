@@ -21,6 +21,9 @@ project:
 
 website:
   title: "The Craft of Computing"
+  # Next/previous links in the page footer, ordered by the sidebar below.
+  # On by default for books, off for websites, so it has to be asked for.
+  page-navigation: true
   search:
     location: sidebar
   sidebar:
