@@ -284,11 +284,10 @@ installed. `toilet` cannot work on its own: it needs `libcaca0` and
 for, it shows you the list first.
 
 To answer, type `y` and press Enter, or `n` and press Enter to change your
-mind. The capital letter in `[Y/n]` is the default, so pressing Enter on its
-own also means yes. Let's do that:
+mind. Let's say yes:
 
 ```session
-Do you want to continue? [Y/n]
+Do you want to continue? [Y/n] y
 Get:1 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libcaca0 amd64 0.99.beta19-2.2ubuntu4.2 [224 kB]
 Get:2 http://archive.ubuntu.com/ubuntu resolute/universe amd64 toilet-fonts all 0.3-1.4 [714 kB]
 Get:3 http://archive.ubuntu.com/ubuntu resolute/universe amd64 toilet amd64 0.3-1.4 [12.7 kB]
@@ -301,6 +300,10 @@ Processing triggers for man-db (2.10.2-1) ...
 ```
 
 Three packages downloaded and set up, because we asked for one.
+
+The capital letter in `[Y/n]` marks the default, so pressing Enter on its own
+would have done the same thing as typing `y`. Typing the `y` is the better
+habit: you can see what you answered.
 
 ```session
 $ toilet -f smblock craft
