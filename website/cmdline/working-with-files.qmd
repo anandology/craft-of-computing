@@ -1,0 +1,416 @@
+---
+title: Working with Files
+---
+
+We can now find our way around the file system and make directories. The next
+step is to do something with the files themselves: copy them, rename them, move
+them somewhere else, and throw away the ones we no longer want.
+
+In this chapter, we'll learn about the following commands:
+
+* `cp` - copy a file
+* `mv` - move or rename a file
+* `rm` - remove a file
+* `rmdir` - remove an empty directory
+
+One idea runs through the whole chapter, and it is worth holding on to from the
+start: **copying leaves the original where it was, moving does not.**
+
+## A place to work
+
+Let's go home and make a directory to work in, so that our experiments stay in
+one place.
+
+```session
+$ cd
+```
+
+```session
+$ mkdir files
+```
+
+```session
+$ cd files
+```
+
+```session
+$ pwd
+/home/anand/files
+```
+
+We need some files to work with. Rather than typing contents by hand, let's use
+`seq` and `>` from the first chapter:
+
+```session
+$ seq 5 > five.txt
+```
+
+```session
+$ seq 10 > ten.txt
+```
+
+```session
+$ ls
+five.txt  ten.txt
+```
+
+`five.txt` holds the numbers 1 to 5:
+
+```session
+$ cat five.txt
+1
+2
+3
+4
+5
+```
+
+Files with contents we can recognise at a glance will be useful. When we start
+copying things around, we will be able to check what actually happened.
+
+## Copying a file
+
+The `cp` command copies a file. It takes two arguments: the file to copy, and
+the name to give the copy.
+
+```session
+$ cp five.txt five-copy.txt
+```
+
+Like most commands, it says nothing when it works. Let's look:
+
+```session
+$ ls
+five-copy.txt  five.txt  ten.txt
+```
+
+There are now two files. And the copy really is a copy:
+
+```session
+$ cat five-copy.txt
+1
+2
+3
+4
+5
+```
+
+Notice that `five.txt` is still there. That is the whole point of copying: you
+end up with two files, not one moved file. Anything you do to `five-copy.txt`
+from now on leaves `five.txt` untouched. They are separate files that happen to
+have the same contents.
+
+## Copying into a directory
+
+Often you do not want to rename anything - you just want the file to also exist
+somewhere else. Let's make a directory to keep our number files in:
+
+```session
+$ mkdir numbers
+```
+
+```session
+$ cp ten.txt numbers
+```
+
+The second argument is a directory this time, not a new name. When `cp` sees
+that, it puts the file inside that directory and keeps its name:
+
+```session
+$ ls numbers
+ten.txt
+```
+
+So `cp` has two forms, and which one you get depends on the second argument:
+
+* If the destination is a name that is not a directory, `cp` makes a copy under
+  that name.
+* If the destination is a directory, `cp` puts the copy inside it, keeping the
+  original name.
+
+## Copying over a file that already exists
+
+Here is something to be careful about. Let's copy `ten.txt` over `five.txt`:
+
+```session
+$ cp ten.txt five.txt
+```
+
+No warning, no question, nothing. Now look at what `five.txt` contains:
+
+```session
+$ cat five.txt
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+```
+
+The file is still called `five.txt`, but the five numbers that were in it are
+gone, replaced by ten. `cp` did exactly what we asked, and what we asked was to
+overwrite the file.
+
+::: {.callout-warning}
+`cp` replaces the destination without asking. Whatever was in that file is
+gone. There is no undo, and there is no copy of the old contents anywhere.
+:::
+
+We were lucky here. The contents came from `seq`, so we can simply make the file
+again:
+
+```session
+$ seq 5 > five.txt
+```
+
+```session
+$ cat five.txt
+1
+2
+3
+4
+5
+```
+
+Had we typed those lines by hand, they would have been lost for good.
+
+If you want to be asked first, `cp -i` checks with you before overwriting
+anything:
+
+```session
+$ cp -i ten.txt five.txt
+cp: overwrite 'five.txt'? n
+```
+
+Type `y` to go ahead, or `n` to leave the file alone. We answered `n`, so
+`five.txt` still holds its five numbers.
+
+The `-i` here is an **option**. Options change how a command behaves, and they
+usually start with a `-`. They go before the arguments.
+
+## Renaming a file
+
+The `mv` command moves a file. Renaming is just a special case of moving: the
+file stays where it is, and only its name changes.
+
+Let's make one more file:
+
+```session
+$ seq 20 > 20.txt
+```
+
+```session
+$ ls
+20.txt  five-copy.txt  five.txt  numbers  ten.txt
+```
+
+Look at that listing. Our other files are named with words - `five.txt` and
+`ten.txt` - and `20.txt` does not match. Nothing is broken, but a directory
+where the names follow the same pattern is easier to work with, and easier to
+guess at when you come back to it in a month.
+
+So let's rename it:
+
+```session
+$ mv 20.txt twenty.txt
+```
+
+```session
+$ ls
+five-copy.txt  five.txt  numbers  ten.txt  twenty.txt
+```
+
+The old name is gone and the new one is there. Unlike `cp`, we still have only
+one file - `mv` did not leave a `20.txt` behind. That is the difference between
+the two commands, and it is the thing to remember about them.
+
+## Moving a file into a directory
+
+`mv` has the same two forms as `cp`. If the destination is a directory, the file
+is moved into it and keeps its name:
+
+```session
+$ mv twenty.txt numbers/
+```
+
+```session
+$ ls
+five-copy.txt  five.txt  numbers  ten.txt
+```
+
+```session
+$ ls numbers
+ten.txt  twenty.txt
+```
+
+`twenty.txt` has left the directory we were in and is now inside `numbers`. It
+exists in exactly one place, as it did before.
+
+Notice the `/` we typed at the end of `numbers/`. It is not required, but it is
+a good habit. It says "I mean a directory", and if you are wrong, `mv` tells
+you instead of doing something surprising:
+
+```session
+$ mv five-copy.txt nosuchdir/
+mv: cannot move 'five-copy.txt' to 'nosuchdir/': Not a directory
+```
+
+Without that slash, `mv five-copy.txt nosuchdir` would have quietly renamed the
+file to `nosuchdir`, and you would be left wondering where it went. The same
+command means two different things depending on whether the destination happens
+to exist as a directory, so it is worth saying which one you meant.
+
+## Removing a file
+
+The `rm` command removes a file.
+
+```session
+$ rm five-copy.txt
+```
+
+```session
+$ ls
+five.txt  numbers  ten.txt
+```
+
+It is gone.
+
+::: {.callout-warning}
+`rm` does not move files to a Recycle Bin or a Trash folder. There is nowhere
+to fish the file back out of. When `rm` finishes, the file is gone.
+:::
+
+This is the command to slow down on. Read the name you have typed before you
+press Enter.
+
+If the file is not there, `rm` says so:
+
+```session
+$ rm five-copy.txt
+rm: cannot remove 'five-copy.txt': No such file or directory
+```
+
+Like `cp`, `rm` has an `-i` option that asks first:
+
+```session
+$ rm -i ten.txt
+rm: remove regular file 'ten.txt'? n
+```
+
+## Removing a directory
+
+`rm` removes files. Point it at a directory and it refuses:
+
+```session
+$ rm numbers
+rm: cannot remove 'numbers': Is a directory
+```
+
+That is what `rmdir` is for. But it has a rule of its own - it only removes a
+directory that is **empty**:
+
+```session
+$ rmdir numbers
+rmdir: failed to remove 'numbers': Directory not empty
+```
+
+`numbers` still has two files in it, so `rmdir` will not touch it. This refusal
+is worth being glad about. Removing a directory means removing everything
+inside it, possibly a great deal of it, and `rmdir` makes you deal with the
+contents yourself first.
+
+## Clearing up
+
+Let's use all of this to put the file system back the way we found it. First,
+where are we?
+
+```session
+$ pwd
+/home/anand/files
+```
+
+`numbers` has two files in it:
+
+```session
+$ ls numbers
+ten.txt  twenty.txt
+```
+
+`rm` will take more than one file at a time:
+
+```session
+$ rm numbers/ten.txt numbers/twenty.txt
+```
+
+```session
+$ ls numbers
+```
+
+Empty. Now `rmdir` is happy:
+
+```session
+$ rmdir numbers
+```
+
+```session
+$ ls
+five.txt  ten.txt
+```
+
+Remove the last two files:
+
+```session
+$ rm five.txt ten.txt
+```
+
+```session
+$ ls
+```
+
+Now `files` itself. Go up a level first:
+
+```session
+$ cd ..
+```
+
+```session
+$ pwd
+/home/anand
+```
+
+```session
+$ rmdir files
+```
+
+```session
+$ ls
+hello.txt  notes  notes.txt  numbers.txt  todo.txt
+```
+
+We are back to what we had at the end of the last chapter.
+
+Typing out `numbers/ten.txt numbers/twenty.txt` was tedious, and it would have
+been far worse with twenty files. In the next chapter we'll learn how to name a
+whole group of files at once.
+
+## Summary
+
+| Command | What it does |
+|---------|--------------|
+| `cp a.txt b.txt` | copies `a.txt` to a new file `b.txt` |
+| `cp a.txt numbers` | copies `a.txt` into the directory `numbers` |
+| `cp -i a.txt b.txt` | asks before overwriting `b.txt` |
+| `mv a.txt b.txt` | renames `a.txt` to `b.txt` |
+| `mv a.txt numbers/` | moves `a.txt` into the directory `numbers` |
+| `rm a.txt` | removes `a.txt`, permanently |
+| `rm a.txt b.txt` | removes both files |
+| `rm -i a.txt` | asks before removing |
+| `rmdir numbers` | removes `numbers`, if it is empty |
+
+And the one idea to carry forward: `cp` leaves the original in place, `mv` does
+not, and `rm` leaves nothing at all.

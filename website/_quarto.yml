@@ -42,6 +42,7 @@ website:
             text: Why the command line?
           - href: cmdline/getting-started.qmd
           - href: cmdline/filesystem.qmd
+          - href: cmdline/working-with-files.qmd
           - href: cmdline/practice-resize-images.qmd
       - section: "Appendix"
         contents:
