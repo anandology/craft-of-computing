@@ -1,10 +1,9 @@
 ---
-title: Navigating The File System
+title: The File System
 ---
 
-First thing that we need to learn when start with command-line is to figure out
-how to nagivate the file system. In this chapter, we'll learn about the
-following commands:
+The first thing to learn on the command line is how to find your way around the
+file system. In this chapter, we'll learn about the following commands:
 
 * `pwd` - print the present working directory
 * `cd` - change directory
