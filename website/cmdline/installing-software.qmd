@@ -318,7 +318,7 @@ If an `apt` command seems to be taking forever, look at the last line on the
 screen. Nine times out of ten it is a `[Y/n]` question waiting for an answer.
 :::
 
-## A talking cow, and where it lives
+## Installing cowsay
 
 One more to install, and this one we will use again in the next chapter:
 
