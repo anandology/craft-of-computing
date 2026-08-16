@@ -15,7 +15,6 @@ skill in itself. In this chapter, we'll learn about the following commands:
 * `sudo` - run one command as the administrator
 * `apt` - install and remove software
 * `figlet`, `cowsay` - two silly programs to install
-* `zip`, `unzip` - bundle files together and take them apart
 
 The silly ones are not filler. In the next chapter we will need commands that
 produce plenty of text on demand, and these two are exactly that.
@@ -131,9 +130,9 @@ catalogue.
 
 ```session
 $ sudo apt update
-Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
-Hit:2 http://archive.ubuntu.com/ubuntu jammy-updates InRelease
-Hit:3 http://archive.ubuntu.com/ubuntu jammy-security InRelease
+Hit:1 http://archive.ubuntu.com/ubuntu resolute InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu resolute-updates InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu resolute-security InRelease
 Reading package lists... Done
 Building dependency tree... Done
 Reading state information... Done
@@ -171,7 +170,7 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 205 not upgraded.
 Need to get 133 kB of archives.
 After this operation, 752 kB of additional disk space will be used.
-Get:1 http://archive.ubuntu.com/ubuntu jammy/universe amd64 figlet amd64 2.2.5-3 [133 kB]
+Get:1 http://archive.ubuntu.com/ubuntu resolute/universe amd64 figlet amd64 2.2.5-3 [133 kB]
 Fetched 133 kB in 1s (125 kB/s)
 Selecting previously unselected package figlet.
 (Reading database ... 125595 files and directories currently installed.)
@@ -250,6 +249,72 @@ An absolute path from chapter two, and a wildcard from chapter four, used to
 poke around inside a package we installed a minute ago. Take the name of any of
 those files without the `.flf` and hand it to `-f`.
 
+## When apt asks a question
+
+Installing `figlet` went straight through without asking us anything. That is
+not always so, and the difference confuses people, so let's see the other case.
+
+The message at the start of the chapter also suggested `toilet`, which does the
+same job as `figlet` with fancier characters. Install that one and watch what
+happens:
+
+```session
+$ sudo apt install toilet
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  libcaca0 toilet-fonts
+The following NEW packages will be installed:
+  libcaca0 toilet toilet-fonts
+0 upgraded, 3 newly installed, 0 to remove and 205 not upgraded.
+Need to get 950 kB of archives.
+After this operation, 1929 kB of additional disk space will be used.
+Do you want to continue? [Y/n]
+```
+
+And there it stops. Nothing else happens, no new prompt appears, and it can
+look as though the terminal has frozen. It has not. `apt` has asked a question
+and is waiting for you to answer it.
+
+Look at why it asked. We named one package and the list says **three** will be
+installed. `toilet` cannot work on its own: it needs `libcaca0` and
+`toilet-fonts`. Packages a package needs are called its **dependencies**, and
+`apt` works them out for you - but since it is about to do more than you asked
+for, it shows you the list first.
+
+To answer, type `y` and press Enter, or `n` and press Enter to change your
+mind. The capital letter in `[Y/n]` is the default, so pressing Enter on its
+own also means yes. Let's do that:
+
+```session
+Do you want to continue? [Y/n]
+Get:1 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libcaca0 amd64 0.99.beta19-2.2ubuntu4.2 [224 kB]
+Get:2 http://archive.ubuntu.com/ubuntu resolute/universe amd64 toilet-fonts all 0.3-1.4 [714 kB]
+Get:3 http://archive.ubuntu.com/ubuntu resolute/universe amd64 toilet amd64 0.3-1.4 [12.7 kB]
+Fetched 950 kB in 2s (526 kB/s)
+Unpacking libcaca0:amd64 (0.99.beta19-2.2ubuntu4.2) ...
+Unpacking toilet-fonts (0.3-1.4) ...
+Unpacking toilet (0.3-1.4) ...
+Setting up toilet (0.3-1.4) ...
+Processing triggers for man-db (2.10.2-1) ...
+```
+
+Three packages downloaded and set up, because we asked for one.
+
+```session
+$ toilet -f smblock craft
+         ▗▀▖▐
+▞▀▖▙▀▖▝▀▖▐  ▜▀
+▌ ▖▌  ▞▀▌▜▀ ▐ ▖
+▝▀ ▘  ▝▀▘▐   ▀
+```
+
+::: {.callout-tip}
+If an `apt` command seems to be taking forever, look at the last line on the
+screen. Nine times out of ten it is a `[Y/n]` question waiting for an answer.
+:::
+
 ## A second package, and a wrinkle
 
 ```session
@@ -264,7 +329,7 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 205 not upgraded.
 Need to get 18.6 kB of archives.
 After this operation, 93.2 kB of additional disk space will be used.
-Get:1 http://archive.ubuntu.com/ubuntu jammy/universe amd64 cowsay all 3.03+dfsg2-8 [18.6 kB]
+Get:1 http://archive.ubuntu.com/ubuntu resolute/universe amd64 cowsay all 3.03+dfsg2-8 [18.6 kB]
 Fetched 18.6 kB in 1s (26.4 kB/s)
 Selecting previously unselected package cowsay.
 (Reading database ... 125611 files and directories currently installed.)
@@ -342,22 +407,22 @@ $ cowsay -f tux The command line is fun
 ## Installing several at once
 
 `apt install` takes as many package names as you like, in the same way `touch`
-and `rm` do. We need two more:
+and `rm` do. We could have installed both of ours in one command:
 
 ```session
-$ sudo apt install zip unzip
+$ sudo apt install figlet cowsay
 Reading package lists... Done
 Building dependency tree... Done
 Reading state information... Done
-zip is already the newest version (3.0-12build2).
-unzip is already the newest version (6.0-26ubuntu3.2).
+cowsay is already the newest version (3.03+dfsg2-8).
+figlet is already the newest version (2.2.5-3).
 0 upgraded, 0 newly installed, 0 to remove and 205 not upgraded.
 ```
 
-On this machine they were already there, so `apt` did nothing and said so. If
-yours installs them, that is fine too - both endings are correct.
+We already have them, so `apt` did nothing and said so - no question asked,
+nothing downloaded.
 
-This is worth knowing in general: installing something you already have is
+That is worth knowing in general: installing something you already have is
 harmless. When instructions tell you to run an `apt install`, you can run it
 without first working out whether you need to.
 
@@ -377,7 +442,7 @@ Installed-Size: 752 kB
 Depends: libc6 (>= 2.14)
 Homepage: http://www.figlet.org/
 Download-Size: 133 kB
-APT-Sources: http://archive.ubuntu.com/ubuntu jammy/universe amd64 Packages
+APT-Sources: http://archive.ubuntu.com/ubuntu resolute/universe amd64 Packages
 Description: Make large character ASCII banners out of ordinary text
  FIGlet (Frank, Ian & Glenn's Letters) is a program that creates large
  characters out of ordinary screen characters.
@@ -389,155 +454,28 @@ sometimes see when you asked for one thing.
 
 ## Removing a package
 
-`sudo apt remove` takes a package away again.
+`sudo apt remove` takes a package away again. We have had our fun with
+`toilet` and do not need it, so:
 
 ```session
-$ sudo apt remove cowsay
+$ sudo apt remove toilet
 Reading package lists... Done
 Building dependency tree... Done
 Reading state information... Done
 The following packages will be REMOVED:
-  cowsay
+  toilet
 0 upgraded, 0 newly installed, 1 to remove and 205 not upgraded.
-After this operation, 93.2 kB disk space will be freed.
-Do you want to continue? [Y/n] n
-Abort.
+After this operation, 49.2 kB disk space will be freed.
+Do you want to continue? [Y/n] y
+Removing toilet (0.3-1.4) ...
+Processing triggers for man-db (2.10.2-1) ...
 ```
 
-We answered `n`, so nothing was removed - keep `cowsay`, we will want it in the
-next chapter.
+The same question as before, and here the list above it is the part to read.
+`apt` will happily take other packages along with the one you named, and this
+is where it tells you. Answer `n` if the list is not what you expected.
 
-That question is worth noticing. When a command is going to affect more than
-you asked for, `apt` stops and asks first, and the capital `Y` in `[Y/n]` means
-yes is what you get if you just press Enter. Read the list above the question
-before you answer it.
-
-## zip and unzip
-
-The last two packages are useful rather than silly. `zip` bundles several files
-into one, and `unzip` takes the bundle apart. This is the same kind of `.zip`
-file you would download from a website.
-
-Let's make somewhere to work, as we did in the last chapter:
-
-```session
-$ cd
-```
-
-```session
-$ mkdir software
-```
-
-```session
-$ cd software
-```
-
-```session
-$ pwd
-/home/anand/software
-```
-
-We need some files. We have just installed two commands that produce plenty of
-text, and `>` from the first chapter puts that text into a file:
-
-```session
-$ figlet -f small week 1 > week1.txt
-$ figlet -f small week 2 > week2.txt
-$ cowsay we are learning the command line > cow.txt
-```
-
-```session
-$ ls
-cow.txt  week1.txt  week2.txt
-```
-
-```session
-$ cat week1.txt
-                _     _
-__ __ _____ ___| |__ / |
-\ V  V / -_) -_) / / | |
- \_/\_/\___\___|_\_\ |_|
-
-```
-
-Now bundle them. The first name is the bundle to create, and the rest are the
-files to put in it:
-
-```session
-$ zip banners.zip *.txt
-  adding: cow.txt (deflated 58%)
-  adding: week1.txt (deflated 51%)
-  adding: week2.txt (deflated 55%)
-```
-
-The wildcard did its usual work: the shell replaced `*.txt` with the three
-names before `zip` ever ran. "Deflated 58%" means the file was squeezed to
-rather less than its original size, which is the other thing a zip file does.
-
-```session
-$ ls
-banners.zip  cow.txt  week1.txt  week2.txt
-```
-
-`unzip -l` lists what is inside a bundle without unpacking it:
-
-```session
-$ unzip -l banners.zip
-Archive:  banners.zip
-  Length      Date    Time    Name
----------  ---------- -----   ----
-      232  2026-08-17 03:29   cow.txt
-      125  2026-08-17 03:29   week1.txt
-      135  2026-08-17 03:29   week2.txt
----------                     -------
-      492                     3 files
-```
-
-To prove the originals really are in there, let's throw them away:
-
-```session
-$ rm *.txt
-```
-
-```session
-$ ls
-banners.zip
-```
-
-```session
-$ unzip banners.zip
-Archive:  banners.zip
-  inflating: cow.txt
-  inflating: week1.txt
-  inflating: week2.txt
-```
-
-```session
-$ ls
-banners.zip  cow.txt  week1.txt  week2.txt
-```
-
-```session
-$ cat cow.txt
- __________________________________
-< we are learning the command line >
- ----------------------------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-```
-
-All three came back, contents and all. One file travelled, three files came
-out of it.
-
-::: {.callout-warning}
-`unzip` writes the files into the directory you are standing in, and it does
-not ask before overwriting. Before unzipping something you downloaded, make a
-directory for it and `cd` into it. `unzip -l` first will tell you what is
-coming.
-:::
+Keep `figlet` and `cowsay` - the next chapter uses them.
 
 ## Being careful with sudo
 
@@ -561,35 +499,10 @@ macOS has no `apt`. The usual equivalent is [Homebrew](https://brew.sh/),
 which you install once by following the instructions on its website. After
 that, `brew install figlet cowsay` does the job of this chapter's `apt`
 commands, and `brew` needs no `sudo`, because it installs into a directory
-that belongs to you. `zip` and `unzip` are already on every Mac.
+that belongs to you.
 
 These notes assume Ubuntu, on a Linux machine or through WSL on Windows.
 :::
-
-## Clearing up
-
-The files can go; the packages stay, because the next chapter needs them.
-
-```session
-$ rm banners.zip cow.txt week1.txt week2.txt
-```
-
-```session
-$ ls
-```
-
-```session
-$ cd ..
-```
-
-```session
-$ rmdir software
-```
-
-```session
-$ ls software
-ls: cannot access 'software': No such file or directory
-```
 
 ## Summary
 
@@ -600,16 +513,16 @@ ls: cannot access 'software': No such file or directory
 | `which figlet` | shows where a command lives |
 | `sudo apt update` | refreshes the list of available packages |
 | `sudo apt install figlet` | installs a package |
-| `sudo apt install zip unzip` | installs more than one |
+| `sudo apt install figlet cowsay` | installs more than one |
 | `apt show figlet` | describes a package, without installing it |
-| `sudo apt remove cowsay` | removes a package |
+| `sudo apt remove toilet` | removes a package |
 | `figlet hello` | prints `hello` in large letters |
 | `figlet -f small hello` | uses a different font |
 | `cowsay hello` | a cow says `hello` |
 | `cowsay -f tux hello` | a different animal says it |
-| `zip out.zip *.txt` | bundles the `.txt` files into `out.zip` |
-| `unzip -l out.zip` | lists what is inside, without unpacking |
-| `unzip out.zip` | unpacks it here |
+
+And the question `apt` asks: `Do you want to continue? [Y/n]` is waiting for
+`y` or `n` and Enter. Enter on its own means yes.
 
 And the one idea to carry forward: your own files are yours to break, and the
 rest of the machine is not - which is why installing software needs `sudo`, and
