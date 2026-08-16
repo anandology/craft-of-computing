@@ -318,7 +318,9 @@ If an `apt` command seems to be taking forever, look at the last line on the
 screen. Nine times out of ten it is a `[Y/n]` question waiting for an answer.
 :::
 
-## A second package, and a wrinkle
+## A talking cow, and where it lives
+
+One more to install, and this one we will use again in the next chapter:
 
 ```session
 $ sudo apt install cowsay
@@ -354,7 +356,7 @@ $ cowsay hello
                 ||     ||
 ```
 
-Now the wrinkle. Ask where it went:
+Now ask where it went:
 
 ```session
 $ which cowsay
