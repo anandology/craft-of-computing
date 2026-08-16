@@ -388,11 +388,11 @@ $ rmdir files
 ```
 
 ```session
-$ ls
-hello.txt  notes  notes.txt  numbers.txt  todo.txt
+$ ls files
+ls: cannot access 'files': No such file or directory
 ```
 
-We are back to what we had at the end of the last chapter.
+Gone. Everything we made in this chapter has been cleared away.
 
 Typing out `numbers/ten.txt numbers/twenty.txt` was tedious, and it would have
 been far worse with twenty files. In the next chapter we'll learn how to name a

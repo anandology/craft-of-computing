@@ -1,0 +1,598 @@
+---
+title: Wildcards and Quoting
+---
+
+At the end of the last chapter we typed out `numbers/ten.txt numbers/twenty.txt`
+to remove two files. Two was tedious. Twenty would have been unbearable.
+
+This chapter is about naming a whole group of files at once. It introduces no
+new commands - we will use `ls`, `echo`, `cp`, `mv` and `rm`, all of which we
+already know. What is new is a pair of characters:
+
+* `*` - stands for any number of characters
+* `?` - stands for exactly one character
+
+These are called **wildcards**. Along the way we will find out who actually
+does the work when you type one, and that will lead us to quotes: the way to
+tell the shell to leave your text alone.
+
+## A place to work
+
+Wildcards are about naming everything in a directory at once, so it matters
+which directory you are standing in. We will work in one of our own, where a
+mistake costs us nothing.
+
+```session
+$ cd
+```
+
+```session
+$ mkdir wildcards
+```
+
+```session
+$ cd wildcards
+```
+
+```session
+$ pwd
+/home/anand/wildcards
+```
+
+Now some files to practise on:
+
+```session
+$ seq 5 > five.txt
+```
+
+```session
+$ seq 10 > ten.txt
+```
+
+```session
+$ seq 20 > twenty.txt
+```
+
+```session
+$ echo command line, files, wildcards > topics.md
+```
+
+`touch` takes more than one name at a time, just as `rm` did:
+
+```session
+$ touch day1.log day2.log day3.log day10.log
+```
+
+That gives us eight files:
+
+```session
+$ ls
+day1.log   day2.log  five.txt  topics.md
+day10.log  day3.log  ten.txt   twenty.txt
+```
+
+## Naming several files at once
+
+Suppose we want to see only the `.txt` files. We can say so:
+
+```session
+$ ls *.txt
+five.txt  ten.txt  twenty.txt
+```
+
+The `*` stands for any number of characters, so `*.txt` means "anything, as
+long as it ends in `.txt`". The three number files match. `topics.md` does not,
+and neither do the logs.
+
+## What `*` matches
+
+The `*` can go anywhere in the name. At the end, it matches everything that
+starts a certain way:
+
+```session
+$ ls t*
+ten.txt  topics.md  twenty.txt
+```
+
+Note that `topics.md` is in that list. We asked for names beginning with `t`
+and said nothing at all about the ending.
+
+At the start, it matches everything that ends a certain way:
+
+```session
+$ ls *y.txt
+twenty.txt
+```
+
+And it can sit in the middle, fixing both ends and leaving the part between
+free:
+
+```session
+$ ls day*.log
+day1.log  day10.log  day2.log  day3.log
+```
+
+"Starts with `day`, ends with `.log`, anything in between."
+
+One thing to be careful about: `*` matches *any number* of characters, and
+that includes none at all. If we had a file called simply `day.log`, the
+pattern `day*.log` would match it too.
+
+## Who does the matching
+
+Here is the question worth stopping on. When we type `ls *.txt`, does `ls` go
+looking for files whose names end in `.txt`?
+
+It does not. Watch:
+
+```session
+$ echo *.txt
+five.txt ten.txt twenty.txt
+```
+
+`echo` knows nothing about files. All it ever does is print the arguments it is
+given. So if `echo` printed three file names, those three names must have been
+its arguments - they were already there by the time `echo` started.
+
+That is exactly what happens. Before running the command, the shell looks at
+`*.txt`, finds the names in the current directory that match, and replaces the
+pattern with those names. The command that finally runs is:
+
+```
+echo five.txt ten.txt twenty.txt
+```
+
+`echo` never sees the `*`. Neither does `ls`, or `rm`, or any other command.
+This is called **expansion**, and it is the shell's work, not the command's.
+
+Try `*` on its own, which matches every name:
+
+```session
+$ echo *
+day1.log day10.log day2.log day3.log five.txt ten.txt topics.md twenty.txt
+```
+
+This is why `echo` is the safest way to try out a pattern. It shows you exactly
+what the shell will hand to a command, before you hand it to a command that
+does something you cannot undo.
+
+::: {.callout-tip}
+Not sure what a pattern will match? Put `echo` in front of it and look.
+:::
+
+## Matching a single character with `?`
+
+`?` stands for exactly one character - no more, no less.
+
+```session
+$ ls day?.log
+day1.log  day2.log  day3.log
+```
+
+Three files, not four. `day10.log` has two characters where the `?` is, so it
+does not match. Compare that with the `*` version from earlier:
+
+```session
+$ ls day*.log
+day1.log  day10.log  day2.log  day3.log
+```
+
+That is the whole difference between the two. Use `?` when you know how long
+the missing part is.
+
+## Wildcards in paths
+
+A wildcard can appear in any part of a path, not just the last. To try that, we
+need a directory with something inside it. `mkdir` takes several names at once,
+just as `touch` did:
+
+```session
+$ mkdir week1 week2 week3
+```
+
+Each one needs a file in it, with something we can recognise inside:
+
+```session
+$ echo the command line > week1/topics.txt
+$ echo files and directories > week2/topics.txt
+$ echo wildcards and quoting > week3/topics.txt
+```
+
+```session
+$ ls
+day1.log   day2.log  five.txt  topics.md   week1  week3
+day10.log  day3.log  ten.txt   twenty.txt  week2
+```
+
+Three directories, each holding a `topics.txt`. A pattern can name them all:
+
+```session
+$ echo week*
+week1 week2 week3
+```
+
+And a pattern can sit in the middle of a path, with a fixed name after it:
+
+```session
+$ echo week*/topics.txt
+week1/topics.txt week2/topics.txt week3/topics.txt
+```
+
+Three paths. Now, since `cat` takes as many files as you give it:
+
+```session
+$ cat week*/topics.txt
+the command line
+files and directories
+wildcards and quoting
+```
+
+Three files, from three directories, read with one short command. Nothing about
+`cat` changed - the shell simply handed it three paths instead of one.
+
+There is a rule hiding in this. A `*` never matches a `/`; it stays inside one
+part of the path. That is why `*.txt` does not reach into the week directories:
+
+```session
+$ echo *.txt
+five.txt ten.txt twenty.txt
+```
+
+The three `topics.txt` files are `.txt` files too, but they are one level down,
+and `*` did not go looking for them. To reach them you have to say so, as we
+did with `week*/topics.txt`.
+
+## When nothing matches
+
+What if a pattern matches nothing at all? The shell gives up and passes the
+pattern through unchanged, exactly as you typed it:
+
+```session
+$ echo a*b
+a*b
+```
+
+There is no file starting with `a` and ending with `b`, so there was nothing to
+replace the pattern with, and `echo` printed the pattern itself.
+
+This explains an error message that would otherwise be baffling:
+
+```session
+$ ls *.pdf
+ls: cannot access '*.pdf': No such file or directory
+```
+
+`ls` is complaining about a file called `*.pdf`. It is not being obtuse. No
+name matched, so the shell handed the pattern straight to `ls`, and `ls` did
+the only thing it could - it looked for a file with that name.
+
+So when you see a `*` inside an error message, read it as: nothing matched.
+
+## Wildcards match names, not contents
+
+`*.txt` does not mean "files with text in them". The shell never opens a single
+file to work out what matches; it only compares names. A `.txt` file full of
+nonsense matches, and a file full of beautiful prose named `topics.md` does
+not.
+
+Nor does a pattern care whether a name belongs to a file or a directory. When
+we ran `echo week*`, the three things it matched were all directories.
+
+## What this was all for
+
+Back to the tedium we started with. Let's put the number files into a directory
+of their own:
+
+```session
+$ mkdir numbers
+```
+
+```session
+$ mv *.txt numbers/
+```
+
+```session
+$ ls
+day1.log   day2.log  numbers    week1  week3
+day10.log  day3.log  topics.md  week2
+```
+
+```session
+$ ls numbers
+five.txt  ten.txt  twenty.txt
+```
+
+Three files moved with one command, and it would have been the same command for
+three hundred. This is the pattern of the whole command line: you describe what
+you want, and the number of files stops mattering.
+
+## Look before you delete
+
+`rm` accepts wildcards like everything else, which makes it the place to be
+careful. `rm *.txt` is easy to type and impossible to undo, and if your finger
+slips and it becomes `rm *`, you have removed everything in the directory.
+
+So get into this habit: run the pattern past `ls` first, read the list, and only
+then run `rm`.
+
+```session
+$ ls day*.log
+day1.log  day10.log  day2.log  day3.log
+```
+
+That is the list we meant. Now press the up arrow to bring the line back, change
+`ls` to `rm`, and press Enter:
+
+```session
+$ rm day*.log
+```
+
+```session
+$ ls
+numbers  topics.md  week1  week2  week3
+```
+
+::: {.callout-warning}
+Watch out for a stray space. `rm * .log` is not `rm *.log` - it is two
+arguments, and the first one is `*`, which matches everything. The space
+changes "remove the log files" into "remove everything".
+:::
+
+## Turning the star off
+
+Sometimes you want a `*` to be a plain star and nothing more. Try printing one:
+
+```session
+$ echo *
+numbers topics.md week1 week2 week3
+```
+
+Not what we wanted. The shell expanded it before `echo` ever saw it. To stop
+that, put it in quotes:
+
+```session
+$ echo '*'
+*
+```
+
+```session
+$ echo "*"
+*
+```
+
+Quotes tell the shell that what is inside is plain text. No matching, no
+expansion - the `*` is handed to `echo` as an ordinary character.
+
+## What quotes really do
+
+Stopping wildcards is only half of it. Try this:
+
+```session
+$ echo hello     world
+hello world
+```
+
+We typed five spaces and got one. That is not `echo` tidying up. The shell
+split the line into arguments wherever it found spaces, and handed `echo` two
+of them: `hello` and `world`. `echo` printed them with a single space between,
+because that is what `echo` does with two arguments. The extra spaces were
+never part of anything.
+
+Now with quotes:
+
+```session
+$ echo "hello     world"
+hello     world
+```
+
+One argument this time, spaces and all. So the real rule is:
+
+**Quotes make what is inside them a single argument, and stop the shell from
+changing it.**
+
+## Files with spaces in their names
+
+This matters most with file names. Suppose we want a file called
+`my notes.txt`:
+
+```session
+$ touch my notes.txt
+```
+
+```session
+$ ls
+my  notes.txt  numbers  topics.md  week1  week2  week3
+```
+
+We got **two** files - `my` and `notes.txt`. And that is fair enough: we handed
+`touch` two arguments, so it made two files, exactly as it did when we typed
+`touch day1.log day2.log day3.log day10.log`.
+
+Let's clear them away and try again:
+
+```session
+$ rm my notes.txt
+```
+
+```session
+$ touch "my notes.txt"
+```
+
+```session
+$ ls
+my notes.txt  numbers  topics.md  week1  week2  week3
+```
+
+One file, with a space in its name. Every command that touches it from now on
+needs the quotes too:
+
+```session
+$ cat my notes.txt
+cat: my: No such file or directory
+cat: notes.txt: No such file or directory
+```
+
+```session
+$ cat "my notes.txt"
+```
+
+The file is empty, so `cat` printed nothing - but it found it, which the
+unquoted version could not.
+
+A wildcard is another way to avoid the typing, since the shell fills in the
+name for you, space and all:
+
+```session
+$ ls my*
+my notes.txt
+```
+
+::: {.callout-tip}
+You can put spaces in file names, but life is easier if you do not. Use
+`my-notes.txt` or `my_notes.txt` and you will never have to think about
+quoting the name again.
+:::
+
+## Single and double quotes
+
+We have used both `'` and `"` and they behaved identically. For our purposes
+they mostly do, and either one will serve you well.
+
+There is one difference, and it will matter later. The shell keeps some values
+under names, called **variables**. `HOME` is one of them: it holds the path to
+your home directory. Writing `$` in front of the name asks for its value, and
+the shell fills it in - another rewrite it does before the command runs, just
+like a wildcard.
+
+```session
+$ echo $HOME
+/home/anand
+```
+
+```session
+$ echo "$HOME"
+/home/anand
+```
+
+```session
+$ echo '$HOME'
+$HOME
+```
+
+Double quotes stopped the wildcard and the spaces, but let the variable
+through. Single quotes stopped everything, and `$HOME` was printed exactly as
+we typed it.
+
+So: **double quotes stop wildcards and spaces but let `$` through; single
+quotes stop everything.** There is more to say about variables, and we will
+come back to them in a later chapter.
+
+## Clearing up
+
+Let's tidy away this chapter's directory, using wildcards to do it.
+
+```session
+$ pwd
+/home/anand/wildcards
+```
+
+```session
+$ ls
+my notes.txt  numbers  topics.md  week1  week2  week3
+```
+
+The awkward name needs its quotes one last time:
+
+```session
+$ rm "my notes.txt"
+```
+
+Now the directories. `rmdir` only removes an empty directory, so the files
+inside have to go first - and we can name both sets in one command:
+
+```session
+$ ls numbers
+five.txt  ten.txt  twenty.txt
+```
+
+```session
+$ rm numbers/* week*/topics.txt
+```
+
+```session
+$ ls numbers
+```
+
+Empty, and so are the week directories. Now `rmdir` will take them, and it
+accepts a wildcard like everything else:
+
+```session
+$ rmdir numbers week*
+```
+
+```session
+$ ls
+topics.md
+```
+
+One file left, and `*` will do for that:
+
+```session
+$ rm *
+```
+
+```session
+$ ls
+```
+
+Now go up and remove the directory itself:
+
+```session
+$ cd ..
+```
+
+```session
+$ rmdir wildcards
+```
+
+```session
+$ ls wildcards
+ls: cannot access 'wildcards': No such file or directory
+```
+
+Gone, and we know how to read that message now: there is nothing left of this
+chapter's work.
+
+Compare that clean-up with the one at the end of the last chapter, where we
+named every file by hand.
+
+## Summary
+
+Wildcards:
+
+| Pattern | What it matches |
+|---------|-----------------|
+| `*.txt` | any name ending in `.txt` |
+| `t*` | any name starting with `t` |
+| `day*.log` | starts with `day`, ends with `.log` |
+| `?` | exactly one character |
+| `day?.log` | `day1.log`, but not `day10.log` |
+| `*` | every name in the directory |
+| `week*/topics.txt` | one file in each matching directory |
+| `echo *.txt` | shows what a pattern matches, safely |
+
+Quotes:
+
+| What you type | What the command gets |
+|---------------|-----------------------|
+| `echo *` | every file name |
+| `echo '*'` | a single `*` |
+| `echo hello   world` | two arguments, `hello` and `world` |
+| `echo "hello   world"` | one argument, spaces kept |
+| `touch "my notes.txt"` | one file with a space in its name |
+| `echo '$HOME'` | the text `$HOME` |
+| `echo "$HOME"` | your home directory |
+
+And the one idea to carry forward: the shell rewrites your line before the
+command runs. Wildcards are how you ask it to, and quotes are how you ask it
+not to.
