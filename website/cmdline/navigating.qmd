@@ -1,0 +1,417 @@
+---
+title: Navigating The File System
+---
+
+First thing that we need to learn when start with command-line is to figure out
+how to nagivate the file system. In this chapter, we'll learn about the
+following commands:
+
+* `pwd` - print the present working directory
+* `cd` - change directory
+* `mkdir` - make a directory
+
+We already know `ls` from the previous chapter, and we'll keep using it here to
+see where we have ended up.
+
+## Files live in a tree
+
+Every file on your computer sits inside a directory, and every directory sits
+inside another directory. It looks like this:
+
+```
+/
+├── home
+│   └── anand
+│       ├── notes.txt
+│       └── todo.txt
+├── usr
+│   ├── bin
+│   └── share
+└── etc
+```
+
+At the very top is a single directory called `/`, said "root". Everything else
+is somewhere inside it. There is no second tree, and nothing sits outside this
+one - every file on the machine has a place in it.
+
+Your own files live in a directory of your own, named after you. Mine is
+`/home/anand`. This is called your **home directory**.
+
+## Present Working directory
+
+The `pwd` command prints the present working directory.
+
+```session
+$ pwd
+/home/anand
+```
+
+The present working directory is simply where you are standing right now. Every
+command you type runs from there, so it is worth knowing.
+
+When you login, it would typically be your home directory.
+
+## Changing directory
+
+The `cd` command is used to change the present working directory.
+
+The following command changes the current working directory to `/usr`.
+
+```session
+$ cd /usr
+```
+
+The `cd` command does not produce any output. It moves you, and says nothing
+about it. To see that it worked, ask `pwd`:
+
+```session
+$ pwd
+/usr
+```
+
+And now `ls` shows the files in `/usr`, not the ones in your home directory:
+
+```session
+$ ls
+bin    include  lib32  libexec  local  share
+games  lib      lib64  libx32   sbin   src
+```
+
+This is the important part: `ls` did not change. *You* changed. `ls` always
+lists the directory you are standing in.
+
+You can always come back to your home directory by simply running the `cd`
+command without any arguments.
+
+```session
+$ cd
+```
+
+```session
+$ pwd
+/home/anand
+```
+
+If you try to go somewhere that does not exist, `cd` tells you so:
+
+```session
+$ cd nosuchdir
+bash: cd: nosuchdir: No such file or directory
+```
+
+You have not moved, and nothing is broken. `pwd` will confirm you are still
+where you were.
+
+## Absolute and Relative Paths
+
+When we use a path starting with `/`, we are mentioning the full path starting
+from the root. `/usr/bin` means: start at the root, go into `usr`, then into
+`bin`. This is called an **absolute path**. It means the same thing no matter
+where you are standing when you type it.
+
+We could also specify the path relative to the current directory. Let's go to
+`/usr` first:
+
+```session
+$ cd /usr
+```
+
+```session
+$ pwd
+/usr
+```
+
+We know from the `ls` above that `/usr` contains a directory called `bin`. So
+from here, we can just say:
+
+```session
+$ cd bin
+```
+
+```session
+$ pwd
+/usr/bin
+```
+
+Notice what we typed: `bin`, not `/usr/bin`. There is no `/` at the start. That
+makes it a **relative path** - it is read starting from where you are, not from
+the root.
+
+The rule is short, and it is worth memorising:
+
+* A path starting with `/` is **absolute**. It starts at the root.
+* A path not starting with `/` is **relative**. It starts at your present
+  working directory.
+
+So `cd bin` only works when you happen to be in `/usr`. Try it from your home
+directory and you will get `No such file or directory`, because there is no
+`bin` inside `/home/anand`. The same words mean different things depending on
+where you are standing.
+
+## Making a directory
+
+The `mkdir` command makes a new directory.
+
+Let's go home and make one:
+
+```session
+$ cd
+```
+
+```session
+$ mkdir notes
+```
+
+Like `cd` and `touch`, it prints nothing when it works. Let's look:
+
+```session
+$ ls
+hello.txt  notes  notes.txt  numbers.txt  todo.txt
+```
+
+There is `notes`, alongside the files we made in the previous chapter. (Yes,
+there is both a `notes` directory and a `notes.txt` file. They are different
+things with similar names, and the computer has no trouble telling them apart.)
+
+If you try to make it again, `mkdir` refuses:
+
+```session
+$ mkdir notes
+mkdir: cannot create directory ‘notes’: File exists
+```
+
+That is a useful refusal. If `mkdir` had quietly succeeded, it might have
+thrown away whatever was in there.
+
+Now let's go into it:
+
+```session
+$ cd notes
+```
+
+```session
+$ pwd
+/home/anand/notes
+```
+
+```session
+$ ls
+```
+
+Nothing. A brand new directory is empty.
+
+## Building a small tree
+
+We are inside `notes`. Let's make a directory for each week of the course.
+
+```session
+$ mkdir week1
+```
+
+```session
+$ ls
+week1
+```
+
+```session
+$ mkdir week2
+```
+
+```session
+$ mkdir week3
+```
+
+```session
+$ ls
+week1  week2  week3
+```
+
+We have built this:
+
+```
+/home/anand
+└── notes
+    ├── week1
+    ├── week2
+    └── week3
+```
+
+## Putting files in them
+
+Let's go into `week1` and write down what we covered.
+
+```session
+$ cd week1
+```
+
+```session
+$ pwd
+/home/anand/notes/week1
+```
+
+```session
+$ echo the command line > topics.txt
+```
+
+```session
+$ ls
+topics.txt
+```
+
+```session
+$ cat topics.txt
+the command line
+```
+
+Nothing new here - this is `echo`, `>` and `cat` from the previous chapter. What
+is new is *where* the file went. `topics.txt` was created in the directory we
+were standing in, which was `week1`. Commands act on the present working
+directory unless you tell them otherwise.
+
+## Going up
+
+We are in `week1`. How do we get back to `notes`?
+
+Every directory contains a special name, `..`, which means "the directory above
+this one".
+
+```session
+$ cd ..
+```
+
+```session
+$ pwd
+/home/anand/notes
+```
+
+`..` is a relative path like any other, so it can be part of a longer one. From
+`notes`, we can go into `week2` and create a file there:
+
+```session
+$ cd week2
+```
+
+```session
+$ echo files and directories > topics.txt
+```
+
+Now, still standing in `week2`, we can read the file in `week1` without moving:
+
+```session
+$ cat ../week1/topics.txt
+the command line
+```
+
+Read that path from left to right: go up one level (to `notes`), then into
+`week1`, then take `topics.txt`. We never left `week2` - `pwd` will confirm it.
+
+You can use `..` more than once. From `week2`, going up twice lands you in your
+home directory:
+
+```session
+$ cd ../..
+```
+
+```session
+$ pwd
+/home/anand
+```
+
+Let's fill in `week3` too, using a relative path instead of walking there:
+
+```session
+$ echo pipes and filters > notes/week3/topics.txt
+```
+
+```session
+$ cat notes/week3/topics.txt
+pipes and filters
+```
+
+We are still in `/home/anand`. The path `notes/week3/topics.txt` was read
+starting from here.
+
+::: {.callout-tip}
+There is also `.`, a single dot, which means "this directory". So
+`./topics.txt` and `topics.txt` mean exactly the same thing. It looks pointless
+now, but it becomes useful later.
+:::
+
+## The same file, three ways
+
+We are in our home directory. Here is `week1`'s file, reached by a relative
+path:
+
+```session
+$ cat notes/week1/topics.txt
+the command line
+```
+
+And here is the very same file, reached by an absolute path:
+
+```session
+$ cat /home/anand/notes/week1/topics.txt
+the command line
+```
+
+And once more, from inside `week2`:
+
+```session
+$ cd notes/week2
+```
+
+```session
+$ cat ../week1/topics.txt
+the command line
+```
+
+One file, three ways of naming it. The absolute path is the longest, but it is
+the only one that works from anywhere - the other two depend on where you are
+standing. That is the whole difference between the two kinds of path.
+
+## A shortcut for home
+
+Your home directory comes up constantly, so the shell gives it a short name:
+`~`, the tilde character.
+
+```session
+$ cd ~
+```
+
+```session
+$ pwd
+/home/anand
+```
+
+`~` expands to the full path of your home directory, so `~/notes/week1` and
+`/home/anand/notes/week1` are the same place. Because it starts from a fixed
+point rather than from where you are, it behaves like an absolute path:
+
+```session
+$ cd /usr/bin
+```
+
+```session
+$ cat ~/notes/week1/topics.txt
+the command line
+```
+
+This is also what the `~` in your prompt means. When the prompt reads
+`anand@laptop:~$`, it is telling you that you are in your home directory.
+
+## Summary
+
+| Command | What it does |
+|---------|--------------|
+| `pwd` | prints where you are |
+| `cd /usr/bin` | goes to `/usr/bin`, from anywhere |
+| `cd bin` | goes into `bin`, inside where you already are |
+| `cd` | goes back to your home directory |
+| `cd ..` | goes up one level |
+| `cd ../..` | goes up two levels |
+| `cd ~` | goes to your home directory |
+| `mkdir notes` | makes a directory named `notes` |
+| `cat notes/week1/topics.txt` | reads a file in another directory |
+
+And the one idea to carry forward: a path starting with `/` is read from the
+root, and a path that does not is read from wherever you are standing.

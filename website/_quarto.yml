@@ -38,6 +38,7 @@ website:
           - href: cmdline/why.qmd
             text: Why the command line?
           - href: cmdline/getting-started.qmd
+          - href: cmdline/navigating.qmd
           - href: cmdline/practice-resize-images.qmd
       - section: "Appendix"
         contents:
