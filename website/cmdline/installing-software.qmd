@@ -79,18 +79,6 @@ The same command, run by somebody else.
 allowed to change anything, anywhere. `sudo` means "run this one command as
 root". Just this one; when it finishes, you are yourself again.
 
-::: {.callout-tip}
-You will see `root` written as `#` in documentation. A normal prompt ends in
-`$`, and a root prompt ends in `#`, so instructions written as
-
-```
-# apt install figlet
-```
-
-mean "run this as root", while a `$` means "run this as yourself". Every
-example in these notes uses `$`, and we reach for `root` only through `sudo`.
-:::
-
 ## Why `sudo` is needed at all
 
 Try the install without it:
