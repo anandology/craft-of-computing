@@ -1,0 +1,14 @@
+---
+title: More Pipes and Filters
+---
+
+Let's explore pipes and filters a bit more. 
+
+In this session, we'll learn the following commands:
+
+* head
+* tail
+* sort
+* uniq
+
+_This session is a draft. It will be updated soon._

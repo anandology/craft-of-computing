@@ -1,0 +1,104 @@
+---
+title: Making the computer speak
+---
+
+Unix pipes makes combining multiple commands to make something complex. Let's add sound to the mix and see what all we could with them.
+
+## Setup
+
+Before we start, make sure you install the following packages.
+
+
+```session
+$ sudo apt install espeak-ng
+```
+
+Now check that this machine can actually make a sound:
+
+```session
+$ espeak-ng "testing one two three"
+```
+
+You should have heard a voice say *testing one two three*.
+
+::: {.callout-warning}
+If you heard nothing, the machine has no working sound. This is common when you
+are connected to another machine over the network, and inside WSL and
+containers. Everything in this chapter needs a working speaker, so sort that out
+before going on - otherwise every command below will look like it did nothing.
+:::
+
+## Speaking text
+
+The `espeak-ng` command speaks any given text. 
+
+The text could be given as an argument:
+
+```session
+$ espeak-ng hello
+```
+
+Or passed through a pipe.
+
+```session
+$ echo hello | espeak-ng
+```
+
+When there are multiple lines in the input, use `--stdin` flag.
+
+```session
+$ seq 5 | espeak-ng --stdin
+```
+
+If that sounds too fast, you could increase the gap between words using the `-g` option. The following example uses a gap of 50 milli seconds gap between words.
+
+
+```session
+$ seq 5 | espeak-ng --stdin -g 50
+```
+
+The wonderful thing about espeak is that it has support for many languages.
+
+The following command counts 1 to 5 in Kannada.
+
+```session
+$ seq 5 | espeak-ng --stdin -g 50 -v kn
+```
+
+Change the code from `kn` to `hi`, `ta`, `te`, `ml` to speak in Hindi, Tamil, Telugu or Malayalam.
+
+```session
+$ seq 5 | espeak-ng --stdin -g 50 -v te
+```
+
+## Fun with Voices
+
+The `espeak-ng` package support multiple voice variants. The default variant is a male voice, we could try with a female voice or a grandma.
+
+List all available variants.
+
+```session
+$ espeak-ng --voices=variant
+Pty Language       Age/Gender VoiceName          File                 Other Languages
+ 5  variant         --/F      Andrea             !v/Andrea            
+ 5  variant         --/F      Annie              !v/Annie             
+...
+ 5  variant         --/M      grandpa            !v/grandpa           
+ ...
+ 5  variant         90/F      grandma            !v/grandma           
+```
+
+Let's try Annie.
+
+```session
+$ espeak-ng -v "en+Annie" "How are you doing today?"
+```
+
+## Example: Train Announcements
+
+Let's try to mimic a train announcement.
+
+```session
+$ espeak-ng "Your attention please. Train number 1 2 0 2 8 Shatabhi Express from Bangalore to Chennai to about to depart from platform number 1."
+```
+

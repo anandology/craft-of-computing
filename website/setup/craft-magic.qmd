@@ -1,0 +1,35 @@
+---
+title: The craft.sh magic
+---
+
+To make it easier for you to get the files that are needed to practice in the class, we've created a small utility called `craft.sh`.
+
+Please install it by running the following command:
+
+```session
+$ curl -fsSL https://craft-of-computing.anandology.com/2026/install.sh | bash
+```
+
+You could check if it working by checking its version:
+
+```session
+$ craft.sh version
+craft 2
+```
+
+This would have created a craft directory in your home.
+
+```session
+$ cd
+$ ls
+craft ...
+```
+
+Let's check what is there. 
+
+```session
+$ ls craft
+
+
+
+

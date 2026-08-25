@@ -1,0 +1,73 @@
+---
+title: Introduction to Shell Scripts
+---
+
+So far, we have seen many commands provided by the system, and seen how to combine them to do interesting things. In this session, we are going to learn how to make own scripts, programs that work just like the commands provided by the system. 
+
+## The Setup
+
+Before we start, we need to learn how to create and edit files. Please follow the instructions in [Setting up editor](../setup/editor.qmd).
+
+## Getting Started
+
+Use `nano` to create a file `hello.sh` with the following contents. You'll have to type `nano hello.sh` and enter the contents.
+
+```{.bash filename="hello.sh"}
+echo "Hello, world!"
+```
+
+Let's check if we have the file.
+
+```session
+$ ls
+hello.sh
+```
+
+Let's see what is in the file.
+
+```session
+$ cat hello.sh
+echo "Hello, world!"
+```
+
+Now let's run the script.
+
+```session
+$ bash hello.sh
+Hello, world!
+```
+
+A script could have multiple commands. When you run the script, all the commands are executed one by one. For example try the following script.
+
+```bash {filename=welcome.sh}
+figlet "Welcome $USER"
+
+echo 
+echo "---"
+echo "The time is: $(date)"
+echo "current directory: $(pwd)"
+echo "The files in the directory:"
+ls
+```
+
+And when you run it:
+
+```session
+$ bash welcome.sh
+
+```
+
+### Example: figdate.sh
+
+Let's write a script to display the date using let. If you remember from the previous sessions, we could do `date | figlet` to pipe the output of date as input to figlet. We just need to put that in a shell script.
+
+
+```bash {filename=figdate.sh}
+date | figlet
+```
+
+
+
+
+
+

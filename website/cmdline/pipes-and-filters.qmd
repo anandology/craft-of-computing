@@ -1,0 +1,263 @@
+---
+title: Pipes and Filters
+---
+
+Every command we have used so far prints its answer on the screen. We have seen
+one other place that answer can go: `>` sends it into a file instead.
+
+This chapter is about a third place it can go - into another command.
+
+In this chapter, we'll learn about:
+
+* `|` - the pipe, which joins two commands together
+
+We'll use `figlet` and `cowsay` from the previous chapter to see what that
+means, because both of them do something you can see at a glance.
+
+## Commands we already know
+
+Here is `echo`, from the first chapter:
+
+```session
+$ echo hello
+hello
+```
+
+And here is `date`:
+
+```session
+$ date
+Mon Aug 17 01:20:29 UTC 2026
+```
+
+And here is `figlet`, which we installed in the previous chapter. Give it a
+word and it prints that word in large letters:
+
+```session
+$ figlet hello
+ _          _ _
+| |__   ___| | | ___
+| '_ \ / _ \ | |/ _ \
+| | | |  __/ | | (_) |
+|_| |_|\___|_|_|\___/
+
+```
+
+Three separate commands, each printing its own answer to the screen.
+
+## Joining two commands
+
+Now type this:
+
+```session
+$ echo hello | figlet
+ _          _ _
+| |__   ___| | | ___
+| '_ \ / _ \ | |/ _ \
+| | | |  __/ | | (_) |
+|_| |_|\___|_|_|\___/
+
+```
+
+The same large `hello`, but we got there a different way. The `|` character is
+called a **pipe**. It says: take the output of the command on the left, and
+give it to the command on the right, instead of printing it on the screen.
+
+So `echo hello` printed nothing where we could see it. Its output went into
+`figlet`, and what we saw was `figlet`'s output.
+
+::: {.callout-tip}
+The `|` character is usually on the same key as `\`, above the Enter key. The
+two share a key, so you have to hold **Shift** to get the `|`. It is a
+vertical bar, not the letter `l` or a capital `I`.
+:::
+
+Read a pipeline from left to right, the way you would read a sentence: run
+`echo hello`, then hand the result to `figlet`.
+
+## Why that is useful
+
+Piping `echo hello` into `figlet` is a roundabout way of doing something we
+could already do by typing `figlet hello`. But the left of the pipe can be any
+command at all, and most commands print something we do not know in advance.
+
+`date` is one of them. We do not know what the time is until we ask, so we
+could not have typed it into `figlet` ourselves. With a pipe we do not need to
+- we hand `date`'s answer straight across:
+
+```session
+$ date | figlet
+ __  __                  _                 _ _____
+|  \/  | ___  _ __      / \  _   _  __ _  / |___  |
+| |\/| |/ _ \| '_ \    / _ \| | | |/ _` | | |  / /
+| |  | | (_) | | | |  / ___ \ |_| | (_| | | | / /
+|_|  |_|\___/|_| |_| /_/   \_\__,_|\__, | |_|/_/
+                                   |___/
+  ___  _   ____   ___    ____ ____    _   _ _____ ____
+ / _ \/ |_|___ \ / _ \ _| ___|___ \  | | | |_   _/ ___|
+| | | | (_) __) | | | (_)___ \ __) | | | | | | || |
+| |_| | |_ / __/| |_| |_ ___) / __/  | |_| | | || |___
+ \___/|_(_)_____|\___/(_)____/_____|  \___/  |_| \____|
+
+ ____   ___ ____   __
+|___ \ / _ \___ \ / /_
+  __) | | | |__) | '_ \
+ / __/| |_| / __/| (_) |
+|_____|\___/_____|\___/
+
+```
+
+The date and time, in letters big enough to read across the room. `figlet` had
+no idea where the text came from, and `date` had no idea where its answer was
+going. Neither command was written with the other in mind.
+
+The text on the left can be as long as you like. `seq 5` prints five lines, so
+`figlet` gets five lines and draws each one:
+
+```session
+$ seq 5 | figlet
+ _
+/ |
+| |
+| |
+|_|
+
+ ____
+|___ \
+  __) |
+ / __/
+|_____|
+
+ _____
+|___ /
+  |_ \
+ ___) |
+|____/
+
+ _  _
+| || |
+| || |_
+|__   _|
+   |_|
+
+ ____
+| ___|
+|___ \
+ ___) |
+|____/
+
+```
+
+The right of the pipe is just as free. `figlet` is not special - anything that
+reads text will do, and `cowsay` reads text too:
+
+```session
+$ date | cowsay
+ ______________________________
+< Mon Aug 17 01:23:22 UTC 2026 >
+ ------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+
+```
+
+We changed the command on the right and got a completely different result,
+without touching the command on the left. That is the arrangement worth
+noticing: each command does one thing, and the pipe decides what is joined to
+what.
+
+## Piping one into the other
+
+Both of our commands produce text, and both of them read text. So we can join
+them to each other:
+
+```session
+$ figlet hello | cowsay
+ ________________________________________
+/  _ _ _ | |__ ___| | | ___ | '_ \ / _ \ \
+| | |/ _ \ | | | | __/ | | (_) | |_|     |
+\ |_|\___|_|_|\___/                      /
+ ----------------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+That is a mess, and it is worth understanding why. `cowsay` expects a sentence,
+so it rearranges the words to fit a tidy speech bubble - it runs lines together
+and breaks them wherever the bubble ends. That is helpful for a sentence, but
+it destroys a picture.
+
+`cowsay -n` turns that rearranging off, leaving the text exactly as it arrived:
+
+```session
+$ figlet hello | cowsay -n
+ ________________________
+/  _          _ _        \
+| | |__   ___| | | ___   |
+| | '_ \ / _ \ | |/ _ \  |
+| | | | |  __/ | | (_) | |
+| |_| |_|\___|_|_|\___/  |
+\                        /
+ ------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+The `hello` is intact inside the bubble. `-n` is an option, like the `-i` we
+gave `cp` and `rm`.
+
+## More than two
+
+A pipeline is not limited to two commands. Each `|` hands its output on to the
+next one, however many there are:
+
+```session
+$ date | figlet | cowsay -n
+ __________________________________________________________
+/  __  __                  _                 _ _____       \
+| |  \/  | ___  _ __      / \  _   _  __ _  / |___  |      |
+| | |\/| |/ _ \| '_ \    / _ \| | | |/ _` | | |  / /       |
+| | |  | | (_) | | | |  / ___ \ |_| | (_| | | | / /        |
+| |_|  |_|\___/|_| |_| /_/   \_\__,_|\__, | |_|/_/         |
+|                                    |___/                 |
+|   ___  _   ____  _____  ____  _  _     _   _ _____ ____  |
+|  / _ \/ |_|___ \|___ /_| ___|| || |   | | | |_   _/ ___| |
+| | | | | (_) __) | |_ (_)___ \| || |_  | | | | | || |     |
+| | |_| | |_ / __/ ___) | ___) |__   _| | |_| | | || |___  |
+|  \___/|_(_)_____|____(_)____/   |_|    \___/  |_| \____| |
+|                                                          |
+|  ____   ___ ____   __                                    |
+| |___ \ / _ \___ \ / /_                                   |
+|   __) | | | |__) | '_ \                                  |
+|  / __/| |_| / __/| (_) |                                 |
+| |_____|\___/_____|\___/                                  |
+\                                                          /
+ ----------------------------------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+Three commands, read left to right: ask the time, draw it in large letters,
+put the drawing in a speech bubble. None of them knows about the other two.
+
+A command that takes text in, changes it, and passes text out is called a
+**filter**. That is the second word in the title of this chapter. `figlet` and
+`cowsay` are both filters, which is why we could join them in either order and
+put a third command in front of them.
+
+A filter does not have to sit in the middle of a pipeline. It is the shape of
+the command that makes it a filter - text in, text out - not where it happens
+to stand. `date` is not a filter: it pays no attention to what is given to it,
+which is why it can only ever be the first command in a pipeline.

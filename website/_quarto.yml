@@ -46,7 +46,11 @@ website:
           - href: cmdline/working-with-files.qmd
           - href: cmdline/wildcards.qmd
           - href: cmdline/installing-software.qmd
+          - href: cmdline/pipes-and-filters.qmd
+          - href: cmdline/more-pipes-and-filters.qmd
+          - href: cmdline/speak.qmd
           - href: cmdline/practice-resize-images.qmd
+          - href: cmdline/shell-scripting.qmd
       - section: "Appendix"
         contents:
           - section: setup/index.qmd
@@ -54,8 +58,10 @@ website:
             contents:
               - href: setup/ubuntu-wsl.qmd
                 text: Installing Ubuntu on Windows using WSL
+              - href: setup/editor.qmd
           - href: notes/group-projects.qmd
             text: Group Project Ideas
+          - href: notes/week4.qmd
 
 format:
   html:

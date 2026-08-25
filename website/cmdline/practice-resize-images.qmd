@@ -93,10 +93,34 @@ $ ls
 cat.jpg
 ```
 
-Lets find the information about the image.
+Let's find the information about the image.
 
 ```session
 $ magick identify cat.jpg
 cat.jpg JPEG 2545x1692 2545x1692+0+0 8-bit sRGB 529075B 0.010u 0:00.005
 ```
+
+Let's resize the image into 100x100 square. The command will reisze it while keeping the aspect ration.
+
+```session
+$ magick resie cat.jpg cat-small.jpg
+```
+
+```session
+$ magick identify cat-small.jpeg
+cat-small.jpg JPEG 67x100 67x100+0+0 8-bit sRGB 2832B 0.000u 0:00.000
+```
+
+Now, we have resized the cat.jpg image. 
+
+## Exercise 
+
+The directory has another file tiger.jpg. 
+
+Do the following taks.
+
+1. identify the size of the image
+2. resize it to 100x100 size and save it as tiger-small.jpg
+3. use `ls` command to verfy the new file is present
+4. Use `identify` command to verify the new size
 

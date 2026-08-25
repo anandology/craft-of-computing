@@ -1,0 +1,33 @@
+---
+title: Week 4 Practice
+---
+
+# Week 4
+
+Download the following files.
+
+```session
+$ wget  https://craft-of-computing.anandology.com/2026/files/week4.zip
+```
+
+And unzip it.
+
+```session
+$ unzip week4.zip
+```
+
+
+You will see practice/week4 directory.
+
+```session
+$ ls practice/week4
+data
+numbers
+```
+
+
+If `unzip` is not found, install it using:
+
+```session
+$ sudo apt install zip unzip
+```
