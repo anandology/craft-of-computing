@@ -65,9 +65,77 @@ watching live in a room, that is the right trade.
 
 ### Writing a quiz
 
-Drop a JSON file in `app/quizzes/`. The filename is the URL: `command-line.json`
-is served at `/quiz/command-line`. Names may use lowercase letters, digits and
-hyphens.
+Write the quiz in markdown and generate the JSON the app reads:
+
+    python app/md2quiz.py app/quizzes/0.md
+
+That writes `app/quizzes/0.json` beside it. The filename is the URL, so
+`0.json` is served at `/quiz/0`; names may use lowercase letters, digits and
+hyphens. Add `--roll 60` to record how many students are on the roll, which
+the dashboard uses for its "of 60" line.
+
+The markdown looks like this — `app/quizzes/0.md` is a working example:
+
+    # Demo Quiz
+
+    This is a demo quiz to practice how the quiz system works.
+
+    Start the quiz by entering your name and email.
+
+    ## Q1
+
+    What is `1 + 1`?
+
+    - 0
+    - 1
+    - [x] 2
+    - 3
+    - I don't know
+
+    ## Q2
+
+    What does the last command print?
+
+    ```
+    $ sort names.txt | uniq | wc -l
+    ```
+
+    - [ ] 1
+    - [x] 2
+    - [ ] 3
+
+The rules are short:
+
+- `#` is the quiz title, and the prose under it is the description shown on
+  the first screen.
+- `##` starts a question. Its text is only a marker — call them `Q1`, `Q2` or
+  anything else, it is thrown away.
+- The **last list in a question is its options**. Everything above them is the
+  question itself, so it can run to several paragraphs and hold code blocks,
+  images, or a list of its own.
+- `- [x]` marks the correct answer, and `- [ ]` is the same as a plain `-`.
+  Mark at most one.
+- **A question with nothing marked is simply not graded.** A warm-up quiz can
+  mark nothing at all, and a question that asks for an opinion sits happily
+  beside ones that have a right answer.
+
+To keep the ids stable, put one in the heading:
+
+    ## Q1 {#uniq-count}
+
+Without it questions are `q1`, `q2`, ... by position, so inserting a question
+later shifts every id after it, and answers already recorded against `q3`
+would then belong to a different question. The id is what the recorded answers
+are keyed by; the number a student sees is unaffected.
+
+Markdown that cannot become a quiz — a question with one option, two answers
+marked, two questions sharing an id — is refused with a message naming the
+question, and nothing is written.
+
+### The generated JSON
+
+The app only ever reads the `.json`. Editing it by hand works too, and the
+`.md` is not needed at runtime:
 
     {
       "title": "Command line quiz",
@@ -83,21 +151,13 @@ hyphens.
       ]
     }
 
-- `question` and every option are **markdown**. A fenced code block inside a
-  question becomes the terminal panel; an option written as `` `like this` ``
-  comes out in the monospace face.
-- `answer` is a **0-based** index into `options`, so the `1` above picks the
-  second option. It never leaves the server: the page sent to the browser has
-  no answer key in it at all.
-- `id` is optional and defaults to `q1`, `q2`, ... Give a real one if you can.
-  Changing a question's id after students have started orphans the answers
-  already recorded against the old id.
-- `roll` is optional, and only feeds the "of 60 on the roll" line on the
-  dashboard.
+`question` and every option are markdown, rendered on the server. `answer` is
+a **0-based** index into `options` and may be left out, in which case the
+question is not graded. The answer never leaves the server: the page sent to
+the browser has no key in it at all.
 
-A quiz file that cannot work — an `answer` outside its options, a question with
-one option, two questions sharing an id — is reported on the page itself,
-naming the question, rather than failing quietly.
+A quiz file that cannot work is reported on the page itself, naming the
+question, rather than failing quietly.
 
 `app/quizzes/command-line.json` is a complete ten-question example.
 
@@ -149,7 +209,8 @@ each time a question is left, the gap between consecutive files is how long
 that student spent on that question.
 
 A **result** is written on Finish: one file per student, graded, since the
-answer key is right there:
+answer key is right there. `out_of` counts only the questions that have a
+correct answer, so it is `0` for a quiz that grades nothing:
 
     {
       "name": "Meera Nair",

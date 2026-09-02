@@ -55,7 +55,8 @@ def load_quiz(quiz_id):
     """Read a quiz file and render its markdown.
 
     Returns the quiz with the answer key alongside it, never inside it, so
-    that handing the quiz to a template cannot leak the key by accident.
+    that handing the quiz to a template cannot leak the key by accident. A
+    question with no correct answer has None in the key.
     """
     path = os.path.join(QUIZ_DIR, quiz_id + ".json")
     if not os.path.exists(path):
@@ -78,11 +79,16 @@ def load_quiz(quiz_id):
         if not isinstance(options, list) or len(options) < 2:
             raise QuizError(f"{where} needs at least two options")
 
+        # A question may have no correct answer -- a warm-up quiz, or one
+        # asking for an opinion. It is then simply left out of the grading.
         answer = q.get("answer")
-        if not isinstance(answer, int) or isinstance(answer, bool):
-            raise QuizError(f"{where} has no answer (a 0-based index into options)")
-        if not 0 <= answer < len(options):
-            raise QuizError(f"{where} has answer {answer}, outside its {len(options)} options")
+        if answer is not None:
+            if not isinstance(answer, int) or isinstance(answer, bool):
+                raise QuizError(f"{where} has an answer that is not a number "
+                                "(it should be a 0-based index into options)")
+            if not 0 <= answer < len(options):
+                raise QuizError(f"{where} has answer {answer}, outside its "
+                                f"{len(options)} options")
 
         qid = q.get("id") or f"q{n}"
         if qid in seen:
@@ -303,18 +309,22 @@ def record(quiz_id):
     write_event(quiz_id, event, now)
 
     if kind == "submit":
-        key = dict(zip((q["id"] for q in quiz["questions"]), quiz["answers"]))
+        key = {q["id"]: a for q, a in zip(quiz["questions"], quiz["answers"])
+               if a is not None}
+        # Graded here, where the key already is, so that reading the results
+        # directory later needs nothing but a JSON parser. Questions with no
+        # correct answer are not counted, so out_of can be less than the
+        # number of questions, and zero for a quiz that grades nothing.
+        correct = {qid: clean[qid] == key[qid] for qid in clean if qid in key}
         write_json(os.path.join(results_dir(quiz_id), slug(email) + ".json"), {
             "quiz": quiz_id,
             "name": name,
             "email": email,
             "submitted_at": isoformat(now),
             "answers": clean,
-            # Graded here, where the key already is, so that reading the
-            # results directory later needs nothing but a JSON parser.
-            "correct": {qid: clean[qid] == key[qid] for qid in clean},
-            "score": sum(1 for qid in clean if clean[qid] == key[qid]),
-            "out_of": len(quiz["questions"]),
+            "correct": correct,
+            "score": sum(correct.values()),
+            "out_of": len(key),
         })
 
     return jsonify(ok=True)
