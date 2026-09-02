@@ -1,0 +1,97 @@
+{
+  "title": "Command line quiz",
+  "roll": 60,
+  "description": "Ten questions on the shell commands we have used so far. There is no time limit and nothing is graded in the browser — we are collecting answers to look at together in class.",
+  "questions": [
+    {
+      "id": "uniq-count",
+      "question": "Given the session below, what does the last command print?\n\n```\n$ cat names.txt\nanand\nsriram\nanand\n$ sort names.txt | uniq | wc -l\n```",
+      "options": ["`1`", "`2`", "`3`", "`uniq: command not found`"],
+      "answer": 1
+    },
+    {
+      "id": "grep",
+      "question": "Which command prints only the lines of `log.txt` that contain the word `error`?",
+      "options": [
+        "`find error log.txt`",
+        "`grep error log.txt`",
+        "`cat error log.txt`",
+        "`less error log.txt`"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "cd-dotdot",
+      "question": "You are in `/home/meera/notes`. What does `cd ..` followed by `pwd` print?",
+      "options": ["`/home/meera`", "`/home/meera/notes`", "`/home`", "`/`"],
+      "answer": 0
+    },
+    {
+      "id": "redirect-overwrite",
+      "question": "What is printed here?\n\n```\n$ echo hello > out.txt\n$ echo world > out.txt\n$ cat out.txt\n```",
+      "options": [
+        "`hello`",
+        "`world`",
+        "both lines, `hello` then `world`",
+        "nothing — the file is empty"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "glob",
+      "question": "What does the last command print?\n\n```\n$ ls\nnotes.txt  photo.jpg  report.pdf\n$ ls *.txt\n```",
+      "options": [
+        "`notes.txt`",
+        "all three names",
+        "`*.txt`",
+        "`ls: *.txt: No such file or directory`"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "append",
+      "question": "What is printed here?\n\n```\n$ echo one > f.txt\n$ echo two >> f.txt\n$ wc -l < f.txt\n```",
+      "options": ["`0`", "`1`", "`2`", "an error, because `>>` needs a file that exists"],
+      "answer": 2
+    },
+    {
+      "id": "head",
+      "question": "What does `head -n 3 report.txt` do?",
+      "options": [
+        "prints the first three lines of the file",
+        "prints the last three lines of the file",
+        "prints only line three",
+        "deletes the first three lines of the file"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "chmod",
+      "question": "You wrote a shell script and `./script.sh` says `Permission denied`. Which command fixes it?",
+      "options": [
+        "`chmod +x script.sh`",
+        "`chmod 644 script.sh`",
+        "`chown script.sh`",
+        "`sudo script.sh`"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "pipeline",
+      "question": "What is the first line printed by this pipeline?\n\n```\n$ cat words.txt\napple\nbanana\napple\ncherry\n$ sort words.txt | uniq -c | sort -rn | head -n 1\n```",
+      "options": ["`2 apple`", "`1 banana`", "`1 cherry`", "`4`"],
+      "answer": 0
+    },
+    {
+      "id": "cd-bare",
+      "question": "What does `cd` with no arguments do?",
+      "options": [
+        "moves to your home directory",
+        "stays where you are and prints the path",
+        "moves to `/`",
+        "reports an error, because `cd` needs a directory"
+      ],
+      "answer": 0
+    }
+  ]
+}

@@ -1,8 +1,10 @@
 """API for the Craft of Computing course.
 
-Currently supports collecting ssh public keys from students. Each key is stored
+The /api endpoints collect ssh public keys from students. Each key is stored
 as a file named after the student's email, so the whole directory can be fed
 straight into an authorized_keys file.
+
+The /quiz pages, in quiz_app.py, run the in-class quizzes.
 """
 
 import base64
@@ -13,6 +15,8 @@ import struct
 from functools import wraps
 
 from flask import Flask, jsonify, request
+
+import quiz_app
 
 # Hardcoded for now. Move to an environment variable before this handles
 # anything more sensitive than ssh public keys.
@@ -27,6 +31,9 @@ KEYS_DIR = os.environ.get(
 EMAIL_RE = re.compile(r"^[a-z0-9][a-z0-9._%+-]*@[a-z0-9-]+(\.[a-z0-9-]+)+$")
 
 app = Flask(__name__)
+
+# The quizzes are pages under /quiz, sharing this process and this deploy.
+quiz_app.init_app(app)
 
 
 def require_token(f):

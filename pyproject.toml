@@ -3,7 +3,10 @@ name = "craft-of-computing"
 version = "0.1.0"
 description = "Tools for the Craft of Computing course"
 requires-python = ">=3.10"
-dependencies = ["flask"]
+dependencies = [
+    "flask",
+    "markdown",  # quiz questions and options are written in markdown
+]
 
 [project.scripts]
 sketch = "craft.sketch:main"

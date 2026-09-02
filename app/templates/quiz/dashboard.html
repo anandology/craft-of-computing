@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress · {{ quiz.title }} — Craft of Computing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+<main>
+
+  <div class="head">
+    <h1>{{ quiz.title }}</h1>
+    <span class="stamp" id="stamp">updating…</span>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <p class="label">Started</p>
+      <p class="value" id="m-started">—</p>
+      <p class="sub" id="m-started-sub"></p>
+    </div>
+    <div class="metric">
+      <p class="label">Finished</p>
+      <p class="value" id="m-done">—</p>
+      <p class="sub" id="m-done-sub"></p>
+    </div>
+    <div class="metric">
+      <p class="label">Idle over 3 min</p>
+      <p class="value" id="m-idle">—</p>
+      <p class="sub">possibly stuck</p>
+    </div>
+  </div>
+
+  <h2>Students past each question</h2>
+  <div class="qbars" id="qbars"></div>
+
+  <div class="listhead">
+    <h2 style="margin:0;">Each student</h2>
+    <span style="font-size:12px; color:var(--ink-faint);">finished first, then most recently active</span>
+  </div>
+  <div class="rows" id="rows"></div>
+  <p class="empty" id="empty" hidden>No one has started yet.</p>
+
+</main>
+
+<script>const PROGRESS_URL = "{{ url_for('quiz.quiz_progress', quiz_id=quiz.id) }}";</script>
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>

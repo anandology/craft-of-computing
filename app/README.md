@@ -1,12 +1,15 @@
-# Craft of Computing API
+# Craft of Computing app
 
-A small Flask app serving the course API at
-`https://craft-of-computing.anandology.com/api`.
+A small Flask app behind `https://craft-of-computing.anandology.com`, doing two
+jobs:
 
-Right now it collects ssh public keys from students. More endpoints will be
-added under `/api` as the course needs them.
+- `/api` collects ssh public keys from students.
+- `/quiz` runs the in-class quizzes and shows their progress live.
 
-## Endpoints
+Both live in one process and one deploy. There is no database anywhere in here;
+everything is files in a directory.
+
+## API endpoints
 
 | Method | Path          | Auth | Description                            |
 |--------|---------------|------|----------------------------------------|
@@ -49,9 +52,160 @@ who regenerates a key can just submit again — `201` means a new key, `200` an
 updated one. The write goes to a temporary file and is renamed into place, so a
 concurrent `cat ssh-keys/*.key` never sees a half-written key.
 
+## Quizzes
+
+A quiz is one URL. `https://craft-of-computing.anandology.com/quiz/command-line`
+shows `app/quizzes/command-line.json`, one question at a time, and
+`/quiz/command-line/dashboard` shows who is where in it while the class is
+running.
+
+There is no login. Students type their name and email on the first screen, and
+nothing stops someone typing a name that is not theirs. For a quiz you are
+watching live in a room, that is the right trade.
+
+### Writing a quiz
+
+Drop a JSON file in `app/quizzes/`. The filename is the URL: `command-line.json`
+is served at `/quiz/command-line`. Names may use lowercase letters, digits and
+hyphens.
+
+    {
+      "title": "Command line quiz",
+      "roll": 60,
+      "description": "Ten questions on the shell commands we have used so far.",
+      "questions": [
+        {
+          "id": "uniq-count",
+          "question": "What does the last command print?\n\n```\n$ sort names.txt | uniq | wc -l\n```",
+          "options": ["`1`", "`2`", "`3`", "`uniq: command not found`"],
+          "answer": 1
+        }
+      ]
+    }
+
+- `question` and every option are **markdown**. A fenced code block inside a
+  question becomes the terminal panel; an option written as `` `like this` ``
+  comes out in the monospace face.
+- `answer` is a **0-based** index into `options`, so the `1` above picks the
+  second option. It never leaves the server: the page sent to the browser has
+  no answer key in it at all.
+- `id` is optional and defaults to `q1`, `q2`, ... Give a real one if you can.
+  Changing a question's id after students have started orphans the answers
+  already recorded against the old id.
+- `roll` is optional, and only feeds the "of 60 on the roll" line on the
+  dashboard.
+
+A quiz file that cannot work — an `answer` outside its options, a question with
+one option, two questions sharing an id — is reported on the page itself,
+naming the question, rather than failing quietly.
+
+`app/quizzes/command-line.json` is a complete ten-question example.
+
+### What the student sees
+
+One question per screen, with the question number in the URL fragment, so
+`#q4` is question four. Reload, Back and Forward all behave, and answers are
+kept in the browser as well as on the server — a student whose laptop sleeps
+mid-quiz comes back to the question they were on.
+
+Next stays disabled until the current question is answered, so nothing can be
+skipped, and typing a larger number into the URL only gets you as far as you
+had actually reached. Answers can be changed by going back, until Finish.
+
+Keyboard: `A`–`D` to choose, `Enter` to continue.
+
+### What gets recorded
+
+Under `quiz-data/` (set `CRAFT_QUIZ_DATA` to move it):
+
+    quiz-data/
+        events/command-line/20260902T101533412876-meera_apu.edu.in-7f3c1a.json
+        results/command-line/meera_apu.edu.in.json
+
+An **event** is written when a student starts, each time they press Next, and
+when they finish. Every event is its own file, named so that a later event
+sorts after an earlier one, which is what makes forty students answering at
+once safe without a lock or a database: no two writes ever touch the same file.
+Each file is written under a temporary name and renamed into place, so a reader
+never catches one half-written.
+
+Every event carries the student's **whole answer set**, not just the newest
+answer. A ping lost to classroom wifi therefore costs nothing — the next one
+says everything the lost one would have. It also means a student's state is
+their newest file, with no merging.
+
+    {
+      "quiz": "command-line",
+      "kind": "next",
+      "name": "Meera Nair",
+      "email": "meera@apu.edu.in",
+      "index": 3,
+      "answers": {"uniq-count": 1, "grep": 1, "cd-dotdot": 0, "redirect-overwrite": 1},
+      "at": "2026-09-02T10:15:33Z"
+    }
+
+The `at` is the server's clock, not the student's. Because an event is written
+each time a question is left, the gap between consecutive files is how long
+that student spent on that question.
+
+A **result** is written on Finish: one file per student, graded, since the
+answer key is right there:
+
+    {
+      "name": "Meera Nair",
+      "email": "meera@apu.edu.in",
+      "submitted_at": "2026-09-02T10:22:07Z",
+      "answers": {"uniq-count": 1, ...},
+      "correct": {"uniq-count": true, ...},
+      "score": 8,
+      "out_of": 10
+    }
+
+Scores, highest first:
+
+    cd quiz-data/results/command-line
+    python3 -c '
+    import glob, json
+    rows = [json.load(open(f)) for f in glob.glob("*.json")]
+    for r in sorted(rows, key=lambda r: -r["score"]):
+        print(r["score"], r["out_of"], r["name"], r["email"], sep="\t")
+    '
+
+Which questions the class found hard:
+
+    python3 -c '
+    import collections, glob, json
+    wrong = collections.Counter()
+    for f in glob.glob("*.json"):
+        for qid, right in json.load(open(f))["correct"].items():
+            if not right: wrong[qid] += 1
+    for qid, n in wrong.most_common(): print(n, qid)
+    '
+
+### The dashboard
+
+`/quiz/<name>/dashboard` polls every two seconds and shows how many have
+started, how many have finished, how many have not moved in three minutes, how
+far the class has got through each question, and a row per student. Finished
+students are at the top, then whoever is active, then whoever has gone quiet —
+so the people to walk over to are at the bottom of the list.
+
+It is not protected. Anyone with the URL can open it, students included. It
+shows names, emails and progress, never answers or scores.
+
+If the server goes away mid-class the page keeps the last picture it had and
+says how stale it is, rather than blanking.
+
+### Configuration
+
+| Variable            | Default          | What it does                        |
+|---------------------|------------------|-------------------------------------|
+| `CRAFT_QUIZ_DIR`    | `app/quizzes`    | Where the quiz JSON files are read  |
+| `CRAFT_QUIZ_DATA`   | `app/quiz-data`  | Where events and results are written |
+
 ## Running locally
 
-    uv run --with flask python app/app.py
+    uv run python app/app.py
 
 That serves on `http://127.0.0.1:8081` and writes to `app/ssh-keys/`. Set
 `CRAFT_KEYS_DIR` to put the keys elsewhere.
@@ -79,9 +233,11 @@ Copy the app to the server and install its dependencies:
     python3 -m venv .venv
     .venv/bin/pip install -r requirements.txt
 
-Keep the keys outside the app directory so a deploy can never overwrite them:
+Keep the keys and the quiz data outside the app directory so a deploy can never
+overwrite them:
 
     sudo mkdir -p /var/lib/craft-of-computing/ssh-keys
+    sudo mkdir -p /var/lib/craft-of-computing/quiz-data
     sudo chown -R www-data:www-data /var/lib/craft-of-computing
 
 ### systemd unit
@@ -97,6 +253,7 @@ Keep the keys outside the app directory so a deploy can never overwrite them:
     Group=www-data
     WorkingDirectory=/opt/craft-of-computing-api
     Environment=CRAFT_KEYS_DIR=/var/lib/craft-of-computing/ssh-keys
+    Environment=CRAFT_QUIZ_DATA=/var/lib/craft-of-computing/quiz-data
     ExecStart=/opt/craft-of-computing-api/.venv/bin/gunicorn \
         --workers 2 --bind 127.0.0.1:8081 app:app
     Restart=on-failure
@@ -114,14 +271,14 @@ Then:
 
 The static site is already served from
 `/var/www/craft-of-computing.anandology.com/2026`. Add an `/api` location to
-that same server block so the API lives on the same domain:
+that same server block so the API and the quizzes live on the same domain:
 
     server {
         server_name craft-of-computing.anandology.com;
 
         root /var/www/craft-of-computing.anandology.com/2026;
 
-        location /api {
+        location ~ ^/(api|quiz) {
             proxy_pass http://127.0.0.1:8081;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
@@ -133,12 +290,18 @@ that same server block so the API lives on the same domain:
     }
 
 There is no trailing slash on `proxy_pass`, so nginx passes the path through
-unchanged and the app sees `/api/keys` as its own route.
+unchanged and the app sees `/api/keys` and `/quiz/command-line` as its own
+routes.
 
 Reload and check:
 
     sudo nginx -t && sudo systemctl reload nginx
     curl https://craft-of-computing.anandology.com/api/health
+    curl -sI https://craft-of-computing.anandology.com/quiz/command-line | head -1
+
+## Collecting the answers
+
+    rsync -av anandology.com:/var/lib/craft-of-computing/quiz-data/ ./quiz-data/
 
 ## Collecting the keys
 

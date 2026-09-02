@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ quiz.title }} — Craft of Computing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='quiz.css') }}">
+</head>
+<body>
+<main>
+
+  <!-- ============ start ============ -->
+  <section class="screen on" id="s-start">
+    <p class="course" style="margin-bottom:1.5rem;">Craft of computing</p>
+    <h1>{{ quiz.title }}</h1>
+    <div class="lede">{{ quiz.description|safe }}</div>
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="field-group">
+        <label class="field" for="f-name">Your name</label>
+        <input type="text" id="f-name" autocomplete="name" placeholder="Your name">
+      </div>
+      <div class="field-group">
+        <label class="field" for="f-email">Your email</label>
+        <input type="email" id="f-email" autocomplete="email" placeholder="name@example.com">
+      </div>
+      <p class="err" id="start-err" hidden></p>
+    </div>
+    <div class="nav">
+      <span></span>
+      <button class="primary" id="btn-start">Start quiz</button>
+    </div>
+    <p class="hint">You can go back and change an answer before you finish. Every question needs an answer before you can move on.</p>
+  </section>
+
+  <!-- ============ question ============ -->
+  <section class="screen" id="s-quiz">
+    <div class="strip">
+      <span class="course">Craft of computing · {{ quiz.title|lower }}</span>
+      <span class="dots" id="progress"></span>
+    </div>
+    <div class="card">
+      <p class="qnum" id="q-num"></p>
+      <div class="qtext" id="q-text"></div>
+      <div class="opts" id="q-opts"></div>
+    </div>
+    <div class="nav">
+      <button class="quiet" id="btn-back">← Back</button>
+      <button class="primary" id="btn-next" disabled>Next</button>
+    </div>
+    <p class="err" id="quiz-err" hidden></p>
+    <p class="hint" id="q-hint"></p>
+  </section>
+
+  <!-- ============ done ============ -->
+  <section class="screen" id="s-done">
+    <h2>Answers received</h2>
+    <p class="lede" id="done-msg"></p>
+    <p class="hint">You can close this tab. We'll go through the answers together in class.</p>
+  </section>
+
+</main>
+
+<script id="quiz-data" type="application/json">{{ quiz|tojson }}</script>
+<script src="{{ url_for('static', filename='quiz.js') }}"></script>
+</body>
+</html>

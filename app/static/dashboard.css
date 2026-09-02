@@ -1,0 +1,104 @@
+:root {
+  --ink: #1A1A1A;
+  --ink-soft: #5A5F66;
+  --ink-faint: #8C9298;
+  --page: #FCFCFB;
+  --card: #FFFFFF;
+  --panel: #F1F4F7;
+  --line: #E2E5E9;
+  --accent: #2C5F8A;
+  --ok: #1D6E4F;
+  --ok-wash: #E9F3EE;
+  --ok-bar: #2E9A6E;
+  --warn: #8A5A12;
+  --warn-wash: #FAF1DF;
+  --warn-bar: #C08A29;
+  --danger: #A32D2D;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+main { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+.head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+.head h1 { font-size: 20px; font-weight: 500; margin: 0; }
+.stamp { font-size: 12px; color: var(--ink-faint); white-space: nowrap; }
+.stamp.stale { color: var(--danger); }
+
+/* ---------- metric cards ---------- */
+.metrics {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px; margin-bottom: 2.5rem;
+}
+.metric { background: var(--panel); border-radius: var(--radius); padding: 1rem; }
+.metric .label { font-size: 13px; color: var(--ink-soft); margin: 0 0 4px; }
+.metric .value { font-size: 26px; font-weight: 500; margin: 0; line-height: 1.2; }
+.metric .sub { font-size: 12px; color: var(--ink-faint); margin: 3px 0 0; }
+.metric.alert .value { color: var(--warn); }
+
+h2 { font-size: 14px; font-weight: 500; margin: 0 0 12px; }
+
+/* ---------- per-question bars ---------- */
+.qbars { display: flex; flex-direction: column; gap: 7px; margin-bottom: 2.5rem; }
+.qrow { display: flex; align-items: center; gap: 10px; }
+.qrow .qid {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px; color: var(--ink-faint); width: 28px; flex: none;
+}
+.track { flex: 1; height: 6px; background: var(--panel); border-radius: 3px; overflow: hidden; }
+.track > span { display: block; height: 6px; background: var(--accent); transition: width .4s ease; }
+.qrow .num {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px; color: var(--ink-soft); width: 66px; text-align: right; flex: none;
+}
+
+/* ---------- student list ---------- */
+.listhead { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.rows { border-top: 1px solid var(--line); }
+.row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 12px; border-bottom: 1px solid var(--line);
+}
+.row .mark { width: 16px; flex: none; font-size: 15px; line-height: 1; text-align: center; }
+.row .who { flex: 1; min-width: 0; }
+.row .name { font-size: 14px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .mail { font-size: 12px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.row .seen { font-size: 12px; color: var(--ink-faint); width: 62px; text-align: right; flex: none; }
+.row .meter { width: 90px; height: 6px; background: var(--panel); border-radius: 3px; overflow: hidden; flex: none; }
+.row .meter > span { display: block; height: 6px; background: var(--accent); transition: width .4s ease; }
+.row .score {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px; color: var(--ink-soft); width: 40px; text-align: right; flex: none;
+}
+
+.row.done { background: var(--ok-wash); }
+.row.done .name, .row.done .mail, .row.done .seen, .row.done .score, .row.done .mark { color: var(--ok); }
+.row.done .meter { background: var(--card); }
+.row.done .meter > span { background: var(--ok-bar); }
+
+.row.idle { background: var(--warn-wash); }
+.row.idle .name, .row.idle .mail, .row.idle .seen, .row.idle .score, .row.idle .mark { color: var(--warn); }
+.row.idle .meter { background: var(--card); }
+.row.idle .meter > span { background: var(--warn-bar); }
+
+.empty { color: var(--ink-faint); font-size: 14px; padding: 1.5rem 0; }
+
+@media (max-width: 560px) {
+  .row .seen { display: none; }
+  .row .meter { width: 60px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
