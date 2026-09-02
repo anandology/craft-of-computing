@@ -5,6 +5,7 @@ description = "Tools for the Craft of Computing course"
 requires-python = ">=3.10"
 dependencies = [
     "flask",
+    "gunicorn",  # what serves the app on the course server
     "markdown",  # quiz questions and options are written in markdown
 ]
 
