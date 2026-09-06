@@ -16,3 +16,4 @@ espeak-ng
 imagemagick
 openssh-client
 jekyll
+pandoc
