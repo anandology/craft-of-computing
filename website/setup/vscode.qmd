@@ -1,0 +1,16 @@
+---
+title: "Installing Visual Studio Code"
+---
+
+## Install Visual Studio Code
+
+Visual Studio Code (vscode) is the recommended editor for this course. Please install it from [Visual Studio Code Downloads][1] page.
+
+[1]: https://code.visualstudio.com/download
+
+## Install WSL extension in vscode
+
+Follow the following instructions to install the extension.
+
+* Open `vscode` and press `Ctrl+P`
+* Type `ext install ms-vscode-remote.remote-wsl` and press `Enter`

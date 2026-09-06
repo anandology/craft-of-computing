@@ -103,7 +103,7 @@ cat.jpg JPEG 2545x1692 2545x1692+0+0 8-bit sRGB 529075B 0.010u 0:00.005
 Let's resize the image into 100x100 square. The command will reisze it while keeping the aspect ration.
 
 ```session
-$ magick resie cat.jpg cat-small.jpg
+$ magick cat.jpg -resize 100x100 cat-small.jpg
 ```
 
 ```session

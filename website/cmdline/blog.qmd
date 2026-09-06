@@ -1,0 +1,412 @@
+---
+title: Setting up a blog
+---
+
+By the end of this chapter you will have a blog of your own, on the internet,
+at an address you can send to somebody.
+
+We are not going to write HTML by hand for every page. Instead we will use
+**Jekyll**, a program that takes a folder of plain text files and turns it into
+a website - one HTML page per post, with a home page listing them all. You
+write in your editor, Jekyll does the rest.
+
+The whole loop is four steps, and this chapter is those four steps in order:
+
+1. **Set up** a blog on your own machine, with `jekyll new`.
+2. **Edit** it - write a post, change the title - with `nano`.
+3. **Preview** it locally, in your browser, before anyone else sees it.
+4. **Build** it into a folder of plain HTML, and **copy** that to the course
+   server with `scp`.
+
+The first three happen entirely on your own computer. Nothing is public until
+step four, so you can experiment freely.
+
+## Installing Jekyll
+
+Jekyll is written in a language called Ruby, and Ubuntu packages it for us. It
+is an `apt install` like the ones in the
+[Installing Software](installing-software.qmd) chapter, with two packages
+named:
+
+```session
+$ sudo apt update
+$ sudo apt install jekyll jekyll-theme-minima
+```
+
+The first is Jekyll itself. The second is a **theme** - the design a Jekyll
+site uses unless you tell it otherwise. Jekyll's new sites expect it, so we
+install both together.
+
+That pulls in a good number of Ruby packages and takes a few minutes. Answer
+`y` when it asks. When it finishes, check:
+
+```session
+$ which jekyll
+/usr/bin/jekyll
+
+$ jekyll --version
+jekyll 4.3.4
+```
+
+Your version may be different from the one printed here. Anything from 3.9
+onwards will do for this chapter.
+
+## Making a blog
+
+`jekyll new` makes a new blog. Go to your home directory and ask for one:
+
+```session
+$ cd
+$ jekyll new website --skip-bundle
+New jekyll site installed in /home/anand/website.
+```
+
+Look at what it made:
+
+```session
+$ cd website
+$ ls
+404.html  Gemfile  _config.yml  _posts  about.markdown  index.markdown
+```
+
+Each one has a job:
+
+* `_config.yml` - the settings for the whole site: its title, your name, your
+  email.
+* `_posts` - the blog posts. One file per post.
+* `index.markdown` - the home page.
+* `about.markdown` - the about page.
+* `Gemfile`, `404.html` - the machinery. Leave them alone.
+
+The two files ending in `.markdown` are written in **Markdown**, a way of
+writing formatted text as plain text. A line starting with `#` is a heading,
+`*` at the start of a line makes a bullet point, and `**word**` makes a word
+bold. That is most of it.
+
+There is already one post in `_posts`:
+
+```session
+$ ls _posts
+2026-08-31-welcome-to-jekyll.markdown
+```
+
+## Previewing it
+
+Before changing anything, let's see what we have. `jekyll serve` builds the
+site and then runs a small web server on your own machine so you can look at
+it:
+
+```session
+$ jekyll serve
+Configuration file: /home/anand/website/_config.yml
+            Source: /home/anand/website
+       Destination: /home/anand/website/_site
+ Auto-regeneration: enabled for '/home/anand/website'
+    Server address: http://127.0.0.1:4000/
+  Server running... press ctrl-c to stop.
+```
+
+Open <http://127.0.0.1:4000/> in your browser. There is your blog, with the one
+post Jekyll wrote for you.
+
+Two things to notice.
+
+The prompt has not come back. `jekyll serve` keeps running until you stop it -
+that is what a server does. To stop it, press **Ctrl-C**. To carry on working
+while it runs, open a second terminal.
+
+And `Auto-regeneration: enabled`. Jekyll is watching the folder. Edit a file
+and save it, and it rebuilds by itself - you only have to reload the browser.
+
+::: {.callout-note}
+`127.0.0.1` is your own computer, always. This preview is not on the internet;
+nobody else can open that address. Publishing is step four.
+:::
+
+## Writing a post
+
+A post is one file in `_posts`, and its name matters. It has to be
+
+```
+YYYY-MM-DD-some-title.markdown
+```
+
+- the date, then a short name, joined by dashes. Jekyll reads the date out of
+the filename.
+
+Let's write one. Use today's date:
+
+```session
+$ nano _posts/2026-08-31-my-first-post.markdown
+```
+
+Type this in:
+
+```{.markdown filename="_posts/2026-08-31-my-first-post.markdown"}
+---
+layout: post
+title: "My First Post"
+date: 2026-08-31 10:00:00 +0530
+---
+
+I have a blog now.
+
+I made it from the command line, with a program called Jekyll. These are
+the commands I used:
+
+* `jekyll new website` to make it
+* `jekyll serve` to look at it
+* `scp` to put it on the internet
+
+More soon.
+```
+
+Save with **Ctrl-O**, Enter, and leave `nano` with **Ctrl-X**.
+
+The part between the two `---` lines is the **front matter**: information about
+the post rather than the post itself. `title` is what appears as the heading
+and in the list on the home page. `layout: post` tells Jekyll to wrap it in the
+usual page design. Every post needs those lines.
+
+Below the second `---` is the post, in Markdown.
+
+If `jekyll serve` is still running, reload the browser - your post is on the
+home page. If you stopped it, start it again.
+
+## Changing the title of the blog
+
+The site still says "Your awesome title". That, and a few other things, live in
+`_config.yml`:
+
+```session
+$ nano _config.yml
+```
+
+Find these lines near the top and change them:
+
+```{.yaml filename="_config.yml"}
+title: Anand's Blog
+email: anand@example.com
+description: >-
+  Notes from the Craft of Computing course, and whatever else
+  I feel like writing about.
+```
+
+::: {.callout-warning}
+`_config.yml` is the one file Jekyll does *not* re-read while it is running.
+After editing it, stop `jekyll serve` with Ctrl-C and start it again.
+:::
+
+While you are here, open `about.markdown` and replace the text with something
+about yourself. It is your blog.
+
+## Building the site
+
+`jekyll serve` was for you. To publish, we need the site as ordinary files that
+any web server can hand out. That is `jekyll build`:
+
+```session
+$ jekyll build
+Configuration file: /home/anand/website/_config.yml
+            Source: /home/anand/website
+       Destination: /home/anand/website/_site
+      Generating...
+                    done in 0.51 seconds.
+```
+
+Everything it made is in a directory called `_site`:
+
+```session
+$ ls _site
+404.html  about  assets  feed.xml  index.html  jekyll  
+```
+
+```session
+$ ls _site/jekyll/2026/08/31/
+my-first-post.html
+```
+
+There it is: your Markdown post, turned into an HTML page. Nothing in `_site`
+is special - it is plain HTML and CSS, the same as any other web page. That is
+the folder we are going to copy to the server.
+
+::: {.callout-note}
+Never edit anything inside `_site`. Jekyll deletes and rewrites it on every
+build. Edit the Markdown files; let Jekyll make the HTML.
+:::
+
+## Telling Jekyll where it will live
+
+One thing to fix before publishing. On the server your blog will not be at the
+top of the site - it will be under your username, at
+
+```
+https://coc.apucomputing.com/~anand/
+```
+
+Jekyll does not know that, so the links it writes in the HTML point at `/about`
+instead of `/~anand/about`, and the page comes out without its styling. Tell it
+by adding a `baseurl` in `_config.yml`:
+
+```{.yaml filename="_config.yml"}
+baseurl: "/~anand"
+url: "https://coc.apucomputing.com"
+```
+
+Use *your* username, not `anand`, and note the leading `/` with no trailing
+one.
+
+Then build again:
+
+```session
+$ jekyll build
+```
+
+::: {.callout-tip}
+With `baseurl` set, the local preview moves too - it is now at
+<http://127.0.0.1:4000/~anand/> rather than the bare address. Jekyll prints the
+right one when it starts; read the `Server address:` line.
+:::
+
+## Copying it to the server
+
+You have an account on the course server, `coc.apucomputing.com`, and a
+directory in it called `public_html`. Whatever is in `public_html` is on the
+web. That is the whole arrangement.
+
+The command to copy files to another machine is `scp` - "secure copy". It is
+`cp`, with one end of the copy on a different computer. A remote place is
+written as
+
+```
+username@machine:path
+```
+
+Let's try it. From inside your `blog` directory:
+
+```session
+$ scp -r _site/* anand@coc.apucomputing.com:public_html/
+index.html                             100% 4148    68.2KB/s   00:00
+about/index.html                       100% 3721    59.4KB/s   00:00
+assets/main.css                        100%   22KB  310.1KB/s   00:00
+feed.xml                               100% 1102    18.9KB/s   00:00
+jekyll/2026/08/31/my-first-post.html   100% 4396    71.3KB/s   00:00
+```
+
+Reading that command from the left:
+
+* `scp` - copy, to or from another machine.
+* `-r` - recursive; copy directories and everything inside them, the same `-r`
+  we used with `cp` and `rm`. `_site` has directories in it, so we need it.
+* `_site/*` - the contents of `_site`. The wildcard matters: `_site/*` copies
+  the files *inside*, while `_site` would copy the folder itself and you would
+  end up with `public_html/_site/index.html`.
+* `anand@coc.apucomputing.com:public_html/` - the destination. Your username,
+  the machine, a colon, and where to put it. `public_html/` is relative to your
+  home directory on the server.
+
+The first time you connect it will ask:
+
+```
+The authenticity of host 'coc.apucomputing.com' can't be established.
+ED25519 key fingerprint is SHA256:4mZ8...
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+```
+
+Type `yes` and Enter. It asks once, ever.
+
+Now open your blog:
+
+```
+https://coc.apucomputing.com/~anand/
+```
+
+That is a page on the internet, made by you, from a terminal.
+
+## Doing it again
+
+The four steps only look long the first time. From now on, publishing a new
+post is this:
+
+```session
+$ cd ~/website
+$ nano _posts/2026-09-07-second-post.markdown
+$ jekyll serve
+```
+
+Read it in the browser, fix what you do not like, stop the server with Ctrl-C,
+and then:
+
+```session
+$ jekyll build
+$ scp -r _site/* anand@coc.apucomputing.com:public_html/
+```
+
+Write, look, build, copy.
+
+::: {.callout-tip}
+Two commands, always in that order, and one is easy to forget. If you `scp`
+without `jekyll build`, you have copied the *previous* build and your new post
+is not there. If the website does not show what the preview showed, that is
+almost always why.
+:::
+
+## Looking around the server
+
+`scp` copies files. To get a shell *on* the server - to look around, or to fix
+something in place - use `ssh`:
+
+```session
+$ ssh anand@coc.apucomputing.com
+anand@coc:~$
+```
+
+The prompt changes, and every command you now type runs on the server, not on
+your machine. Everything from the earlier chapters works there:
+
+```session
+anand@coc:~$ ls public_html
+404.html  about  assets  feed.xml  index.html  jekyll
+
+anand@coc:~$ ls -l public_html/index.html
+-rw-r--r-- 1 anand anand 4148 Aug 31 10:24 public_html/index.html
+```
+
+`exit` brings you back to your own machine.
+
+```session
+anand@coc:~$ exit
+logout
+Connection to coc.apucomputing.com closed.
+$
+```
+
+It is the same skill you have been practising all along, applied to a computer
+in a data centre somewhere rather than the one in front of you. That is most of
+what running a server is.
+
+## Summary
+
+| Command | What it does |
+|---------|--------------|
+| `sudo apt install jekyll jekyll-theme-minima` | installs Jekyll |
+| `jekyll new website --skip-bundle` | makes a new blog in `website/` |
+| `jekyll serve` | builds it and previews it at <http://127.0.0.1:4000/> |
+| Ctrl-C | stops the preview server |
+| `jekyll build` | builds the site into `_site/` |
+| `scp -r _site/* user@host:public_html/` | copies the built site to the server |
+| `ssh user@host` | a shell on the server |
+| `exit` | back to your own machine |
+
+And the files:
+
+| File | What it is |
+|------|------------|
+| `_config.yml` | site settings - title, description, `baseurl` |
+| `_posts/YYYY-MM-DD-name.markdown` | one blog post |
+| `index.markdown`, `about.markdown` | the home page and the about page |
+| `_site/` | what Jekyll builds; never edit it by hand |
+
+The idea to carry forward: your blog is a folder of text files that a program
+turns into a website. The website is not the thing you keep - the text files
+are. You can rebuild the site any time, and copy it anywhere.

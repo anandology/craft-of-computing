@@ -51,6 +51,7 @@ website:
           - href: cmdline/speak.qmd
           - href: cmdline/practice-resize-images.qmd
           - href: cmdline/shell-scripting.qmd
+          - href: cmdline/blog.qmd
       - section: "Writing with Markdown"
         contents:
           - href: markdown/index.qmd
@@ -65,8 +66,11 @@ website:
               - href: setup/ubuntu-wsl.qmd
                 text: Installing Ubuntu on Windows using WSL
               - href: setup/editor.qmd
+              - href: setup/vscode.qmd
+              - href: setup/craft-magic.qmd
           - href: notes/group-projects.qmd
             text: Group Project Ideas
+          - href: notes/week4.qmd
           - href: notes/week4.qmd
 
 format:
