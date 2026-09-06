@@ -1,0 +1,45 @@
+---
+title: "Writing with Markdown"
+---
+
+Most of what you produce in this course is text: notes, reports, READMEs,
+answers to exercises, documentation for the programs you write. Markdown is the
+simplest way to write that text well.
+
+Markdown is a plain-text format. You write in a way that already looks readable
+in the source, and a tool converts it into HTML, PDF, slides or a book. Because
+it is plain text, it works with every editor, diffs cleanly, and survives in
+version control.
+
+Here is the whole idea in one example:
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+```markdown
+The **craft** of computing is learned by
+*making things*, not by reading about them.
+```
+:::
+::: {.g-col-12 .g-col-md-6}
+The **craft** of computing is learned by
+*making things*, not by reading about them.
+:::
+:::
+
+The left column is what you type. The right column is what the reader sees.
+
+## Where you will meet it
+
+Markdown is not one tool's private format. You will run into it in:
+
+- README files on GitHub and GitLab
+- Jupyter notebooks, in every text cell
+- Quarto documents like this website
+- Issue trackers, wikis, chat applications and forums
+
+The dialects differ a little at the edges, but everything in this section works
+almost everywhere.
+
+## Next
+
+- [Markdown Tutorial](tutorial.qmd) --- the features you need, with examples.

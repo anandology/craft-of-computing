@@ -100,3 +100,76 @@ pre.session .cmd-cont {
 pre.session .out {
   color: #5c6369;
 }
+
+/* Markdown tutorial: source on the left, rendered output on the right.
+
+   Both cells hold the same text, so their first lines have to start at the same
+   height. Quarto's code block arrives with its own margin, padding, background
+   and border, all of which would push the left column down relative to the
+   right. Those are stripped here and the cell supplies them instead -- the grey
+   fill moves from the code block to the cell itself, so it reads as one table
+   cell rather than a box within a box. */
+
+.md-demo {
+  gap: 0;
+  margin: 1.25rem 0;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.md-demo > div {
+  padding: 20px;
+  min-width: 0; /* let long lines scroll rather than stretch the column */
+}
+
+/* The source cell. Grid stretches both cells to the taller of the two, so the
+   fill and the divider run the full height of the row. */
+.md-demo > div:first-child {
+  background-color: #f8f9fa;
+  border-right: 1px solid #dee2e6;
+}
+
+.md-demo div.sourceCode,
+.md-demo pre {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+/* A long source line wraps into the cell rather than scrolling sideways: the
+   two cells are narrow, and a scrollbar hides the very text the example is
+   there to show. Quarto's code-overflow option only tags executable cells, so
+   the rule is applied here. */
+.md-demo pre,
+.md-demo pre > code,
+.md-demo pre > code.sourceCode {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+/* The cell's padding is the whole of the spacing; content must not add to it. */
+.md-demo > div > :first-child {
+  margin-top: 0;
+}
+
+.md-demo > div > :last-child {
+  margin-bottom: 0;
+}
+
+/* Below the md breakpoint the cells stack, so the divider turns horizontal. */
+@media (max-width: 767.98px) {
+  .md-demo > div:first-child {
+    border-right: none;
+    border-bottom: 1px solid #dee2e6;
+  }
+}
+
+/* The theme underlines every h2 to separate the page's sections. Inside a demo
+   the heading is the example, not a section, so the rule reads as part of the
+   output and is dropped. */
+.md-demo h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+}

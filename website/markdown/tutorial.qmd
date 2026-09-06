@@ -1,0 +1,389 @@
+---
+title: "Markdown Tutorial"
+format:
+  html:
+    page-layout: full
+    toc: false
+---
+
+Every example below is shown twice. The left column is what you type. The right
+column is what the reader sees.
+
+## Headings
+
+A heading is a line that starts with one to six `#` characters, followed by a
+space. One `#` is the title of the document, `##` is a section, `###` a
+subsection, and so on. Leave a blank line before and after a heading.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+# Title
+
+## Section 1
+
+### Subsection
+
+## Section 2
+
+### Subsection
+
+
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+<h1>Title</h1>
+<h2>Section 1</h2>
+<h3>Subsection</h3>
+<h2>Section 2</h2>
+<h3>Subsection</h3>
+:::
+:::
+
+Don't skip levels: a `###` belongs under a `##`, not directly under a `#`. Most
+documents need only two or three levels.
+
+## Paragraphs
+
+A paragraph is one or more lines of text. Paragraphs are separated by a blank
+line --- that blank line is the only thing that matters. A single line break
+inside a paragraph is ignored, so you are free to wrap your source text at
+whatever width you find comfortable.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+Programs must be written for people to
+read, and only incidentally for
+machines to execute.
+
+That sentence is from the preface of
+SICP.
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+Programs must be written for people to
+read, and only incidentally for
+machines to execute.
+
+That sentence is from the preface of
+SICP.
+:::
+:::
+
+If you really need a line break within a paragraph, end the line with a
+backslash.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+Roses are red \
+Violets are blue
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+Roses are red \
+Violets are blue
+:::
+:::
+
+## Formatting
+
+Wrap text in one asterisk for *emphasis*, two for **strong emphasis**, and
+backticks for `code` --- names of commands, files, variables and anything else
+that should be read literally.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+This is *italic*, this is **bold**, and
+this is ***both***.
+
+Run `ls -l` to list files in the
+current directory.
+
+You can also ~~strike out~~ text.
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+This is *italic*, this is **bold**, and
+this is ***both***.
+
+Run `ls -l` to list files in the
+current directory.
+
+You can also ~~strike out~~ text.
+:::
+:::
+
+Use `>` at the start of a line to quote someone.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+> Simplicity is prerequisite for
+> reliability.
+>
+> --- Edsger Dijkstra
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+> Simplicity is prerequisite for
+> reliability.
+>
+> --- Edsger Dijkstra
+:::
+:::
+
+## Lists
+
+An unordered list is a set of lines starting with `-`. An ordered list starts
+with `1.`, `2.` and so on. Indent by four spaces to nest one list inside
+another.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+- the shell
+- a text editor
+- version control
+    - git
+    - a place to push it
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+- the shell
+- a text editor
+- version control
+    - git
+    - a place to push it
+:::
+:::
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+1. Read the problem
+2. Write the smallest thing that runs
+3. Make it correct
+4. Make it clear
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+1. Read the problem
+2. Write the smallest thing that runs
+3. Make it correct
+4. Make it clear
+:::
+:::
+
+The numbers you type are not the numbers you get --- the output is numbered in
+sequence regardless. Writing `1.` on every line is a common habit, because then
+inserting an item in the middle costs nothing.
+
+## Links
+
+A link is the text in square brackets followed by the address in parentheses.
+A bare URL in angle brackets becomes a link to itself.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+[DuckDuckGo](https://duckduckgo.com/) is my favorite seach engine.
+
+I use it insead of [Google](https://google.com/).
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+[DuckDuckGo](https://duckduckgo.com/) is my favorite seach engine.
+
+I use it insead of [Google](https://google.com/).
+:::
+:::
+
+The links to be used to link other relative resources.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+[Download the slides](slides.pdf).
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+[Download the slides](slides.pdf).
+:::
+:::
+
+We could use the links to create a simple navigation.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+# My Blog
+[About](about.html) | [Contact](contact.html)
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+<h1>My Blog</h1>
+
+[About](about.html) | [Contact](contact.html)
+:::
+:::
+
+
+
+## Images
+
+An image is a link with a `!` in front of it. The text in the square brackets is
+the alt text --- a description read aloud by screen readers and shown when the
+image fails to load. Write it as a sentence describing what the image shows.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+A Sample local image:
+
+![](images/sample.svg)
+
+An xkcd cartoon from the web:
+
+![](https://imgs.xkcd.com/comics/final_exam.png)
+
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+A Sample local image:
+
+![](images/sample.svg)
+
+An xkcd cartoon from the web:
+
+![](https://imgs.xkcd.com/comics/final_exam.png)
+:::
+:::
+
+## Code Blocks
+
+Wrap code in a line of three backticks above and below it.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+`````
+```
+$ seq 5
+1
+2
+3
+4
+5
+```
+`````
+:::
+::: {.g-col-12 .g-col-md-6}
+```
+$ seq 5
+1
+2
+3
+4
+5
+```
+:::
+:::
+
+The code blocks preserve the whitespace and use a fixed width font to render it.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+`````
+```
+                __ _            __
+  ___ _ __ __ _ / _| |_    ___  / _|
+ / __| '__/ _` | |_| __|  / _ \| |_
+| (__| | | (_| |  _| |_  | (_) |  _|
+ \___|_|  \__,_|_|  \__|  \___/|_|
+
+                                 _   _
+  ___ ___  _ __ ___  _ __  _   _| |_(_)_ __   __ _
+ / __/ _ \| '_ ` _ \| '_ \| | | | __| | '_ \ / _` |
+| (_| (_) | | | | | | |_) | |_| | |_| | | | | (_| |
+ \___\___/|_| |_| |_| .__/ \__,_|\__|_|_| |_|\__, |
+                    |_|                      |___/
+
+```
+`````
+:::
+::: {.g-col-12 .g-col-md-6}
+```
+               __ _            __
+  ___ _ __ __ _ / _| |_    ___  / _|
+ / __| '__/ _` | |_| __|  / _ \| |_
+| (__| | | (_| |  _| |_  | (_) |  _|
+ \___|_|  \__,_|_|  \__|  \___/|_|
+
+                                 _   _
+  ___ ___  _ __ ___  _ __  _   _| |_(_)_ __   __ _
+ / __/ _ \| '_ ` _ \| '_ \| | | | __| | '_ \ / _` |
+| (_| (_) | | | | | | |_) | |_| | |_| | | | | (_| |
+ \___\___/|_| |_| |_| .__/ \__,_|\__|_|_| |_|\__, |
+                    |_|                      |___/
+
+```
+:::
+:::
+
+Some markdown tools support syntax highlighting if we specify the language.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+`````
+```python
+def square(x):
+    return x*x
+```
+`````
+:::
+::: {.g-col-12 .g-col-md-6}
+```python
+def square(x):
+    return x*x
+```
+:::
+:::
+
+## Math Expressions
+
+Mathematics is written in LaTeX notation. Put it between single dollar signs to
+keep it in the flow of a sentence, or between double dollar signs to set it on
+its own line.
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+The area of a circle is $\pi r^2$.
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+The area of a circle is $\pi r^2$.
+:::
+:::
+
+::: {.grid .md-demo}
+::: {.g-col-12 .g-col-md-6}
+````markdown
+The pythagoras theorem:
+
+$$
+a^2 + b^2 = c^2
+$$
+````
+:::
+::: {.g-col-12 .g-col-md-6}
+The pythagoras theorem:
+
+$$
+a^2 + b^2 = c^2
+$$
+:::
+:::
+

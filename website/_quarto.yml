@@ -51,6 +51,12 @@ website:
           - href: cmdline/speak.qmd
           - href: cmdline/practice-resize-images.qmd
           - href: cmdline/shell-scripting.qmd
+      - section: "Writing with Markdown"
+        contents:
+          - href: markdown/index.qmd
+            text: Writing with Markdown
+          - href: markdown/tutorial.qmd
+            text: Markdown Tutorial
       - section: "Appendix"
         contents:
           - section: setup/index.qmd
