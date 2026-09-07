@@ -12,7 +12,7 @@ SCRATCH  := /tmp/craft-test
 
 # Files that make up a release. install.sh is not among them: it is
 # published on its own, and students fetch it before they have anything.
-SOURCES  := version.txt packages.txt profile.sh post-update.sh bin content
+SOURCES  := version.txt packages.txt mac-packages.txt profile.sh post-update.sh bin content
 
 .PHONY: build release test clean
 

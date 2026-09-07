@@ -1,7 +1,7 @@
 # Packages the course expects on every student's machine.
 #
-# "craft.sh update" installs these on Linux, using apt. On a mac they are
-# still installed by hand.
+# "craft.sh update" installs these on Linux, using apt. The mac has its
+# own list in mac-packages.txt, because brew names things differently.
 #
 # Lines starting with # are ignored. Only add what the course actually
 # uses -- anything here has to be installed on every student's machine.

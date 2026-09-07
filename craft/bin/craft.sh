@@ -160,14 +160,13 @@ run_post_update() {
 # --------------------------------------------------------------- packages
 
 # The course expects a handful of command line tools to be present. The
-# list lives in packages.txt, inside the release, so it can grow from one
-# week to the next without changing this script.
+# lists live in the release, so they can grow from one week to the next
+# without changing this script: packages.txt for Linux, mac-packages.txt
+# for a mac, because the two systems name the same tools differently.
 #
-# How you install them depends on the machine, so there is one function
-# per system and this picks the right one.
+# How you install them also depends on the machine, so there is one
+# function per system and this picks the right one.
 install_packages() {
-    [ -f "$CRAFT/packages.txt" ] || return 0
-
     case "$(uname -s)" in
         Linux)  install_packages_linux ;;
         Darwin) install_packages_mac ;;
@@ -175,15 +174,19 @@ install_packages() {
     esac
 }
 
-# The names in packages.txt, one per line, with comments and blank lines
-# dropped.
+# The names in one of those files, one per line, with comments and blank
+# lines dropped. A file that is not in this release gives nothing back.
 package_list() {
-    sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$CRAFT/packages.txt"
+    local file="$1"
+
+    [ -f "$file" ] || return 0
+
+    sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$file"
 }
 
 install_packages_linux() {
     local packages
-    packages=$(package_list)
+    packages=$(package_list "$CRAFT/packages.txt")
 
     [ -n "$packages" ] || return 0
 
@@ -197,9 +200,27 @@ install_packages_linux() {
         || say "Warning: some packages could not be installed."
 }
 
-# Nothing here yet -- setting up a mac is still done by hand.
+# On a mac the tools come from Homebrew, which installs into a place you
+# own, so there is no password to type here.
 install_packages_mac() {
-    :
+    local packages
+
+    packages=$(package_list "$CRAFT/mac-packages.txt")
+
+    [ -n "$packages" ] || return 0
+
+    if ! command -v brew >/dev/null 2>&1; then
+        say ""
+        say "Skipping packages -- Homebrew is not installed."
+        say "Install it from https://brew.sh and run 'craft.sh update' again."
+        return 0
+    fi
+
+    say ""
+    say "Installing packages: $(echo $packages)"
+
+    HOMEBREW_NO_ASK=1 brew install $packages \
+        || say "Warning: some packages could not be installed."
 }
 
 # --------------------------------------------------------------- setup-ssh
