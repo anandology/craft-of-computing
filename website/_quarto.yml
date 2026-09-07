@@ -58,6 +58,10 @@ website:
             text: Writing with Markdown
           - href: markdown/tutorial.qmd
             text: Markdown Tutorial
+          - href: markdown/vscode.qmd
+            text: Markdown in vscode
+          - href: markdown/tools.qmd
+            text: Markdown Tools
       - section: "Appendix"
         contents:
           - section: setup/index.qmd

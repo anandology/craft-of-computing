@@ -1,0 +1,38 @@
+---
+title: Markdown Tools
+format:
+  html:
+    toc: false
+---
+
+There are many tools that we can use to convert markdown to html, pdf and other formats. 
+
+[Pandoc][] is one of the popular tools. In this chapter, we'll learn how to use pandoc to convert markdown into html and pdf. 
+
+[Pandoc]: https://pandoc.org/
+
+## Pandoc
+
+## HTML
+
+To convert a markdown file into html, use:
+
+```session
+$ pandoc -s file.md --to html -o file.html
+```
+
+The option `-s` makes Pandoc generate a standalone html file.
+
+It is also possible to generate multiple markdown files into a single html file.
+
+```session
+$ pandoc -s header.md home.md --to html -o home.html
+```
+
+### pdf
+
+To convert markdown file to pdf, use:
+
+```session
+$ pandoc file.md --to pdf -o file.pdf
+```

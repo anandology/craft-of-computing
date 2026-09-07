@@ -1,0 +1,16 @@
+---
+title: Markdown in vscode
+format:
+  html:
+    toc: false
+---
+
+Visual Studio Code has built-in support for live preview of markdown.
+
+Open the markdown file and select the preview button.
+
+![](images/vscode-markdown-1.png)
+
+And the live preview will be ready.
+
+![](images/vscode-markdown-2.png)
