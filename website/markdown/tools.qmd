@@ -13,7 +13,7 @@ There are many tools that we can use to convert markdown to html, pdf and other 
 
 ## Pandoc
 
-## HTML
+### HTML
 
 To convert a markdown file into html, use:
 
@@ -34,5 +34,5 @@ $ pandoc -s header.md home.md --to html -o home.html
 To convert markdown file to pdf, use:
 
 ```session
-$ pandoc file.md --to pdf -o file.pdf
+$ pandoc -M mainfont="DejaVu Sans" --to pdf --pdf-engine typst file.md -o file.pdf
 ```
