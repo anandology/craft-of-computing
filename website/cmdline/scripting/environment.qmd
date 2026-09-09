@@ -1,0 +1,143 @@
+---
+title: The Environment
+---
+
+A script can print `$HOME` and get the right answer, although nothing in the
+script ever set it. Values like that reach a program through the
+**environment**: a list of names and values that the shell hands to everything
+it starts.
+
+Your own variables are not on that list, and this chapter is about the
+difference.
+
+In this chapter, we'll learn how to:
+
+* see what a script inherits and what it does not
+* put a variable in the environment with `export`
+* set a value for one command only
+
+And the one idea to hold on to from the start: **a variable belongs to the
+shell you set it in; only the environment travels.**
+
+## What a script inherits
+
+Here is a script that prints three variables, one of which is our own:
+
+```{.bash filename="show.sh"}
+echo "HOME is $HOME"
+echo "USER is $USER"
+echo "name is $name"
+```
+
+```session
+$ bash show.sh
+HOME is /home/anand
+USER is anand
+name is
+```
+
+Two of the three worked. The third, `name`, is empty - and it is empty even if
+you set it a moment before:
+
+```session
+$ name=alice
+```
+
+```session
+$ bash show.sh
+HOME is /home/anand
+USER is anand
+name is
+```
+
+The variable is certainly set. Ask the shell you are typing in and it will tell
+you so:
+
+```session
+$ echo $name
+alice
+```
+
+So `HOME` reached the script and `name` did not.
+
+`HOME` and `USER` are in the environment, which is how the script saw them.
+Every program gets that list - `date`, `figlet`, your script, and the shell
+itself when you logged in. They are not shell settings; they are how the system
+tells every program on the machine who you are and where your files live.
+
+Your own variables are not in the list. A variable you set belongs to the shell
+you set it in, and to nothing else. `bash show.sh` starts a second shell to run
+the script, and that shell was handed the environment, not your variables.
+
+::: {.callout-note}
+The command `env` prints the whole environment. It is a long list on most
+machines, and most of it is not addressed to you - it is settings that programs
+put there for other programs.
+:::
+
+## export
+
+To put a variable in the environment, mark it with `export`:
+
+```session
+$ export name
+```
+
+```session
+$ bash show.sh
+HOME is /home/anand
+USER is anand
+name is alice
+```
+
+Nothing about `name` changed. It held `alice` before and it holds `alice` now.
+What changed is that it now travels: every program this shell starts from here
+on will be handed it.
+
+Marking and setting can be done in one line, which is how you will usually see
+it written:
+
+```session
+$ export name=alice
+```
+
+`export` is one-way and it is not permanent. It affects the shell you type it
+in and the programs that shell starts. Close the terminal and it is gone, along
+with the shell that held it.
+
+## For one command only
+
+Sometimes a program needs a value once and you do not want to change your shell
+at all. Write the assignment in front of the command:
+
+```session
+$ name=bob bash show.sh
+HOME is /home/anand
+USER is anand
+name is bob
+```
+
+The script saw `bob`. And your own `name` is untouched:
+
+```session
+$ echo $name
+alice
+```
+
+This is how you try a program with a different setting without living with the
+consequences of it.
+
+## Summary
+
+| What you write | What it means |
+|----------------|---------------|
+| the environment | a list of names and values handed to every program the shell starts |
+| `x=5` | sets `x` in this shell only; programs it starts will not see it |
+| `export x` | puts `x` in the environment, so programs started from here get it |
+| `export x=5` | sets it and exports it in one line |
+| `x=5 somecmd` | runs `somecmd` with `x` set to `5`, and leaves this shell alone |
+| `env` | prints the whole environment |
+
+And the one idea to carry forward: a variable belongs to the shell it was set
+in. Only what has been exported into the environment reaches the programs that
+shell starts.

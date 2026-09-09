@@ -1,0 +1,140 @@
+---
+title: Reading Input
+---
+
+Arguments are fixed before a script starts. You type them, you press Enter, and
+from then on the script is on its own.
+
+Sometimes that is not enough. A script may need to ask a question while it is
+running, or work through more text than anyone would want to type on one line.
+Both of those come in the same way: through **standard input**, the channel a
+pipe feeds.
+
+In this chapter, we'll learn how to:
+
+* ask a question and read the answer
+* feed the same script from a pipe instead
+* read every line of input with a `while` loop
+* write a filter of your own
+
+And the one idea to hold on to from the start: **a script cannot tell whether
+its input was typed at the keyboard or piped in.**
+
+## Asking a question
+
+The `read` command takes one line of input and puts it in a variable:
+
+```{.bash filename="ask.sh"}
+echo "What is your name?"
+read name
+echo "Hello, $name!"
+```
+
+Run it, and the script stops after the question and waits:
+
+```session
+$ bash ask.sh
+What is your name?
+alice
+Hello, alice!
+```
+
+The middle line there is not output. It is what you typed, showing on the
+screen as you typed it, and the script carried on when you pressed Enter.
+
+Notice that `read name` has no `$` in front of the name. That is right: `$name`
+would mean the value, and `read` is being told which variable to put a value
+*into*. It is the same distinction as `name=alice`, which also has no `$`.
+
+## The same script, fed by a pipe
+
+Now try the script without typing anything at all:
+
+```session
+$ echo bob | bash ask.sh
+What is your name?
+Hello, bob!
+```
+
+Nobody was asked. `echo bob` produced a line, the pipe carried it to the
+script, and `read` took it - just as it took the line from the keyboard a
+moment ago.
+
+`read` does not know or care where the line came from. It reads standard input,
+and standard input is the keyboard only because nothing else has been put
+there. Put a pipe there instead and the same script works unchanged.
+
+The question is still printed, which looks odd but is honest: `echo` writes to
+the screen and has nothing to do with standard input. Scripts meant to be used
+both ways often keep the question anyway, since it costs nothing.
+
+## Reading everything
+
+One `read` takes one line. To handle a whole stream you need to keep reading
+until there is nothing left, and for that the shell has `while`.
+
+Here is a script that turns whatever it is given into a Markdown list, by
+putting a `*` in front of every line:
+
+```{.bash filename="make-list.sh"}
+while read line
+do
+    echo "* $line"
+done
+```
+
+```session
+$ seq 3 | bash make-list.sh
+* 1
+* 2
+* 3
+```
+
+`while` is `if`'s repeating cousin. It runs a command, and if that command
+succeeded it does the lines between `do` and `done` and then tries again, over
+and over, until the command fails.
+
+The command here is `read line`. It succeeds every time it gets a line, and
+fails when the input runs out - which is exactly when the loop should stop.
+Three lines came in from `seq`, so the loop ran three times.
+
+The quotes around `"* $line"` matter more than usual here. Without them the
+shell would see a bare `*` and fill in the names of the files in the current
+directory, and `echo` would print those instead of a bullet.
+
+## A filter of your own
+
+Look again at what we just built. `make-list.sh` reads lines from standard
+input, writes to standard output, and does not care who is on either end of it.
+That is the whole description of a filter, so it takes its place in a pipeline
+like any other command - and what comes out can be sent to a file:
+
+```session
+$ seq 5 | bash make-list.sh > list.md
+```
+
+```session
+$ cat list.md
+* 1
+* 2
+* 3
+* 4
+* 5
+```
+
+There is nothing special about the commands that came with the machine. They
+read standard input and write standard output, and now so does yours.
+
+## Summary
+
+| What you write | What it means |
+|----------------|---------------|
+| `read x` | takes one line of standard input and puts it in the variable `x` |
+| `while` ... `do` ... `done` | repeat the lines as long as the command succeeds |
+| `while read x` | repeat once for each line of input, stopping at the end |
+| `echo hi \| bash s.sh` | the script's standard input is the pipe, not the keyboard |
+
+And the one idea to carry forward: `read` takes a line from standard input, and
+a script cannot tell whether that line was typed at the keyboard or arrived
+through a pipe. That is what lets a script of your own stand in a pipeline
+beside any other command.

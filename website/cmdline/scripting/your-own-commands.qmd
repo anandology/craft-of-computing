@@ -1,0 +1,323 @@
+---
+title: Making Your Own Commands
+---
+
+Our scripts work, but they do not feel like the commands that came with the
+machine. To draw big letters you type `figlet hello`. To print a table you type
+`bash table.sh 3`.
+
+Two things are different. You have to say `bash` in front of it. And you have
+to be standing in the directory the file is in. Neither is essential, and by
+the end of this chapter `table.sh` will be a command like any other.
+
+The `.sh` stays. That one is a convention worth keeping, and it costs nothing:
+a listing then tells you at a glance which of your commands are shell scripts.
+
+Nothing about the scripts themselves changes here. This is about where a
+command lives and how the system runs it.
+
+In this chapter, we'll learn how to:
+
+* tell the system which program should read a script
+* mark a script as one that can be run
+* run a script by its path, and see why `./` is needed
+* find out where the shell looks for commands
+* keep commands of your own in a directory of your own
+
+And the one idea to hold on to from the start: **a command is just a file the
+system is allowed to run and the shell knows where to find.**
+
+## Saying which program should read the file
+
+`figlet` needs no `bash` in front of it because the system knows how to run it.
+A script has to say so, and it says so on its very first line:
+
+```{.bash filename="table.sh"}
+#!/bin/bash
+#
+# Prints the multiplication table of a number.
+#
+# USAGE: table.sh 5
+#
+```
+
+The rest of the file is unchanged. That first line means "read the rest of this
+file with `/bin/bash`", and `/bin/bash` is where the shell itself lives on the
+machine.
+
+To the shell it is only a comment, because it starts with a `#`. It is the
+system that looks at it, before bash is involved at all, when it is deciding
+what to do with the file. The two characters `#!` are called a **shebang**, and
+the line has to be the first one in the file - not the second, and with nothing
+in front of the `#`.
+
+## Permission to run
+
+Now try running the file directly:
+
+```session
+$ ./table.sh 3
+bash: ./table.sh: Permission denied
+```
+
+The file is readable - `cat` has been showing it to us all along - but it is
+not marked as something that may be *run*. Every file carries a set of marks
+saying who may do what with it, and `ls -l` prints them:
+
+```session
+$ ls -l table.sh
+-rw-rw-r-- 1 anand anand 247 Sep  9 10:12 table.sh
+```
+
+The marks are the letters at the very start: `rw-rw-r--`. They come in three
+groups of three - what you may do with the file, what your group may do, and
+what everyone else may do. In each group, `r` means it may be read, `w` means
+it may be written to, and `x` means it may be run. A `-` means no.
+
+There is no `x` anywhere in that line. Nobody may run this file, including you.
+Files do not get that mark by accident, which is a good thing: something that
+arrives on your machine cannot be run until you say so.
+
+`chmod` sets it. The name is short for "change mode", and `+x` adds the `x`:
+
+```session
+$ chmod +x table.sh
+```
+
+```session
+$ ls -l table.sh
+-rwxrwxr-x 1 anand anand 247 Sep  9 10:12 table.sh
+```
+
+Three `x`s where there were none. Nothing else about the file changed - same
+size, same contents - and now it may be run:
+
+```session
+$ ./table.sh 3
+3 x 1 = 3
+3 x 2 = 6
+3 x 3 = 9
+3 x 4 = 12
+3 x 5 = 15
+3 x 6 = 18
+3 x 7 = 21
+3 x 8 = 24
+3 x 9 = 27
+3 x 10 = 30
+```
+
+No `bash` in front of it. The first difference is gone.
+
+## Why the ./
+
+You may have wondered about that `./` we had to type. Leave it out and the
+shell cannot find the file at all, even though it is right there:
+
+```session
+$ table.sh 3
+bash: table.sh: command not found
+```
+
+The `./` is doing real work. `.` is the name for the directory you are standing
+in, so `./table.sh` reads as "the file `table.sh`, here in this directory". It
+is a path, and that is the whole point:
+
+- a name with a slash in it is a **path**, and the shell goes straight to it
+- a name with no slash in it is a **command name**, and the shell goes looking
+  for it
+
+`table.sh` on its own has no slash, so the shell went looking - and it does not
+look in the directory you are standing in. It looks through a list of
+directories, kept in a variable:
+
+```session
+$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+```
+
+Directories, separated by colons, searched from left to right. `figlet` is
+found because `/usr/bin` is on that list, and `which` will tell you where a
+command was found:
+
+```session
+$ which figlet
+/usr/bin/figlet
+```
+
+The directory you are standing in is deliberately not on that list. If it were,
+then walking into a directory somebody else had prepared and typing `ls` might
+run their file rather than the real one. So the shell makes you say plainly
+that you mean the file here, and `./` is how you say it.
+
+Being a path, it is not tied to the current directory at all. Go home:
+
+```session
+$ cd
+```
+
+```session
+$ pwd
+/home/anand
+```
+
+The script is in `scripts`, one level down, and naming that path runs it just
+as well:
+
+```session
+$ ./scripts/table.sh 3
+3 x 1 = 3
+3 x 2 = 6
+3 x 3 = 9
+3 x 4 = 12
+3 x 5 = 15
+3 x 6 = 18
+3 x 7 = 21
+3 x 8 = 24
+3 x 9 = 27
+3 x 10 = 30
+```
+
+Read it as "from here, go into `scripts`, and take `table.sh`". The leading
+`./` is not even required here - `scripts/table.sh` has a slash in it too, and
+means the same thing. People write `./` in front of a file in the current
+directory because otherwise there would be no slash at all, and the shell would
+go searching instead of looking.
+
+## A directory of your own
+
+A path works from anywhere, but you have to know and type the path. A command
+does not ask that of you, and the reason is that it sits in a directory on the
+list. So let's put our script on the list.
+
+Do not use `/usr/bin`; that belongs to the system and its package manager. Make
+a directory of your own:
+
+```session
+$ mkdir ~/bin
+```
+
+Then move the script into it:
+
+```session
+$ mv ~/scripts/table.sh ~/bin/
+```
+
+The name does not change. `table.sh` it was and `table.sh` it stays - the
+ending is a note to yourself about what kind of file it is, and it is worth
+keeping now that these files are going to live somewhere out of sight.
+
+## Telling the shell where to look
+
+`~/bin` is not on the list yet:
+
+```session
+$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+```
+
+`PATH` is an ordinary environment variable, so we can set it ourselves. But
+setting it at the prompt would last only until the terminal closed. To make it
+stick, put it in `~/.bashrc` - a file bash reads every time it starts.
+
+```session
+$ nano ~/.bashrc
+```
+
+Add this at the end:
+
+```{.bash filename="~/.bashrc"}
+export PATH=$HOME/bin:$PATH
+```
+
+Read the right-hand side from the inside out: our own `bin`, then a colon, then
+everything `PATH` already had. Ours is first, so it is searched first. And it
+is `export`ed, because a search list that never reached the programs the shell
+starts would be no use to anybody.
+
+The file is only read when bash starts, so this shell has not seen it. `source`
+runs a file in the shell you are already in, rather than starting a new one:
+
+```session
+$ source ~/.bashrc
+```
+
+```session
+$ echo $PATH
+/home/anand/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+```
+
+Every terminal you open from now on will do that for itself.
+
+::: {.callout-note}
+Ubuntu's own setup adds `~/bin` to `PATH` too, but only if the directory
+already exists when you log in - and ours did not. You may therefore see it
+listed twice from now on. That is harmless, and setting it yourself is worth
+doing anyway: it works immediately, and it works the same way on machines that
+do not do it for you.
+:::
+
+## A command like any other
+
+We are still standing in the home directory, and `table.sh` is not here - it is
+in `bin`. Type its name anyway:
+
+```session
+$ table.sh 7
+7 x 1 = 7
+7 x 2 = 14
+7 x 3 = 21
+7 x 4 = 28
+7 x 5 = 35
+7 x 6 = 42
+7 x 7 = 49
+7 x 8 = 56
+7 x 9 = 63
+7 x 10 = 70
+```
+
+No `bash`, no `./`, and no need to be in any particular directory. The shell
+found it the way it finds everything else, by looking down the list:
+
+```session
+$ which table.sh
+/home/anand/bin/table.sh
+```
+
+Give `figdate.sh` the same treatment - a shebang on the first line, then:
+
+```session
+$ chmod +x ~/scripts/figdate.sh
+```
+
+```session
+$ mv ~/scripts/figdate.sh ~/bin/
+```
+
+and `figdate.sh` joins it.
+
+This is the whole trick, and there is less to it than there seems. A command is
+a file. The system will run it if the file says which program should read it
+and is marked as runnable, and the shell will find it if it sits in a directory
+on `PATH`. Nothing about `figlet` or `date` is different in kind. They were
+installed by somebody else, into a directory that was on the list already.
+
+## Summary
+
+| What you write | What it means |
+|----------------|---------------|
+| `#!/bin/bash` | first line of the file: read the rest of it with `/bin/bash` |
+| `ls -l table.sh` | shows the file's marks: `r` read, `w` write, `x` run |
+| `chmod +x table.sh` | adds the `x` mark, so the file may be run |
+| `./table.sh` | runs `table.sh` in this directory |
+| `./scripts/table.sh` | runs `table.sh` inside the `scripts` directory |
+| a name with a slash | a path - the shell goes straight there |
+| a name with no slash | a command name - the shell searches `PATH` for it |
+| `$PATH` | the directories the shell searches for a command, in order |
+| `which figlet` | shows which file the shell would run for that name |
+| `~/bin` | the customary place for commands of your own |
+| `export PATH=$HOME/bin:$PATH` | adds `~/bin` to the front of the search list |
+| `~/.bashrc` | read by bash every time it starts; put the line here to keep it |
+| `source ~/.bashrc` | reads the file into the shell you are in, without opening a new one |
+
+And the one idea to carry forward: a command is nothing more than a file the
+system is allowed to run and the shell knows where to find.

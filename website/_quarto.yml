@@ -45,12 +45,21 @@ website:
           - href: cmdline/filesystem.qmd
           - href: cmdline/working-with-files.qmd
           - href: cmdline/wildcards.qmd
+          - href: cmdline/the-dollar-sign.qmd
           - href: cmdline/installing-software.qmd
           - href: cmdline/pipes-and-filters.qmd
           - href: cmdline/more-pipes-and-filters.qmd
           - href: cmdline/speak.qmd
           - href: cmdline/practice-resize-images.qmd
-          - href: cmdline/shell-scripting.qmd
+          - section: cmdline/scripting/index.qmd
+            text: Writing Shell Scripts
+            contents:
+              - href: cmdline/scripting/your-first-script.qmd
+              - href: cmdline/scripting/arguments-and-loops.qmd
+              - href: cmdline/scripting/conditionals.qmd
+              - href: cmdline/scripting/reading-input.qmd
+              - href: cmdline/scripting/environment.qmd
+              - href: cmdline/scripting/your-own-commands.qmd
           - href: cmdline/blog.qmd
       - section: "Writing with Markdown"
         contents:
@@ -75,7 +84,7 @@ website:
           - href: notes/group-projects.qmd
             text: Group Project Ideas
           - href: notes/week4.qmd
-          - href: notes/week4.qmd
+          - href: notes/activity-1.qmd
 
 format:
   html:

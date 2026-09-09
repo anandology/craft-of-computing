@@ -1,0 +1,261 @@
+---
+title: The Dollar Sign
+---
+
+The last chapter ended on an idea worth carrying into this one: the shell
+rewrites your line before the command runs. `*.txt` never reaches `ls`. The
+shell replaces it with the names it matched, and `ls` sees an ordinary list of
+files.
+
+A wildcard is one rewrite of that kind. This chapter is about another, and it
+is the one you will reach for most often. It is marked by a `$`.
+
+There are three of them:
+
+* `$name` - the value of a variable
+* `$(command)` - the output of running a command
+* `$((...))` - the result of a calculation
+
+They look alike because they are alike. In each case the shell works something
+out and drops the answer into your line, before the command starts. No new
+commands are needed here - `echo` and `date` will do.
+
+## The dollar you do not type
+
+Before anything else, a `$` you have been looking at since the first chapter,
+and a `$` that is new.
+
+```session
+$ echo $HOME
+/home/anand
+```
+
+There are two dollar signs on that line, and they have nothing to do with each
+other.
+
+The first one is the **prompt**. The shell prints it to say it is ready. You
+never type it, and it is not part of the command.
+
+The second one is yours. You typed it, and it asks the shell for the value of
+`HOME`.
+
+Telling them apart is easier than it sounds: the prompt is always the first
+thing on the line, with a space after it. Every other `$` on the line is one
+you typed.
+
+::: {.callout-tip}
+When you copy an example from these notes, leave the leading `$` behind. Copy
+`echo $HOME`, not `$ echo $HOME`.
+:::
+
+We said earlier that a `$` in an example means "this is a command you type".
+That was the `$` at the start of the line. From here on the character has a
+second job, and the rest of this chapter is about that one.
+
+## Variables
+
+The shell can keep a value under a name. A name with a value under it is called
+a **variable**, and you can make your own.
+
+To store a value, write a name, an `=`, and the value:
+
+```session
+$ name=alice
+```
+
+Nothing is printed. Storing a value is quiet work, like `cd` and `touch`.
+
+To get the value back, put a `$` in front of the name:
+
+```session
+$ echo $name
+alice
+```
+
+Look at what happened there. `echo` prints the arguments it is given, and it
+printed `alice` - so `alice` must have been its argument. `echo` never saw
+`$name` at all. The shell replaced it first, and the command that actually ran
+was:
+
+```
+echo alice
+```
+
+This is the same rewriting that `*` does, with a different way of working out
+the answer.
+
+It is called a variable because the value can vary. Set it again and the old
+value is gone:
+
+```session
+$ name=bob
+```
+
+```session
+$ echo $name
+bob
+```
+
+## Watch the spaces
+
+There is one rule to get right, and it catches everybody once:
+
+```session
+$ name = alice
+bash: name: command not found
+```
+
+With spaces around the `=`, the shell reads the line the way it reads every
+other line: a command called `name`, given the arguments `=` and `alice`. There
+is no such command.
+
+::: {.callout-warning}
+No spaces around the `=`. Write `name=alice`, not `name = alice`.
+:::
+
+Asking for a name you never set is not an error either:
+
+```session
+$ echo $city
+```
+
+The shell replaces `$city` with nothing at all, and `echo` prints an empty
+line. This is worth remembering. A misspelled name does not complain - it
+quietly turns into nothing, and the command runs anyway.
+
+## Variables the shell already has
+
+Some variables are set up for you when you log in. `USER` holds your login
+name:
+
+```session
+$ echo $USER
+anand
+```
+
+And `HOME` holds the path to your home directory:
+
+```session
+$ echo $HOME
+/home/anand
+```
+
+There are quite a few of these, and they are how the system tells every program
+about your account and your settings. We will come back to the whole collection
+later, when we look at what a script inherits from the shell that started it.
+
+::: {.callout-tip}
+The shell's own variables are spelled in capitals. Keeping your own in
+lowercase - `name`, `today`, `count` - means you will never accidentally
+overwrite one of them.
+:::
+
+## The output of a command
+
+The second form runs a command and hands you what it printed. Write the command
+inside `$(...)`:
+
+```session
+$ echo "Today is $(date)"
+Today is Wed Sep  9 10:12:43 IST 2026
+```
+
+The shell ran `date`, collected the line it printed, and put that line into the
+argument it gave `echo`.
+
+This is more useful than it first looks, because the output can be dropped into
+the middle of something else. `date` will print just the day if you ask it to:
+
+```session
+$ date +%F
+2026-09-09
+```
+
+So we can build a file name with today's date in it:
+
+```session
+$ echo notes-$(date +%F).txt
+notes-2026-09-09.txt
+```
+
+Nothing was created there. `echo` only printed the name the shell built out of
+the pieces. But that is a name you could hand to `cp`, and tomorrow the same
+line would build `notes-2026-09-10.txt` without anyone thinking about it.
+
+This is the habit from the last chapter again: put `echo` in front of something
+and look at what the shell made of it.
+
+The output of a command can be stored in a variable, like any other value:
+
+```session
+$ today=$(date +%F)
+```
+
+```session
+$ echo $today
+2026-09-09
+```
+
+## Doing arithmetic
+
+The shell does not do sums by accident. Ask `echo` to add two numbers and it
+does what it always does - prints its arguments:
+
+```session
+$ echo 2 + 3
+2 + 3
+```
+
+To get an answer, put the sum inside `$((...))`:
+
+```session
+$ echo $((2 + 3))
+5
+```
+
+Variables work inside it, and here you do not need the `$` on their names -
+inside `$((...))` a bare name is understood to be a variable:
+
+```session
+$ x=5
+```
+
+```session
+$ y=2
+```
+
+```session
+$ echo $((x + y))
+7
+```
+
+```session
+$ echo $((x * y))
+10
+```
+
+::: {.callout-note}
+Shell arithmetic works in whole numbers only. `$((7 / 2))` is `3`, not `3.5` -
+the remainder is dropped rather than rounded. For anything else you will want a
+proper calculator, and we will meet one later.
+:::
+
+## Summary
+
+| What you write | What it means |
+|----------------|---------------|
+| `x=5` | sets the variable `x` to `5` |
+| `x = 5` | an error - no spaces around the `=` |
+| `$x` | the value of the variable `x` |
+| `$nosuchname` | nothing at all - an unset variable is not an error |
+| `$USER` | your login name |
+| `$HOME` | the path to your home directory |
+| `$(date)` | the output of running `date` |
+| `d=$(date)` | sets `d` to the output of `date` |
+| `notes-$(date +%F).txt` | `notes-2026-09-09.txt` |
+| `$((2 + 3))` | `5` |
+| `$((x * y))` | the product of `x` and `y` - no `$` needed on names here |
+
+And the one idea to carry forward: a `$` tells the shell to work something out
+and put the answer in its place, before the command runs. The command itself
+never sees the `$`.

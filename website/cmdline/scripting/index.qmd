@@ -1,0 +1,46 @@
+---
+title: Writing Shell Scripts
+---
+
+Every command so far has been typed at the prompt, one line at a time. This
+section is about putting those lines in a file instead.
+
+A file of commands is called a **shell script**. The shell reads it and runs
+the commands one after another, exactly as if you had typed them yourself. That
+alone earns its keep: something you worked out once is something you never have
+to work out again.
+
+But a script is more than a saved transcript. The same script can do different
+work each time it runs, because information reaches it from outside. There are
+three ways in:
+
+- **Arguments** --- the words typed after its name, the way `five.txt` is typed
+  after `cat`
+- **Standard input** --- whatever is typed at it or piped into it
+- **The environment** --- values the shell hands to every program it starts,
+  such as `$HOME`
+
+Those are the same three channels that `cat`, `date` and every other command on
+your system use. That is the point to hold on to as you go: a shell script is
+not a lesser kind of program. By the end of this section yours will live in a
+directory of its own, run by name from anywhere, with nothing to mark it out
+from the commands that came with the machine.
+
+## You will learn
+
+- How to put commands in a file and run it
+- How to pass arguments to a script, and repeat work with a loop
+- How to make a script choose between two courses of action
+- How to read input, whether typed at the keyboard or piped in
+- What the environment is, and what a script inherits from it
+- How to install a script so it works like any other command
+
+## Before you start
+
+You should be comfortable with `$name` and `$(command)` from
+[The Dollar Sign](../the-dollar-sign.qmd). Scripts are where they begin to earn
+their keep, and they turn up on nearly every page from here on.
+
+## Next
+
+- [Your First Script](your-first-script.qmd) --- commands in a file.

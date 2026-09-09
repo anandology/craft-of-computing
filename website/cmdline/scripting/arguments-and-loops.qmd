@@ -1,0 +1,205 @@
+---
+title: Arguments and Loops
+---
+
+Most commands are told what to work on. `cat` prints whatever file you name
+after it, and `figlet` draws whatever words you give it. Those words are the
+command's **arguments**.
+
+A script can take arguments in the same way, so one file can do different work
+each time it runs. And when a script is given several things to work on, it
+needs a way to deal with each of them in turn. That is a **loop**.
+
+In this chapter, we'll learn how to:
+
+* use the arguments given to a script
+* find out how many arguments there were
+* repeat commands with a `for` loop
+* run a loop over all the arguments
+
+And the one idea to hold on to from the start: **a script is told what to work
+on by what you type after its name, and a loop lets it do that work for each
+thing in turn.**
+
+## The first argument
+
+Write a script that greets somebody:
+
+```{.bash filename="greet.sh"}
+echo "Hello, $1!"
+```
+
+```session
+$ bash greet.sh alice
+Hello, alice!
+```
+
+`$1` is the first word typed after the script's name. It is a variable, filled
+in by the shell before the script runs, exactly like the variables of your own.
+The difference is that you do not set it - `bash` does, from the command line.
+
+The second word is `$2`, the third `$3`, and so on. Two more are worth knowing:
+`$#` is how many arguments there were, and `$*` is all of them together.
+
+```{.bash filename="args.sh"}
+echo "First:  $1"
+echo "Second: $2"
+echo "Count:  $#"
+echo "All:    $*"
+```
+
+```session
+$ bash args.sh alice bob
+First:  alice
+Second: bob
+Count:  2
+All:    alice bob
+```
+
+Give it a third name and the last two lines change:
+
+```session
+$ bash args.sh alice bob charlie
+First:  alice
+Second: bob
+Count:  3
+All:    alice bob charlie
+```
+
+`$1` and `$2` still hold the first two. To use every argument, however many
+there are, we need something new.
+
+## Doing it for each one
+
+A **loop** runs the same lines once for each thing in a list. The shell's is
+called `for`:
+
+```{.bash filename="hello-all.sh"}
+for name in alice bob charlie
+do
+    echo "Hello, $name!"
+done
+```
+
+```session
+$ bash hello-all.sh
+Hello, alice!
+Hello, bob!
+Hello, charlie!
+```
+
+Read it as an English sentence, because that is how it was designed: *for* each
+`name` *in* this list, *do* the following, and that is all - *done*.
+
+`name` is an ordinary variable. `for` sets it to `alice` and runs the lines
+between `do` and `done`, then sets it to `bob` and runs them again, then
+`charlie`, and then stops. Three trips through the same one line.
+
+The lines in the middle are indented. The shell does not care, but you will:
+indentation is how you see at a glance where a loop begins and ends.
+
+## Looping over the arguments
+
+The list in a `for` line is just words, and the shell fills in `$` forms before
+`for` ever sees them. So put `$*` there:
+
+```{.bash filename="hello-all.sh"}
+for name in $*
+do
+    echo "Hello, $name!"
+done
+```
+
+The names are no longer written into the file. They come from the command line:
+
+```session
+$ bash hello-all.sh alice bob charlie
+Hello, alice!
+Hello, bob!
+Hello, charlie!
+```
+
+And the script does not mind how many you give it:
+
+```session
+$ bash hello-all.sh alice
+Hello, alice!
+```
+
+## A script worth keeping
+
+Here is the two of them together, with a little arithmetic. This one prints the
+multiplication table of whatever number you hand it:
+
+```{.bash filename="table.sh"}
+#
+# Prints the multiplication table of a number.
+#
+# USAGE: bash table.sh 5
+#
+
+a=$1
+
+for b in 1 2 3 4 5 6 7 8 9 10
+do
+    echo "$a x $b = $((a * b))"
+done
+```
+
+```session
+$ bash table.sh 3
+3 x 1 = 3
+3 x 2 = 6
+3 x 3 = 9
+3 x 4 = 12
+3 x 5 = 15
+3 x 6 = 18
+3 x 7 = 21
+3 x 8 = 24
+3 x 9 = 27
+3 x 10 = 30
+```
+
+The argument is copied into `a` on the first line. That is not required - we
+could have written `$1` inside the loop - but a name that says what the value
+*is* reads better than a number, and if the script grows you have only one line
+to change.
+
+## When the argument is missing
+
+Now run it and forget the number:
+
+```session
+$ bash table.sh
+ x 1 = 0
+ x 2 = 0
+ x 3 = 0
+ x 4 = 0
+ x 5 = 0
+ x 6 = 0
+ x 7 = 0
+ x 8 = 0
+ x 9 = 0
+ x 10 = 0
+```
+
+No error. `$1` was never set, so it turned into nothing, and nothing multiplied
+by three is zero as far as the shell is concerned. The script ran perfectly and
+produced rubbish.
+
+A script that is given the wrong thing should say so. To do that it has to be
+able to ask a question first, and that is the next chapter.
+
+## Summary
+
+| What you write | What it means |
+|----------------|---------------|
+| `$1`, `$2` | the first and second arguments given to the script |
+| `$#` | how many arguments there were |
+| `$*` | all of the arguments, as one list of words |
+| `for x in a b c` | run the loop three times, with `x` set to `a`, then `b`, then `c` |
+| `for x in $*` | run the loop once for each argument |
+| `do` ... `done` | marks the lines that the loop repeats |
+
+And the one idea to carry forward: arguments are how a script is told what to
+work on, and a loop is how it deals with more than one of them.

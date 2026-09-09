@@ -1,0 +1,184 @@
+---
+title: Conditionals
+---
+
+So far a script has done one thing: run all of its lines, in order, every time.
+But some work needs a decision first. A script may need to check that it was
+given what it needs, or look at whether a file is there, and then do one thing
+or another.
+
+The shell's way of making that choice is `if`.
+
+In this chapter, we'll learn how to:
+
+* run some commands only when a test passes
+* choose between two sets of commands with `else`
+* compare numbers and text
+* check whether a file or a directory exists
+
+And the one idea to hold on to from the start: **a script can look at what it
+was given and take a different course.**
+
+## Asking a question
+
+We left `table.sh` with a bug. Run it without a number and it prints ten lines
+of nonsense instead of complaining:
+
+```session
+$ bash table.sh
+ x 1 = 0
+ x 2 = 0
+ x 3 = 0
+```
+
+The script has no way to notice that anything is wrong. The `if` command gives
+it a choice: it runs one set of lines or another, depending on the answer to a
+question.
+
+```{.bash filename="table.sh"}
+#
+# Prints the multiplication table of a number.
+#
+# USAGE: bash table.sh 5
+#
+
+if [ $# -eq 0 ]
+then
+    echo "Please give me a number."
+else
+    a=$1
+
+    for b in 1 2 3 4 5 6 7 8 9 10
+    do
+        echo "$a x $b = $((a * b))"
+    done
+fi
+```
+
+The question is `[ $# -eq 0 ]`: is the number of arguments equal to zero? If it
+is, the lines after `then` run. If it is not, the lines after `else` run
+instead. Either way, `fi` marks the end - `if` spelled backwards, which is the
+shell's way of closing a block it opened with a word.
+
+Forget the number now and the script says so:
+
+```session
+$ bash table.sh
+Please give me a number.
+```
+
+And with a number it behaves as before:
+
+```session
+$ bash table.sh 3
+3 x 1 = 3
+3 x 2 = 6
+3 x 3 = 9
+3 x 4 = 12
+3 x 5 = 15
+3 x 6 = 18
+3 x 7 = 21
+3 x 8 = 24
+3 x 9 = 27
+3 x 10 = 30
+```
+
+The `else` part is optional. Leave it out and `if` either does the `then` lines
+or does nothing at all.
+
+## What goes in the brackets
+
+`-eq` is one of a small set of comparisons. For numbers there are six:
+
+`-eq` equal, `-ne` not equal, `-lt` less than, `-gt` greater than, `-le` less
+than or equal, `-ge` greater than or equal.
+
+For text the comparison is written with the symbols you would expect, `=` and
+`!=`, and it asks whether two strings are the same:
+
+```{.bash filename="knock.sh"}
+if [ $1 = alice ]
+then
+    echo "Come in."
+else
+    echo "I do not know you."
+fi
+```
+
+Numbers and text are compared differently, and the difference is real: `08` and
+`8` are equal as numbers and different as text.
+
+The brackets can also ask about files. `-f` asks whether a name is a file that
+exists, and `-d` asks whether it is a directory:
+
+```{.bash filename="check.sh"}
+if [ -f $1 ]
+then
+    echo "$1 is a file."
+else
+    echo "There is no file called $1."
+fi
+```
+
+```session
+$ bash check.sh table.sh
+table.sh is a file.
+```
+
+```session
+$ bash check.sh notes.txt
+There is no file called notes.txt.
+```
+
+This is worth more than it looks. A script that is about to overwrite a file,
+or about to read one that may not be there, can find out first instead of
+making a mess.
+
+## The brackets are a command
+
+`[` looks like punctuation, but it is not. It is a command, with a name that
+happens to be one character long, and it lives in `/usr/bin` alongside `date`
+and `figlet`. Its arguments are the things you write after it, and the last one
+has to be `]`.
+
+Which explains a rule that otherwise looks arbitrary:
+
+::: {.callout-warning}
+The brackets need spaces around what is inside them. Write `[ $# -eq 0 ]`, not
+`[$# -eq 0]`.
+:::
+
+Without the space the shell reads the first word as `[0`, and looks for a
+command by that name:
+
+```session
+$ bash table.sh
+table.sh: line 7: [0: command not found
+```
+
+The same is true of every argument in between. `[ $1 = alice ]` needs the
+spaces around the `=` for the same reason - and note that this is the opposite
+of setting a variable, where spaces around the `=` are what break it.
+
+Seeing `[` as a command explains something larger too. `if` does not understand
+comparisons at all. It runs a command, and then looks at whether that command
+succeeded or failed. Every command reports one or the other when it finishes,
+quietly, whether or not you ever look at it. `[` is simply a command whose whole
+job is to answer a question that way, and `if` acts on the answer.
+
+## Summary
+
+| What you write | What it means |
+|----------------|---------------|
+| `if [ ... ]` ... `then` ... `fi` | run the `then` lines if the test succeeds |
+| `else` | the lines to run when the test fails |
+| `[ $# -eq 0 ]` | the number of arguments is zero |
+| `[ $x -lt 10 ]` | `x` is less than 10 - also `-eq -ne -gt -le -ge` |
+| `[ $x = alice ]` | `x` is the text `alice` - also `!=` |
+| `[ -f notes.txt ]` | `notes.txt` exists and is a file |
+| `[ -d notes ]` | `notes` exists and is a directory |
+| `[$x = alice]` | an error - the brackets need spaces around their contents |
+
+And the one idea to carry forward: `if` does not test anything itself. It runs
+a command and takes one branch or the other depending on whether that command
+succeeded, and `[` is a command whose job is to answer such a question.

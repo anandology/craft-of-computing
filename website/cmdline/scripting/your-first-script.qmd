@@ -1,0 +1,154 @@
+---
+title: Your First Script
+---
+
+Many tasks need a few commands, not just one. If it is something you do more
+than once, typing them all again each time gets tedious, and it is easy to get
+one of them wrong.
+
+A **shell script** solves that. It is a file with commands in it. The shell
+reads the file and runs the commands one by one, just as if you typed them. Get
+it right once, and you can run it any time.
+
+In this chapter, we'll learn how to:
+
+* write a script with a single command and run it
+* write a script with several commands
+* use comments to say what a script is for
+
+And the one idea to hold on to from the start: **the shell reads a line from a
+file just the way it reads a line you type.**
+
+## An editor
+
+Putting commands in a file needs a way to edit files. `nano` will do, and it
+runs in the terminal so you do not have to go anywhere else. If you have not
+set up an editor yet, see [Setting up Editor](../../setup/editor.qmd).
+
+## A place to keep them
+
+Scripts are files, and they will pile up. Let's give them a directory of their
+own:
+
+```session
+$ cd
+```
+
+```session
+$ mkdir scripts
+```
+
+```session
+$ cd scripts
+```
+
+Everything in this section happens here.
+
+## Hello, world
+
+Open a new file:
+
+```session
+$ nano hello.sh
+```
+
+Type a single line into it, and save:
+
+```{.bash filename="hello.sh"}
+echo "Hello, world!"
+```
+
+That is the whole script. It is an ordinary text file, and `cat` will show it
+to you like any other:
+
+```session
+$ cat hello.sh
+echo "Hello, world!"
+```
+
+To run it, hand the file to `bash`:
+
+```session
+$ bash hello.sh
+Hello, world!
+```
+
+`bash` is the shell itself - the same program that has been reading your typed
+lines all along. Given a file name, it reads the lines in that file instead of
+the ones you type. There is nothing else to it.
+
+The name ends in `.sh` by custom, so that a directory listing tells you what
+the file is. Nothing depends on it. `bash hello` would work just as well if the
+file were called `hello`.
+
+## More than one command
+
+A script is not limited to one line. Make a second file:
+
+```{.bash filename="numbers.sh"}
+echo "Counting to five:"
+seq 5
+echo "Done."
+```
+
+```session
+$ bash numbers.sh
+Counting to five:
+1
+2
+3
+4
+5
+Done.
+```
+
+Top to bottom, one command at a time, each one finishing before the next
+starts. That is exactly what happens when you type three lines by hand.
+
+## Saying what it is for
+
+A line beginning with `#` is a **comment**. The shell ignores it. Comments are
+there for the person reading the file - which, more often than not, is you, six
+months later, wondering what this thing was for.
+
+Here is a script worth keeping: a pipeline that prints the date in big letters.
+
+```{.bash filename="figdate.sh"}
+#
+# Prints the date in big letters.
+#
+
+date | figlet
+```
+
+```session
+$ bash figdate.sh
+__        __       _   ____                 ___
+\ \      / /__  __| | / ___|  ___ _ __     / _ \
+ \ \ /\ / / _ \/ _` | \___ \ / _ \ '_ \   | (_) |
+  \ V  V /  __/ (_| |  ___) |  __/ |_) |   \__, |
+   \_/\_/ \___|\__,_| |____/ \___| .__/      /_/
+                                 |_|
+ _  ___    _ ____    _  _  _____   ___ ____ _____   ____   ___ ____   __
+/ |/ _ \ _/ |___ \ _| || ||___ /  |_ _/ ___|_   _| |___ \ / _ \___ \ / /_
+| | | | (_) | __) (_) || |_ |_ \   | |\___ \ | |     __) | | | |__) | '_ \
+| | |_| |_| |/ __/ _|__   _|__) |  | | ___) || |    / __/| |_| / __/| (_) |
+|_|\___/(_)_|_____(_)  |_||____/  |___|____/ |_|   |_____|\___/_____|\___/
+```
+
+Notice what went into the file: a pipe. Wildcards, quotes and the `$` forms all
+work in a script too, and for the same reason - the shell reads a line from a
+file exactly the way it reads a line you type. Nothing you have learned so far
+stops working when you put it in a file.
+
+## Summary
+
+| What you write | What it means |
+|----------------|---------------|
+| `nano hello.sh` | opens `hello.sh` in an editor, creating it if it is new |
+| `bash hello.sh` | runs the commands in `hello.sh`, top to bottom |
+| `# ...` | a comment - the shell ignores the rest of the line |
+| `.sh` | the customary ending for a script's name; nothing depends on it |
+
+And the one idea to carry forward: a script is a file of commands, and running
+it is the same as typing them.
