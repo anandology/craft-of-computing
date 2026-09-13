@@ -241,7 +241,7 @@ One thing to fix before publishing. On the server your blog will not be at the
 top of the site - it will be under your username, at
 
 ```
-https://coc.apucomputing.com/~anand/
+https://coc.apucomputing.in/~anand/
 ```
 
 Jekyll does not know that, so the links it writes in the HTML point at `/about`
@@ -250,7 +250,7 @@ by adding a `baseurl` in `_config.yml`:
 
 ```{.yaml filename="_config.yml"}
 baseurl: "/~anand"
-url: "https://coc.apucomputing.com"
+url: "https://coc.apucomputing.in"
 ```
 
 Use *your* username, not `anand`, and note the leading `/` with no trailing
@@ -270,7 +270,7 @@ right one when it starts; read the `Server address:` line.
 
 ## Copying it to the server
 
-You have an account on the course server, `coc.apucomputing.com`, and a
+You have an account on the course server, `coc.apucomputing.in`, and a
 directory in it called `public_html`. Whatever is in `public_html` is on the
 web. That is the whole arrangement.
 
@@ -285,7 +285,7 @@ username@machine:path
 Let's try it. From inside your `blog` directory:
 
 ```session
-$ scp -r _site/* anand@coc.apucomputing.com:public_html/
+$ scp -r _site/* anand@coc.apucomputing.in:public_html/
 index.html                             100% 4148    68.2KB/s   00:00
 about/index.html                       100% 3721    59.4KB/s   00:00
 assets/main.css                        100%   22KB  310.1KB/s   00:00
@@ -301,14 +301,14 @@ Reading that command from the left:
 * `_site/*` - the contents of `_site`. The wildcard matters: `_site/*` copies
   the files *inside*, while `_site` would copy the folder itself and you would
   end up with `public_html/_site/index.html`.
-* `anand@coc.apucomputing.com:public_html/` - the destination. Your username,
+* `anand@coc.apucomputing.in:public_html/` - the destination. Your username,
   the machine, a colon, and where to put it. `public_html/` is relative to your
   home directory on the server.
 
 The first time you connect it will ask:
 
 ```
-The authenticity of host 'coc.apucomputing.com' can't be established.
+The authenticity of host 'coc.apucomputing.in' can't be established.
 ED25519 key fingerprint is SHA256:4mZ8...
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 ```
@@ -318,7 +318,7 @@ Type `yes` and Enter. It asks once, ever.
 Now open your blog:
 
 ```
-https://coc.apucomputing.com/~anand/
+https://coc.apucomputing.in/~anand/
 ```
 
 That is a page on the internet, made by you, from a terminal.
@@ -339,7 +339,7 @@ and then:
 
 ```session
 $ jekyll build
-$ scp -r _site/* anand@coc.apucomputing.com:public_html/
+$ scp -r _site/* anand@coc.apucomputing.in:public_html/
 ```
 
 Write, look, build, copy.
@@ -357,7 +357,7 @@ almost always why.
 something in place - use `ssh`:
 
 ```session
-$ ssh anand@coc.apucomputing.com
+$ ssh anand@coc.apucomputing.in
 anand@coc:~$
 ```
 
@@ -377,7 +377,7 @@ anand@coc:~$ ls -l public_html/index.html
 ```session
 anand@coc:~$ exit
 logout
-Connection to coc.apucomputing.com closed.
+Connection to coc.apucomputing.in closed.
 $
 ```
 
