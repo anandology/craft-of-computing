@@ -19,7 +19,7 @@ import nbformat
 import requests
 import yaml
 from jupyter_server import serverapp as app
-from . import config
+from . import config, webhook
 
 __version__ = "0.1.0"
 
@@ -123,22 +123,12 @@ class Problem:
         self.notify_status(status)
 
     def notify_status(self, status):
-        if not config.tracker_url:
-            return
-
-        data = {
-            "training": config.training_name,
-            "user": os.getenv("USER"),
-            "notebook": _get_notebook_name(),
+        webhook.trigger("problem.verified", {
             "problem": self.name,
+            "notebook": _get_notebook_name(),
             "status": status,
             "output": "\n".join(self.logger.lines),
-        }
-        try:
-            response = requests.post(config.tracker_url, json=data, timeout=10)
-            response.raise_for_status()
-        except requests.RequestException as e:
-            self.logger.log(f"WARNING: Unable to report status to {config.tracker_url}: {e}")
+        })
 
     def _verify(self, env):
         func_name = self.metadata.get("function_name")
