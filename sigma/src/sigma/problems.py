@@ -1,6 +1,6 @@
-"""pipalhub_magic
+"""sigma
 
-Jupyter Lab magic commands for trainings by Pipal Academy.
+Jupyter Lab magic commands for trainings by sigma.
 
 """
 
@@ -123,19 +123,22 @@ class Problem:
         self.notify_status(status)
 
     def notify_status(self, status):
-        # XXX-Anand: FIXME later
-        return
+        if not config.tracker_url:
+            return
 
-        url = "https://engage.pipal.in/api/method/jupyter-problem-tracker"
         data = {
-            "training": "zeomega-python",
+            "training": config.training_name,
             "user": os.getenv("USER"),
             "notebook": _get_notebook_name(),
             "problem": self.name,
             "status": status,
             "output": "\n".join(self.logger.lines),
         }
-        requests.post(url, json=data).json()
+        try:
+            response = requests.post(config.tracker_url, json=data, timeout=10)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            self.logger.log(f"WARNING: Unable to report status to {config.tracker_url}: {e}")
 
     def _verify(self, env):
         func_name = self.metadata.get("function_name")
@@ -194,7 +197,7 @@ class Check:
 
 class FunctionCheck(Check):
     def __init__(self, spec, logger=None, problem=None):
-        super().__init__(self, logger=logger, problem=problem)
+        super().__init__(spec, logger=logger, problem=problem)
         self.setup_code = spec.get("setup_code")
         self.code = spec["code"]
         self.name = spec.get("name") or self.code
@@ -248,7 +251,7 @@ class FunctionCheck(Check):
 
 class CommandCheck(Check):
     def __init__(self, spec, logger=None, problem=None):
-        super().__init__(self, logger=logger, problem=problem)
+        super().__init__(spec, logger=logger, problem=problem)
 
         self.command = spec["command"]
         self.name = spec.get("name") or self.command

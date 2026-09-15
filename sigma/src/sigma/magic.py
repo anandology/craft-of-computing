@@ -1,5 +1,5 @@
 """
-Jupyter Lab magic commands for trainings by Pipal Academy.
+Jupyter Lab magic commands for trainings by sigma.
 """
 
 import os
@@ -48,7 +48,7 @@ def _get_notebook_name():
 
 
 @magics_class
-class PipalMagics(Magics):
+class SigmaMagics(Magics):
     @line_magic
     def load_problem(self, arg):
         """Loads a problem into the current cell."""
@@ -75,4 +75,4 @@ def register():
     """Registers these magic commands with Ipython
     """
     ipython = get_ipython()
-    ipython.register_magics(PipalMagics)
+    ipython.register_magics(SigmaMagics)
