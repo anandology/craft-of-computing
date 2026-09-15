@@ -6,31 +6,49 @@
 #
 #     curl -fsSL https://craft-of-computing.anandology.com/2026/install.sh | bash
 #
-# It does very little: puts craft.sh in place, adds it to your PATH, and
-# then hands over to "craft.sh update", which fetches the actual course
-# files. Everything after this is done by craft.sh.
+# It does very little: installs the basic tools craft.sh needs, puts
+# craft.sh in place, adds it to your PATH, and then hands over to
+# "craft.sh update", which does the rest.
 
 set -eu
 
-BASE_URL="${CRAFT_URL:-https://craft-of-computing.anandology.com/2026/dist}"
+BASE_URL="${CRAFT_URL:-https://coc.apucomputing.in/~anand/craft}"
+SCRIPT="craft.sh"
+
 CRAFT="$HOME/.craft"
 MARKER_START="# >>> craft >>>"
 MARKER_END="# <<< craft <<<"
 
+# The tools craft.sh itself needs. A mac has them already.
+BASIC_TOOLS="curl unzip"
+
 # Running this with sudo would set up the course for the root user instead
-# of you, and leave files you cannot edit. Nothing here needs root.
+# of you, and leave files you cannot edit. sudo is used only where needed.
 if [ "$(id -u)" = 0 ]; then
     echo "Please run this without sudo, as yourself." >&2
     exit 1
 fi
 
-command -v curl >/dev/null || { echo "install.sh: curl is required." >&2; exit 1; }
+if [ "$(uname -s)" = Linux ]; then
+    missing=""
+    for tool in $BASIC_TOOLS; do
+        command -v "$tool" >/dev/null 2>&1 || missing="$missing $tool"
+    done
+
+    if [ -n "$missing" ]; then
+        echo "Installing basic tools:$missing"
+        echo "This needs your password, because installing software affects the"
+        echo "whole machine and not just your own files."
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq $missing
+    fi
+fi
 
 echo "Installing the craft tool..."
 
-mkdir -p "$CRAFT/bin"
-curl -fsS -o "$CRAFT/bin/craft.sh" "$BASE_URL/craft.sh"
-chmod +x "$CRAFT/bin/craft.sh"
+mkdir -p "$CRAFT/bin" "$CRAFT/commands"
+curl -fsS -o "$CRAFT/bin/$SCRIPT" "$BASE_URL/$SCRIPT"
+chmod +x "$CRAFT/bin/$SCRIPT"
 
 # Add ~/.craft/bin to PATH, and load the course shell settings. The block
 # is marked so that running this installer twice does not add it twice.
@@ -49,10 +67,10 @@ fi
 export PATH="$CRAFT/bin:$PATH"
 
 echo ""
-"$CRAFT/bin/craft.sh" update
+"$CRAFT/bin/$SCRIPT" update
 
 echo ""
 echo "Done. Open a new terminal, then run:"
 echo ""
-echo "    craft.sh version"
+echo "    $SCRIPT help"
 echo ""

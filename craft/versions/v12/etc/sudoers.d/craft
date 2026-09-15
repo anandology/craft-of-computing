@@ -1,0 +1,5 @@
+#
+# Allow users in the sudo group to access sudo without any password
+#
+
+%sudo   ALL=(ALL:ALL) NOPASSWD:ALL

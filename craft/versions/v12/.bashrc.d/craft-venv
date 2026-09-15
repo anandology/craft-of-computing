@@ -1,0 +1,2 @@
+
+export PATH="$HOME/craft/venv/bin:$PATH"
