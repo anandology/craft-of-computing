@@ -18,3 +18,4 @@ openssh-client
 jekyll
 pandoc
 poppler-utils
+weasyprint

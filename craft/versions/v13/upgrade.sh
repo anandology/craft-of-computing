@@ -6,6 +6,12 @@ set -euo pipefail
 # same update, that is not on PATH yet.
 export PATH="$HOME/.local/bin:$PATH"
 
+find_username() {
+    echo "finding your username on coc.apucomputing.in"
+    username=$(ssh coc.apucomputing.in whoami)
+    echo $username > ~/.craft/username.txt
+}
+
 install_sigma() {
     echo "Installing magic functions for the course"
     source ~/craft/venv/bin/activate
@@ -53,8 +59,15 @@ add_all_problems() {
     rm -f "$zip"
 }
 
+copy_notebooks() {
+    mkdir -p ~/python
+    cp python/*.ipynb ~/python
+}
+
+find_username
 install_sigma
 install_jupyterlab_execute_time
 setup_ipython_startup
 setup_jupyterlab_settings
 add_all_problems
+copy_notebooks
