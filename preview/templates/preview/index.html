@@ -1,0 +1,25 @@
+{% extends "preview/base.html" %}
+
+{% block content %}
+<div id="main">
+    <h1>Notebook Preview</h1>
+
+    {% if collections %}
+        <p class="muted">Pick a notebook to see everyone's copy side by side.</p>
+
+        <div class="collections">
+            {% for c in collections %}
+                <a class="collection" href="/preview/{{ c.name|urlencode }}">
+                    <span class="collection-name">{{ c.name }}</span>
+                    <span class="muted">
+                        {{ c.size }} student{{ '' if c.size == 1 else 's' }}
+                        &middot; last save {{ c.updated_at|clock }}
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">No notebooks yet. They show up here as students save them.</p>
+    {% endif %}
+</div>
+{% endblock %}

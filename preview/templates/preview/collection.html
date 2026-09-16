@@ -1,0 +1,34 @@
+{% extends "preview/base.html" %}
+
+{% block title %}{{ collection.name }} &middot; Notebook Preview{% endblock %}
+
+{% block content %}
+<div id="main">
+    <h1>{{ collection.name }}</h1>
+    <p class="muted">
+        {{ collection.notebooks|length }} student{{ '' if collection.notebooks|length == 1 else 's' }}
+        &middot; refreshing every 5s
+    </p>
+
+    <div class="notebooks">
+        {% for nb in collection.notebooks %}
+            <div class="notebook-wrapper">
+                <h2 class="notebook-title">
+                    {{ nb.owner }}
+                    <span class="muted">{{ nb.total_cells }} cells &middot; {{ nb.updated_at|clock }}</span>
+                </h2>
+                <div class="notebook" id="notebook-{{ loop.index }}"></div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script type="text/javascript">
+    {% for nb in collection.notebooks %}
+        watchNotebook(
+            "#notebook-{{ loop.index }}",
+            "/preview/_tail/{{ nb.owner|urlencode }}/{{ collection.name|urlencode }}.ipynb",
+            5);
+    {% endfor %}
+</script>
+{% endblock %}
