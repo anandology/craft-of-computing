@@ -71,6 +71,11 @@ website:
             text: Markdown in vscode
           - href: markdown/tools.qmd
             text: Markdown Tools
+      - section: python/index.qmd
+        text: Programming with Python
+        contents:
+          - href: python/using-python.qmd
+          - href: python/python-basics.qmd
       - section: "Appendix"
         contents:
           - section: setup/index.qmd
@@ -81,11 +86,10 @@ website:
               - href: setup/editor.qmd
               - href: setup/vscode.qmd
               - href: setup/craft-magic.qmd
-          - href: notes/group-projects.qmd
-            text: Group Project Ideas
-          - href: notes/week4.qmd
-          - href: notes/activity-1.qmd
-
+          - href: notes/group-project-1.qmd
+            text: Group Project 1
+          - href: notes/group-project-1-groups.qmd
+            text: Group Project 1 Groups
 format:
   html:
     theme:
