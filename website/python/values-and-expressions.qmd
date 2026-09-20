@@ -1,0 +1,186 @@
+---
+title: "Values and Expressions"
+unit: 2
+cluster: "Getting Started"
+---
+
+A calculator works with numbers. Python can work with numbers too, but it can
+also work with text and many other kinds of value.
+
+In this lesson, we'll learn how to:
+
+* write number and text values
+* combine values in expressions
+* find the value that an expression produces
+* display values with `print`
+
+**A value is data that Python can work with. An expression is code that Python
+evaluates to produce a value.**
+
+## Numbers
+
+Python has several types of number. This lesson uses two of them:
+
+* An **integer** (`int`) is a whole number, such as `42`, `0`, or `-5`.
+* A **floating-point number** (`float`) represents a real number, such as
+  `3.5`, `1.0`, or `-0.25`.
+
+Enter an integer in the interpreter. Python displays the same number:
+
+```{python}
+42
+```
+
+Symbols such as `+` and `*` are **operators**. An operator tells Python what to
+do with values:
+
+```{python}
+2 + 3
+```
+
+```{python}
+6 * 7
+```
+
+Python **evaluates** each expression. This means that Python works out the
+result. The interpreter then displays that result.
+
+The usual arithmetic operators work with numbers:
+
+| Expression | Meaning | Value |
+|------------|---------|-------|
+| `7 + 2` | addition | `9` |
+| `7 - 2` | subtraction | `5` |
+| `7 * 2` | multiplication | `14` |
+| `7 / 2` | division | `3.5` |
+| `7 ** 2` | exponentiation | `49` |
+
+Python follows the usual order of arithmetic operations. For example,
+multiplication happens before addition:
+
+```{python}
+2 + 3 * 4
+```
+
+Use parentheses to choose which calculation happens first:
+
+```{python}
+(2 + 3) * 4
+```
+
+## Text
+
+Text is a value too. In Python, a piece of text is called a **string**. Write
+it between quotation marks so Python can tell where the text begins and ends:
+
+```{python}
+"hello"
+```
+
+The quotation marks show Python where the string starts and ends. They are not
+part of the text. The interpreter displays quotation marks around its answer
+to show that the value is a string.
+
+You can use single or double quotation marks to write a string:
+
+```{python}
+'hello'
+```
+
+An expression can combine strings. With strings, `+` joins the values:
+
+```{python}
+"hello, " + "world!"
+```
+
+The `*` operator repeats a string:
+
+```{python}
+"ha" * 3
+```
+
+The operator is the same symbol used with numbers, but its meaning depends on
+the values on each side. `2 + 3` adds numbers. `"hello, " + "world!"` joins
+text.
+
+## Displaying text
+
+The interpreter displays quotation marks around a string to show that the
+value is text. The `print` function displays the text without those quotation
+marks:
+
+```{python}
+print("hello")
+```
+
+`print` can display more than one value. Separate the values with commas.
+Python displays a space between them:
+
+```{python}
+print("Hello", "Python")
+```
+
+## Text from any language
+
+A Python string can contain text from any language. You can type the
+characters directly between the quotation marks:
+
+```{python}
+print("తెలుగు")
+print("ಕನ್ನಡ")
+print("தமிழ்")
+print("മലയാളം")
+print("हिन्दी")
+```
+
+**Unicode** is the standard that represents text from different writing
+systems. Python strings support Unicode, so Python uses the same kind of value
+for text in every language.
+
+Emoji are text too:
+
+```{python}
+print("Hello! 😸")
+```
+
+And if you want to have a bit more fun, try:
+
+```{python}
+"😸" * 10
+```
+
+or 
+
+```{python}
+print("😸" * 10)
+```
+
+## Practice
+
+### Problem 1
+
+For the following expressions, write down the result you expect when you execute it in a notebook cell. Do this without running the code on your computer first. After you write down your answers, run the code on your computer and verify if your answers are correct.
+
+1. `10 - 2 * 3`
+2. `(10 - 2) * 3`
+3. `"go" * 3`
+4. `"42" + "8"`
+5. `2 ** 3 + 1`
+
+## Summary
+
+| Form | Meaning |
+|------|---------|
+| `42` | an integer (`int`) value |
+| `3.5` | a floating-point (`float`) value |
+| `2 + 3` | an expression that produces `5` |
+| `2 ** 3` | an expression that produces `8` |
+| `"hello"` | a string value |
+| `"hello" + "world"` | an expression that joins two strings |
+| `"ha" * 3` | an expression that produces `"hahaha"` |
+| `print("hello")` | displays the text `hello` without quotation marks |
+| `print("Hello", "Python")` | displays two values with a space between them |
+| `print("தமிழ்")` | displays a Unicode string without quotation marks |
+
+And the one idea to carry forward: Python works by evaluating expressions.
+Each expression produces a value that can be used in another expression.

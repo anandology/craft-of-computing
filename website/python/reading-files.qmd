@@ -1,0 +1,252 @@
+---
+title: "Reading Files"
+unit: 2
+cluster: "Writing Programs"
+---
+
+Programs often need data that was saved before the program started. Python can
+open a text file and bring its contents into the program as a string or a list
+of strings.
+
+In this lesson, we'll learn how to:
+
+* open a text file for reading
+* read its complete contents and follow the file position
+* read its lines as a list
+
+**`open()` returns a file object. The `read()` and `readlines()` methods return
+the contents of that file.**
+
+## A file to read
+
+Open a notebook in JupyterLab. Use a `%%file` cell to create a text file named
+`three.txt`:
+
+```python
+%%file three.txt
+one
+two
+three
+```
+
+Run the cell. JupyterLab writes the three lines to `three.txt` in the
+notebook's current working directory. The file contains text, not Python code.
+A program can treat that text as input.
+
+Before proceeding, make sure `three.txt` is present in this directory. 
+
+```python
+!ls *.txt
+```
+
+## Opening a file
+
+The built-in `open()` function takes a filename as its argument and returns a
+**file object**. The file object represents the open file and provides methods
+for reading it.
+
+The filename is relative to the notebook's current working directory. The
+`%%file` cell and `open()` use the same directory, so this code opens the
+`three.txt` created above.
+
+If that file does not exist in the current directory, `open()` raises a
+`FileNotFoundError`. Check the filename and the current directory when this
+happens.
+
+## Reading the complete file
+
+The `read()` method returns all the remaining text as one string:
+
+```python
+contents = open("three.txt").read()
+contents
+```
+
+In a notebook, the final expression displays:
+
+```text
+'one\ntwo\nthree\n'
+```
+
+The `\n` characters represent line breaks in the string. Passing the string to
+`print()` displays those line breaks:
+
+```python
+print(contents)
+```
+
+```text
+one
+two
+three
+
+```
+
+The file ends with a line break, and `print()` adds another line break after
+its argument. That is why an empty line follows the last line of text.
+
+## The file position
+
+A file object keeps track of how much of the file has been read. A new file
+object starts at the beginning:
+
+```python
+text_file = open("three.txt")
+```
+
+The first call to `read()` returns the complete contents:
+
+```python
+text_file.read()
+```
+
+```text
+'one\ntwo\nthree\n'
+```
+
+The first call also moves the file position to the end. There is no text left
+for the second call, so it returns an empty string:
+
+```python
+text_file.read()
+```
+
+```text
+''
+```
+
+Close this file object when the example is finished:
+
+```python
+text_file.close()
+```
+
+Open the file again when another example needs to read from the beginning.
+
+## Reading a list of lines
+
+The `readlines()` method returns a list with one string for each line. Open the
+file again so this example starts with a new file object:
+
+```python
+lines = open("three.txt").readlines()
+lines
+```
+
+The notebook displays:
+
+```text
+['one\n', 'two\n', 'three\n']
+```
+
+Each element includes the line break that ended its line. Because `lines` is a
+list, earlier list operations apply to it:
+
+```python
+len(lines)
+```
+
+The result is `3`. A loop can also visit the line strings one at a time.
+
+## Reading in a script
+
+A script can read a file and produce a result from its contents. Run this cell
+to write `countlines.py`:
+
+```python
+%%file countlines.py
+lines = open("three.txt").readlines()
+
+print("Lines:", len(lines))
+```
+
+Because the notebook wrote both files in its current working directory, the
+script can open `three.txt`. Run the script in another cell:
+
+```python
+!python countlines.py
+```
+
+The notebook displays:
+
+```text
+Lines: 3
+```
+
+The script opens the file and reads its lines before displaying the result.
+Keeping the data file and script in the same directory makes the relative
+filename `three.txt` refer to the intended file.
+
+## Practice
+
+Use a `%%file` cell to create `colors.txt` with these contents, then use it for
+all four problems:
+
+```python
+%%file colors.txt
+red
+green
+blue
+yellow
+```
+
+After you use create make sure `colors.txt` is present by print its contents using `cat` command.
+
+```python
+!cat colors.txt
+```
+
+### Problem 1
+
+Read the complete contents of `colours.txt` into a string named `text`. Predict
+the value of `text`, including its line breaks, then display the value in a
+notebook and check your answer.
+
+### Problem 2
+
+Display the number of lines in `colours.txt`. Keep the lines in a list named
+`colours`.
+
+### Problem 3
+
+Use `%%file` to create a script named `lastcolour.py` that reads `colours.txt`
+and displays:
+
+```text
+Last colour: yellow
+```
+
+Run the script with `!python lastcolour.py`.
+
+### Problem 4
+
+This code closes the file too early. Change the order of its statements so
+that it displays the number of lines in `colours.txt`.
+
+```python
+colours_file = open("colours.txt")
+colours_file.close()
+colours = colours_file.readlines()
+print(len(colours))
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `open("three.txt")` | opens a file and returns a file object at the beginning |
+| a relative filename | is interpreted from the current working directory |
+| `%%file three.txt` | writes a text file in the notebook's current directory |
+| `%%file countlines.py` | writes a Python script in the same directory |
+| `!python countlines.py` | runs the script from the notebook |
+| `contents = open("three.txt").read()` | reads the complete file into one string |
+| `lines = open("three.txt").readlines()` | reads the file into a list of line strings |
+| `text_file.read()` | returns the remaining contents and moves to the end |
+| a second `text_file.read()` | returns `''` when the file position is at the end |
+| `\n` | represents a line break inside a string |
+| `text_file.close()` | closes the file after the program has read it |
+| `FileNotFoundError` | means Python could not find the requested file |
+
+And the one idea to carry forward: opening a file creates an object whose
+methods return the file's contents as values that the rest of a program can
+use.

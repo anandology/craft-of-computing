@@ -1,0 +1,206 @@
+---
+title: "Writing Scripts"
+unit: 2
+cluster: "Writing Programs"
+---
+
+A useful program may need to run after its notebook has been closed, or may
+need to run directly from the command line. A Python script keeps the program
+in a file that Python can run.
+
+In this lesson, we'll learn how to:
+
+* create a Python script from a notebook
+* run a script from a notebook
+* follow the order in which its statements run
+* use `print()` to produce visible output
+
+**A Python script is a text file containing Python statements. In JupyterLab,
+`%%file` writes the file and `!python` runs it as a program.**
+
+## Creating a script
+
+Open a notebook in JupyterLab. Enter this complete cell:
+
+```python
+%%file hello.py
+print("Hello from a script")
+```
+
+Run the cell. JupyterLab writes the lines after `%%file hello.py` to a file.
+The first time the file is written, JupyterLab displays:
+
+```text
+Writing hello.py
+```
+
+`%%file` is a Jupyter **cell magic**. It must be the first line of the cell.
+The cell magic is an instruction to JupyterLab, so it is not written into
+`hello.py`. The file contains only this Python statement:
+
+```python
+print("Hello from a script")
+```
+
+The `.py` **filename extension** is the convention for naming Python source
+files. `hello.py` is created in the notebook's current working directory.
+
+## Running a script
+
+Enter this command in another notebook cell:
+
+```python
+!python hello.py
+```
+
+The notebook displays:
+
+```text
+Hello from a script
+```
+
+The `!` tells JupyterLab to run the rest of the line as a shell command. It is
+not part of the Python script. The command starts Python and gives it the
+filename `hello.py`.
+
+When a script has several statements and no loop, Python runs each statement
+once from top to bottom. Python finishes after the last statement.
+
+## Visible output
+
+A script does not display the value of its final expression automatically.
+For example, run this notebook cell to write `total.py`:
+
+```python
+%%file total.py
+marks = [72, 85, 91]
+sum(marks)
+```
+
+Then run the script:
+
+```python
+!python total.py
+```
+
+The script produces no output. Python evaluates `sum(marks)`, but the script
+does not ask Python to display the returned value. Rewrite the file with the
+value passed to `print()`:
+
+```python
+%%file total.py
+marks = [72, 85, 91]
+total = sum(marks)
+print(total)
+```
+
+Because `total.py` already exists, JupyterLab displays `Overwriting total.py`.
+Run the script again:
+
+```python
+!python total.py
+```
+
+The notebook displays:
+
+```text
+248
+```
+
+This differs from a notebook, which displays the value of the last expression
+in a cell. A script needs `print()` whenever it should produce visible output.
+
+## Editing and running again
+
+A `%%file` cell replaces the complete file when it runs. Edit the cell that
+wrote `hello.py`:
+
+```python
+%%file hello.py
+message = "Hello from a script"
+print(message.upper())
+```
+
+Run that cell to overwrite the file, then run the script again:
+
+```python
+!python hello.py
+```
+
+The notebook displays:
+
+```text
+HELLO FROM A SCRIPT
+```
+
+Each `!python hello.py` command reads the current contents of the saved file.
+Editing the `%%file` cell, running it, and running the script again is the usual
+cycle for developing programs in this course.
+
+## Practice
+
+### Problem 1
+
+Write down the complete output in order. Then use `%%file` to save the code as
+`order.py`, run it with `!python`, and check your answer.
+
+```python
+print("first")
+message = "second"
+print(message)
+print("third")
+```
+
+### Problem 2
+
+Use a `%%file` cell to create a script named `greeting.py`. When it is run with
+`!python greeting.py`, it should display these two lines:
+
+```text
+Hello
+Welcome to Python
+```
+
+### Problem 3
+
+Use a `%%file` cell to create a script named `average.py` that uses this list:
+
+```python
+marks = [72, 85, 91]
+```
+
+The script should calculate the average, round it to one decimal place, and
+display:
+
+```text
+Average: 82.7
+```
+
+### Problem 4
+
+Edit and rerun the `%%file` cell for `greeting.py` so that the second line is
+produced by calling `upper()` on the string `"Welcome to Python"`. Run the
+script again and confirm that it now displays:
+
+```text
+Hello
+WELCOME TO PYTHON
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `hello.py` | a text file containing Python source code |
+| `.py` | the customary filename extension for a Python script |
+| `%%file hello.py` | tells JupyterLab to write the rest of the cell to `hello.py` |
+| `!python hello.py` | tells JupyterLab to run the script with Python |
+| `%%file` and `!` | notebook instructions, not code stored in the script |
+| a script without a loop | runs each statement once, from top to bottom |
+| `sum(marks)` | is evaluated but is not displayed by a script |
+| `print(value)` | produces visible output from a script |
+| rerun a `%%file` cell | overwrites the file with the cell's new contents |
+
+And the one idea to carry forward: `%%file` turns a notebook cell into a saved
+program, and `!python` runs that program. The script itself contains only
+Python code.

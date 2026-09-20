@@ -1,0 +1,145 @@
+---
+title: "Using Modules"
+unit: 2
+cluster: "Functions, Methods, and Modules"
+---
+
+A circle calculation needs the value pi. Writing its decimal digits each time
+does not show what the value means. Python's standard library keeps pi and
+related functions in a module that a program can import when it needs them.
+
+In this lesson, we'll learn how to:
+
+* import a module
+* use a qualified name
+* call a function from a module
+* use a value from a module
+
+**An `import` statement makes a module available. A qualified name uses the
+module's name, a dot, and a name from that module.**
+
+## Importing a module
+
+The Python standard library is a collection of modules included with Python.
+The `math` module provides functions and values for mathematical work.
+
+Use an `import` statement to make the module available:
+
+```{python}
+import math
+```
+
+The statement does not display anything. It makes the name `math` refer to the
+module so that later code can use the names inside it.
+
+## Qualified names
+
+The `math` module contains a function named `sqrt()`. Use the qualified name
+`math.sqrt` to distinguish it from names in other modules or in the program:
+
+```{python}
+math.sqrt(81)
+```
+
+The dot in `math.sqrt` connects the module name to a name inside that module.
+The parentheses then call the function with `81` as its argument. The function
+returns the floating-point number `9.0`.
+
+The module name remains part of every qualified name:
+
+```{python}
+math.ceil(3.2)
+```
+
+The `ceil()` function returns the smallest integer greater than or equal to its
+argument. Here it returns `4`.
+
+## Values in a module
+
+A module can contain values as well as functions. The `math.pi` name refers to
+an approximation of the number pi:
+
+```{python}
+math.pi
+```
+
+There are no parentheses because `math.pi` is a value, not a function. It can
+be used in an expression:
+
+```{python}
+radius = 5
+circumference = 2 * math.pi * radius
+circumference
+```
+
+The qualified name states where `pi` comes from. Anyone reading the expression
+can see that the value belongs to the `math` module.
+
+## Practice
+
+### Problem 1
+
+What will be displayed when this code is run in a notebook cell? Write down
+your answer, then run the cell and check it.
+
+```python
+import math
+math.sqrt(100)
+```
+
+### Problem 2
+
+What will be displayed when this code is run in a notebook cell? Write down
+your answer, then run the cell and check it.
+
+```python
+import math
+math.ceil(7.1)
+```
+
+### Problem 3
+
+What will be displayed when this code is run in a notebook cell? Write down
+your answer, then run the cell and check it.
+
+```python
+import math
+math.pi * 2
+```
+
+### Problem 4
+
+In this code, which qualified names refer to functions? Which qualified name
+refers to a floating-point number?
+
+```python
+import math
+math.sqrt
+math.ceil
+math.pi
+```
+
+### Problem 5
+
+Add an expression that uses `radius` and `math.pi` to calculate the area of the
+circle. The area of a circle is pi times its radius squared.
+
+```python
+import math
+radius = 4
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `import math` | makes the `math` module available |
+| `math.sqrt` | a qualified name for the `sqrt` function in `math` |
+| `math.sqrt(81)` | calls the function and returns `9.0` |
+| `math.ceil(3.2)` | calls the function and returns `4` |
+| `math.pi` | refers to a value in the `math` module |
+| the dot in `math.sqrt` | connects a module name to a name inside that module |
+| parentheses after `math.sqrt` | call the function named by `math.sqrt` |
+
+And the one idea to carry forward: importing a module makes its names
+available. Qualified names show which module provides each function or value.

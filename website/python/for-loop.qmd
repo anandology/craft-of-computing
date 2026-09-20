@@ -1,0 +1,148 @@
+---
+title: "The For Loop"
+unit: 2
+cluster: "Collections and Repetition"
+---
+
+A list can contain many values. Selecting and using each value by its index
+would repeat the same code. A `for` loop performs the same work for every
+element in a list.
+
+In this lesson, we'll learn how to:
+
+* write a `for` loop
+* use the loop variable
+* identify the indented loop body
+* follow the order in which a loop runs
+
+**A `for` loop runs an indented block of code once for each element in a
+collection.**
+
+## A loop over a list
+
+Suppose a list contains three language names:
+
+```{python}
+languages = ["Python", "Shell", "Markdown"]
+```
+
+This loop displays every element:
+
+```{python}
+for language in languages:
+    print(language)
+```
+
+The loop uses the elements in the order in which they appear in the list.
+
+The first line has four parts:
+
+| Part | Meaning |
+|------|---------|
+| `for` | starts a loop |
+| `language` | the loop variable |
+| `in languages` | takes values from `languages` |
+| `:` | marks the start of the loop body |
+
+The name `language` is singular because it refers to one element at a time.
+The name `languages` is plural because it refers to the complete list.
+
+## How the loop runs
+
+Python takes the elements from `languages` in order:
+
+1. `language` refers to `"Python"`, and the body displays `Python`.
+2. `language` refers to `"Shell"`, and the body displays `Shell`.
+3. `language` refers to `"Markdown"`, and the body displays `Markdown`.
+
+Each run of the loop body is called an **iteration**. This loop has three
+iterations because the list has three elements.
+
+The loop variable can be used in an expression:
+
+```{python}
+marks = [72, 85, 91]
+for mark in marks:
+    print(mark, mark + 5)
+```
+
+On each iteration, `mark` refers to the next integer in the list. The loop
+displays that integer and the result of adding `5`.
+
+## The indented body
+
+The spaces at the start of a line are called **indentation**. Indentation tells
+Python which lines belong to the loop:
+
+```{python}
+for language in languages:
+    print("Learning", language)
+print("Done")
+```
+
+The first `print()` is indented, so it runs once for each element. The second
+`print()` is not indented, so it runs once after the loop has finished.
+
+Use four spaces for each level of indentation. Every line in the same loop
+body must have the same indentation.
+
+## Practice
+
+### Problem 1
+
+Write down the complete output of this code. Then run it and check your answer.
+
+```python
+animals = ["cat", "dog", "goat"]
+for animal in animals:
+    print("A", animal)
+print("Done")
+```
+
+## Problem 2
+
+Write a program to print the squares of numbers from 1 to 5.
+
+
+## Problem 3
+
+Complete the following program by replacing each occurance of `___` with appropriate code.
+
+```python
+names = ["Alice", "Bob", "Charlie"]
+
+for ___ in ___:
+   ___
+```
+
+The program with executed is expected to produce the following output.
+
+```text
+Hello Alice
+Hello Bob
+Hello Charlie
+```
+
+### Problem 4
+
+Improve your solution to the above problem to make it print the following output.
+
+```
+Hello, Alice!
+Hello, Bob!
+Hello, Charlie!
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `for language in languages:` | starts a loop over `languages` |
+| `language` | refers to one element during each iteration |
+| `    print(language)` | an indented line that belongs to the loop body |
+| `:` | marks the start of the loop body |
+| four spaces | the indentation used for one level |
+| an unindented line after the body | runs after the loop has finished |
+
+And the one idea to carry forward: a `for` loop visits each element in order
+and runs the indented body once for that element.

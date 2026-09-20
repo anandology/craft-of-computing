@@ -1,0 +1,227 @@
+---
+title: "Command-Line Arguments"
+unit: 2
+cluster: "Writing Programs"
+---
+
+A program sometimes needs a different input each time it runs. Command-line
+arguments let a person provide that input in the command, without editing the
+script.
+
+In this lesson, we'll learn how to:
+
+* pass arguments to a Python script
+* read the `sys.argv` list
+* select an argument by its index
+* convert an integer argument from a string
+
+**The `sys.argv` list contains the script name followed by the command-line
+arguments. Every element in the list is a string.**
+
+## Seeing the argument list
+
+The `argv` list belongs to the `sys` module. Use a `%%file` cell to create
+`args.py`:
+
+```python
+%%file args.py
+import sys
+
+print(sys.argv)
+```
+
+Run it with two words after the script name:
+
+```python
+!python args.py hello world
+```
+
+The notebook displays:
+
+```text
+['args.py', 'hello', 'world']
+```
+
+For this command, Python starts the script and makes this list available as
+`sys.argv`:
+
+| Index | String |
+|-------|--------|
+| `0` | `'args.py'` |
+| `1` | `'hello'` |
+| `2` | `'world'` |
+
+`sys.argv[0]` is the script name. The values supplied after the script name
+begin at index `1`.
+
+## Using one argument
+
+A script can select an argument just as it selects any other list element. Use
+`%%file` to create `echo.py`:
+
+```python
+%%file echo.py
+import sys
+
+message = sys.argv[1]
+print(message)
+```
+
+The first argument becomes the script's output:
+
+```python
+!python echo.py hello
+```
+
+```text
+hello
+```
+
+Running the same script with a different argument changes the output without
+changing the file:
+
+```python
+!python echo.py goodbye
+```
+
+```text
+goodbye
+```
+
+If the command contains more than one argument, this script still selects only
+the element at index `1`:
+
+```python
+!python echo.py hello world
+```
+
+```text
+hello
+```
+
+## Arguments are strings
+
+Every element in `sys.argv` is a string, even when it contains digits:
+
+```python
+!python args.py 5
+```
+
+```text
+['args.py', '5']
+```
+
+A calculation therefore needs to convert the argument. Use `%%file` to create
+`square.py`:
+
+```python
+%%file square.py
+import sys
+
+n = int(sys.argv[1])
+print(n * n)
+```
+
+Now the string from the command line becomes an integer before multiplication:
+
+```python
+!python square.py 5
+```
+
+```text
+25
+```
+
+The expression `sys.argv[1]` is evaluated first. `int()` receives the selected
+string and returns an integer. The assignment keeps that integer in `n`.
+
+## A missing argument
+
+The `echo.py` script expects an element at index `1`. Running it without an
+argument creates a list containing only the script name:
+
+```python
+!python echo.py
+```
+
+The error message ends with:
+
+```text
+IndexError: list index out of range
+```
+
+Read the last line first. The `IndexError` says that the requested list index
+does not exist. The script needs an argument, but the command did not provide
+one. A later lesson will introduce a way to check for this case before
+selecting the element.
+
+## Practice
+
+### Problem 1
+
+Write down the value of `sys.argv` for this command. Then run `args.py` with
+the same arguments and check your answer.
+
+```python
+!python args.py red green blue
+```
+
+### Problem 2
+
+Use `%%file` to create a script named `greet.py` that uses its first
+command-line argument as a name. It should behave like this:
+
+```python
+!python greet.py Mira
+```
+
+```text
+Hello, Mira
+```
+
+### Problem 3
+
+Use `%%file` to create a script named `add.py` that converts its first two
+command-line arguments to integers and displays their sum. It should produce
+these results:
+
+```python
+!python add.py 3 4
+```
+
+```text
+7
+```
+
+```python
+!python add.py 10 20
+```
+
+```text
+30
+```
+
+### Problem 4
+
+Predict what happens when `add.py` is run with only one number. Run the command
+and use the final line of the error message to explain the result.
+
+```python
+!python add.py 3
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `%%file echo.py` | writes the script in the notebook's current directory |
+| `!python echo.py hello` | runs `echo.py` with one command-line argument |
+| `import sys` | makes the `sys` module available |
+| `sys.argv` | a list of strings containing the script name and arguments |
+| `sys.argv[0]` | selects the script name |
+| `sys.argv[1]` | selects the first command-line argument |
+| `int(sys.argv[1])` | converts the first argument from a string to an integer |
+| `IndexError` | occurs when the script selects an argument that was not provided |
+
+And the one idea to carry forward: command-line arguments provide input when a
+script starts, and `sys.argv` makes that input available as a list of strings.

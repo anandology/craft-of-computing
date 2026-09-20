@@ -1,0 +1,240 @@
+---
+title: "Word Count"
+unit: 2
+cluster: "Writing Programs"
+---
+
+The number of words in a document is useful when checking the length of a
+report, article, or assignment. A Python script can calculate that number for
+any text file named on the command line.
+
+In this lesson, we'll learn how to:
+
+* connect command-line input to file reading
+* turn the file's text into a list of words
+* count the words and display the result
+
+**A larger program can be built as a sequence of stages. Variables keep the
+intermediate values that later stages need.**
+
+## The steps in the program
+
+The word-count program needs to perform six stages:
+
+1. Read a filename from `sys.argv`.
+2. Open the named file.
+3. Read its contents as a string.
+4. Close the file.
+5. Split the string into a list of words.
+6. Display the length of the list.
+
+Every operation has appeared in an earlier lesson. The new work is connecting
+the operations so that data flows through a complete program.
+
+## An input file
+
+Use a `%%file` cell in the notebook to create `article.txt`:
+
+```python
+%%file article.txt
+Python programs can read text files.
+Each file can provide different input.
+```
+
+This file has twelve groups of characters separated by whitespace.
+
+## Writing the script
+
+Use another `%%file` cell to create `wordcount.py`:
+
+```python
+%%file wordcount.py
+import sys
+
+filename = sys.argv[1]
+
+text_file = open(filename)
+text = text_file.read()
+text_file.close()
+
+words = text.split()
+count = len(words)
+print(count)
+```
+
+The blank lines separate the program into visible stages. They do not change
+how Python runs the statements.
+
+Run the program with `article.txt`:
+
+```python
+!python wordcount.py article.txt
+```
+
+The notebook displays:
+
+```text
+12
+```
+
+The command supplies `article.txt` as the first command-line argument. The
+script opens that file and counts the twelve strings returned by `split()`.
+
+## Following the data
+
+Each variable keeps the result needed by the next stage:
+
+| Variable | Value |
+|----------|-------|
+| `filename` | the string `'article.txt'` |
+| `text_file` | a file object for `article.txt` |
+| `text` | one string containing the file's text |
+| `words` | a list of strings from `text.split()` |
+| `count` | the integer returned by `len(words)` |
+
+These names make the stages visible. The program could combine several calls
+in one expression, but separate statements are easier to inspect and correct.
+
+## What this program counts
+
+Calling `split()` without an argument separates text at whitespace, including
+spaces and line breaks. Create `sentence.txt` in the notebook:
+
+```python
+%%file sentence.txt
+Anything that can go wrong, will go wrong.
+```
+
+The script reports eight words:
+
+```python
+!python wordcount.py sentence.txt
+```
+
+```text
+8
+```
+
+For this program, a word is any group of characters separated by whitespace.
+The strings `'wrong,'` and `'wrong.'` include punctuation, but each is still
+one element in the list.
+
+The script is named `wordcount.py` rather than `wc.py`. The Unix `wc` command
+has precise rules and can count lines, words, bytes, and characters. This
+program performs only the whitespace-based word count described here.
+
+## Using a different file
+
+The filename is input, so the same program can count another file without any
+code changes. Create `colours.txt`:
+
+```python
+%%file colours.txt
+red
+green
+blue
+yellow
+```
+
+Run the script with the new filename:
+
+```python
+!python wordcount.py colours.txt
+```
+
+```text
+4
+```
+
+Only the command changes. The stages inside the script remain the same.
+
+## Practice
+
+### Problem 1
+
+Use `%%file` to create `places.txt`:
+
+```python
+%%file places.txt
+Bengaluru Mysuru
+New Delhi
+```
+
+Predict the output of this command. Then run it and check your answer.
+
+```python
+!python wordcount.py places.txt
+```
+
+### Problem 2
+
+Use `%%file` to create `message.txt`:
+
+```python
+%%file message.txt
+Wait... what happened?
+```
+
+Predict the list returned by `text.split()` and the count displayed by
+`wordcount.py`. Temporarily add `print(words)` before `print(count)`, run the
+script, and compare the list with your prediction. Then explain how the
+program treats the punctuation.
+
+### Problem 3
+
+Use `%%file` to create a script named `linecount.py`. It should take a filename
+as its first command-line argument and display the number of lines in that
+file. Use the files from Problems 1 and 2 to confirm that it works without
+changing the script:
+
+```python
+!python linecount.py places.txt
+```
+
+```text
+2
+```
+
+```python
+!python linecount.py message.txt
+```
+
+```text
+1
+```
+
+### Problem 4
+
+The stages in this script are in the wrong order. Rearrange them so that the
+script counts the words in the file named on the command line. Close the file
+after reading it.
+
+```python
+import sys
+
+count = len(words)
+text = text_file.read()
+filename = sys.argv[1]
+words = text.split()
+text_file.close()
+text_file = open(filename)
+print(count)
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `%%file wordcount.py` | writes the script in the notebook's current directory |
+| `import sys` | makes the `sys` module available |
+| `sys.argv[1]` | selects the first command-line argument |
+| `open("article.txt")` | returns a file object for the named file |
+| `text_file.read()` | returns the file's text as a string |
+| close a file after reading | releases the file when it is no longer needed |
+| `"one two\nthree".split()` | returns `['one', 'two', 'three']` |
+| `len(['one', 'two', 'three'])` | returns the integer `3` |
+| `!python wordcount.py article.txt` | runs the script with `article.txt` as input |
+
+And the one idea to carry forward: a complete program can be understood as a
+sequence of stages. Variables make intermediate values available to later
+stages.

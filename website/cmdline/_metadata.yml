@@ -1,0 +1,2 @@
+# Scopes the unit accent colour. theme.scss reads it off the body.
+body-classes: unit-1

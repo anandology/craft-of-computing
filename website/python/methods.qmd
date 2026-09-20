@@ -1,0 +1,160 @@
+---
+title: "Using Methods"
+unit: 2
+cluster: "Functions, Methods, and Modules"
+---
+
+The operation needed for a value often depends on its type. Text can be
+changed to uppercase or split into words. Python provides these operations as
+methods on strings.
+
+In this lesson, we'll learn how to:
+
+* call a method on a value
+* recognize the dot in a method call
+* use a value returned by a string method
+* split a string into a list
+
+**A method is a function associated with a value. A dot connects the value to
+the method's name, and parentheses call the method.**
+
+## Calling a method
+
+The `upper()` string method returns an uppercase version of a string:
+
+```{python}
+name = "Python"
+name.upper()
+```
+
+The expression `name.upper()` has three parts:
+
+| Part | Meaning |
+|------|---------|
+| `name` | refers to the string value |
+| `.` | connects the value to one of its methods |
+| `upper()` | names and calls the method |
+
+The value before the dot determines which method Python uses. In this example,
+`name` refers to a string, so Python uses the string method `upper()`.
+
+The `lower()` method performs the opposite operation:
+
+```{python}
+name.lower()
+```
+
+Both methods return strings. Their calls are expressions, so their returned
+values can be assigned to variables.
+
+## The original string
+
+String methods such as `upper()` and `lower()` return new strings. They do not
+change the original string:
+
+```{python}
+language = "Python"
+lowercase_language = language.lower()
+print(lowercase_language)
+print(language)
+```
+
+The first line of output comes from the new string returned by `lower()`. The
+second line shows that `language` still refers to the original string.
+
+To keep the returned string, assign it to a variable. Assigning it back to the
+same variable changes which value that variable refers to:
+
+```{python}
+language = language.upper()
+language
+```
+
+The method still did not change the original string. The assignment made
+`language` refer to the new string returned by `upper()`.
+
+## Splitting text
+
+The `split()` method separates a string at **whitespace**, such as spaces and
+line breaks, and returns a list of strings:
+
+```{python}
+sentence = "Python is easy to read"
+words = sentence.split()
+words
+```
+
+The result is a list with five string elements. Earlier list operations work
+with the returned list:
+
+```{python}
+len(words)
+```
+
+This is a useful pattern: call a method, assign its returned value, and then
+use that value in another operation.
+
+## Practice
+
+### Problem 1
+
+What value will this expression return? Write down your answer, then run it and
+check.
+
+```python
+"quiet".upper()
+```
+
+### Problem 2
+
+What value will this expression return? Write down your answer, then run it and
+check.
+
+```python
+"one two three".split()
+```
+
+### Problem 3
+
+Replace `___` with a method call that uses `message`. The completed cell should
+display `'learn python'`.
+
+```python
+message = "Learn Python"
+lowercase_message = ___
+lowercase_message
+```
+
+### Problem 4
+
+After this code runs, what values do `lowercase_message` and `message` refer
+to? Explain why the two values differ.
+
+```python
+message = "Learn Python"
+lowercase_message = message.lower()
+```
+
+### Problem 5
+
+Write code that uses `split()` and `len()` to find the number of words in this
+sentence. Keep the list of words in a variable before finding its length.
+
+```python
+sentence = "Methods can return useful values"
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `"Python".upper()` | calls a string method and returns `"PYTHON"` |
+| `"Python".lower()` | calls a string method and returns `"python"` |
+| the dot in `text.upper()` | connects a value to a method associated with it |
+| parentheses in `text.upper()` | call the method |
+| `"one two".split()` | returns the list `["one", "two"]` |
+| `new_text = text.lower()` | keeps the new string returned by the method |
+| `upper()` and `lower()` | return new strings without changing the original string |
+
+And the one idea to carry forward: a method is called through a value with a
+dot. The method can return a new value without changing the original value.

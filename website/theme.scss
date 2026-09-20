@@ -1,0 +1,552 @@
+/*-- scss:defaults --*/
+
+// The Craft of Computing --- lesson-site theme.
+//
+// Warm paper ground, a serif for headings, a sans for prose, a mono for
+// terminals. One accent colour per unit, switched by the `body-classes`
+// set in each unit's _metadata.yml.
+
+$font-family-sans-serif: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif !default;
+$font-family-monospace:  "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace !default;
+$headings-font-family:   "Fraunces", Georgia, "Times New Roman", serif !default;
+
+// The design is drawn against a 16px root, so every rem below is the px value
+// in the design divided by 16. Cosmo ships a 17px root, which silently scaled
+// the whole page up by 6%.
+$font-size-root:   16px !default;
+
+// Prose is set at 18px. Everything chrome-side -- sidebar, navbar, captions --
+// is given its own smaller size in the rules below, so this only moves the
+// body text and the heading scale that hangs off it.
+$font-size-base:   1.125rem !default;
+$headings-font-weight: 600 !default;
+
+$body-bg:      #FAF8F3 !default;
+$body-color:   #2C2A24 !default;
+$link-color:   #B4532A !default;
+$link-hover-color: #8E3F1F !default;
+$border-color: #E4DFD3 !default;
+$border-radius: 4px !default;
+
+$navbar-bg: #FAF8F3 !default;
+$navbar-fg: #55503F !default;
+$navbar-hl: #8E3F1F !default;
+
+$sidebar-bg: #F5F1E8 !default;
+$sidebar-fg: #3D3A31 !default;
+$sidebar-hl: #8E3F1F !default;
+
+$grid-sidebar-width: 300px !default;
+
+$code-color: #8E3F1F !default;
+$code-bg:    #EFEADF !default;
+
+/*-- scss:rules --*/
+
+// Every colour the design uses, in one place. The accent trio is redefined
+// per unit below; everything else is shared.
+:root {
+  --craft-paper:        #FAF8F3;
+  --craft-panel:        #F5F1E8;
+  --craft-ink:          #1A1916;
+  --craft-body:         #2C2A24;
+  --craft-muted:        #55503F;
+  --craft-faint:        #6B6558;
+  --craft-label:        #8A8270;
+  --craft-rule:         #E4DFD3;
+  --craft-rule-strong:  #DFD8C8;
+  --craft-card:         #FFFFFF;
+  --craft-code-bg:      #EFEADF;
+
+  --craft-term-bg:      #23211C;
+  --craft-term-fg:      #E8E3D7;
+  --craft-term-out:     #A9A396;
+  --craft-term-prompt:  #C3A87A;
+
+  --craft-accent:       #B4532A;
+  --craft-accent-dark:  #8E3F1F;
+  --craft-accent-wash:  #F2E3D8;
+  --craft-accent-soft:  #F3DCCD;
+  --craft-accent-on:    #FFFFFF;
+}
+
+body.unit-1 {
+  --craft-accent:      #B4532A;
+  --craft-accent-dark: #8E3F1F;
+  --craft-accent-wash: #F2E3D8;
+  --craft-accent-soft: #F3DCCD;
+}
+
+body.unit-2 {
+  --craft-accent:      #2F6B5E;
+  --craft-accent-dark: #24524A;
+  --craft-accent-wash: #DDEBE5;
+  --craft-accent-soft: #CFE2DC;
+}
+
+body.unit-3 {
+  --craft-accent:      #3C5A8A;
+  --craft-accent-dark: #2E466C;
+  --craft-accent-wash: #DFE6F1;
+  --craft-accent-soft: #D3DEEE;
+}
+
+a {
+  color: var(--craft-accent);
+
+  &:hover {
+    color: var(--craft-accent-dark);
+  }
+}
+
+// Navbar -------------------------------------------------------------------
+
+.navbar {
+  min-height: 64px;
+  border-bottom: 1px solid var(--craft-rule);
+  font-size: 0.875rem;
+}
+
+.navbar-brand {
+  font-family: $headings-font-family;
+  font-size: 1.1875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--craft-ink);
+}
+
+// The unit you are reading is named in the navbar, so it carries the mark.
+.navbar .navbar-nav .nav-link.active {
+  color: var(--craft-accent-dark);
+  font-weight: 600;
+}
+
+// Sidebar ------------------------------------------------------------------
+
+.sidebar-navigation {
+  border-right: 1px solid var(--craft-rule);
+  font-size: 0.90625rem;
+}
+
+// Section names are labels for a cluster of lessons, not destinations, so
+// they are set as small caps and the collapse chevron is dropped. Quarto
+// renders them expanded already; without the toggle they simply stay open.
+.sidebar-navigation .sidebar-item-section > .sidebar-item-container {
+  > .sidebar-item-text {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--craft-label);
+    padding: 0.75rem 0.625rem 0.25rem;
+
+    &:hover {
+      color: var(--craft-label);
+      background: none;
+    }
+  }
+
+  > .sidebar-item-toggle {
+    display: none;
+  }
+}
+
+.sidebar-navigation .sidebar-item .sidebar-item-text {
+  padding: 0.4375rem 0.625rem;
+  border-radius: 3px;
+  color: var(--craft-body);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.035);
+    color: var(--craft-body);
+  }
+
+  &.active,
+  &.active:hover {
+    background: var(--craft-accent-wash);
+    color: var(--craft-accent-dark);
+    font-weight: 600;
+  }
+}
+
+.sidebar-title a {
+  font-family: $headings-font-family;
+  font-weight: 600;
+  color: var(--craft-ink);
+}
+
+// Prose --------------------------------------------------------------------
+
+// The prev/next pair is a sibling of main, laid out in the page grid's last
+// row, so the page ends flush against it. The breathing room has to go on the
+// grid itself.
+#quarto-content {
+  padding-bottom: 4rem;
+}
+
+main.content {
+  line-height: 1.7;
+
+  h1, h2, h3, h4 {
+    font-family: $headings-font-family;
+    letter-spacing: -0.015em;
+  }
+
+  // Quarto rules an h2 off from the section above it. The design separates
+  // sections with space instead, so the line goes.
+  h2 {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-top: 2.5rem;
+    font-size: 1.625rem;
+  }
+}
+
+#title-block-header .quarto-title h1.title {
+  font-size: 2.75rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+// Inline code, as distinct from a code block. Quarto leaves it unpadded.
+code:not(.sourceCode) {
+  background: var(--craft-code-bg);
+  color: var(--craft-accent-dark);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+// Terminal transcripts -----------------------------------------------------
+
+// Built by session.lua from a ```session block. It is a bare <pre>, not a
+// div.sourceCode, so it inherits none of the theme's code styling and has to
+// be told all of it.
+pre.session {
+  background: var(--craft-term-bg);
+  color: var(--craft-term-fg);
+  border: none;
+  border-radius: 4px;
+  padding: 1.25rem 1.375rem;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+// Long lines wrap rather than scroll sideways. A student reading on a phone
+// should never have to discover that the rest of a command is off to the
+// right -- a command they cannot see is one they cannot type. The <code> is
+// named as well as the <pre>: the theme's bare `code { white-space: pre }`
+// beats inheritance from the parent.
+pre.session,
+pre.session > code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+// The prompt is drawn here rather than written into the block, so it is not
+// part of the page text: selecting a command line and copying it gives the
+// command alone. Nothing is stripped at copy time, so a dollar sign belonging
+// to the command -- $1, $HOME -- survives untouched.
+pre.session .cmd::before {
+  content: "$ ";
+  color: var(--craft-term-prompt);
+  user-select: none;
+}
+
+// Continuation lines of a command broken with "\", indented to sit under the
+// command in place of the prompt they do not get.
+pre.session .cmd-cont::before {
+  content: "  ";
+  user-select: none;
+}
+
+// Commands sit at full strength and output recedes. The difference is carried
+// by colour alone -- with the prompt already marking every command line, bold
+// on top of that was one signal too many.
+pre.session .cmd,
+pre.session .cmd-cont {
+  color: var(--craft-term-fg);
+}
+
+pre.session .out {
+  color: var(--craft-term-out);
+}
+
+// Callouts -----------------------------------------------------------------
+
+.callout {
+  border: 1px solid var(--craft-rule-strong);
+  border-radius: 4px;
+  background: var(--craft-panel);
+}
+
+.callout.callout-style-default > .callout-header {
+  background: none;
+  border-bottom: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--craft-muted);
+}
+
+.callout-warning,
+.callout-important,
+.callout-caution {
+  border-color: #DDBE8E;
+  background: #FBF3E4;
+
+  &.callout-style-default > .callout-header {
+    color: #8A5A18;
+  }
+}
+
+// Previous / next ----------------------------------------------------------
+
+// Quarto ships these as two inline links with arrow icons. The design makes
+// them a pair of cards: where you came from, and where you are going, with
+// the forward one carrying the unit's accent.
+.page-navigation {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-top: 3rem;
+  border-top: none;
+}
+
+// On the first and last lesson of a unit Quarto still emits both divs, one of
+// them empty. The card is therefore drawn on the link, not on the div, so an
+// empty one shows nothing. It keeps its slot, so the single remaining card
+// stays on its own side rather than stretching across the page.
+.nav-page {
+  flex: 1 1 0;
+  padding: 0;
+  border: none;
+  background: none;
+
+  .bi {
+    display: none;
+  }
+
+  a.pagination-link {
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    // Quarto centres the link's contents for its inline arrow-and-title
+    // layout. Here the two lines stack and read from the left edge.
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--craft-rule);
+    border-radius: 4px;
+    background: var(--craft-card);
+    text-decoration: none;
+    color: var(--craft-body);
+  }
+
+  // Quarto insets the title by .25em to clear the arrow icon, which is
+  // dropped above. Left in, it would sit out of line with the label.
+  .nav-page-text {
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+}
+
+// The label is not in the markup -- Quarto emits only the page title -- so it
+// is drawn here.
+.nav-page-previous a.pagination-link::before {
+  content: "Previous";
+  font-size: 0.75rem;
+  color: var(--craft-faint);
+}
+
+.nav-page-next {
+  a.pagination-link {
+    align-items: flex-end;
+    text-align: right;
+    border-color: var(--craft-accent);
+    background: var(--craft-accent);
+    color: var(--craft-accent-on);
+  }
+
+  a.pagination-link::before {
+    content: "Next";
+    font-size: 0.75rem;
+    color: var(--craft-accent-soft);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .page-navigation {
+    flex-direction: column;
+  }
+}
+
+// Home page ----------------------------------------------------------------
+
+// The home page is a directory, not a lesson: no sidebar, no table of
+// contents, and a row of cards per section.
+body.page-home {
+  main.content {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  #title-block-header .quarto-title h1.title {
+    font-size: 3.25rem;
+  }
+
+  // Section headings here are labels over a row of cards, not headings in a
+  // piece of prose, so they are set like the sidebar's cluster labels.
+  h2 {
+    font-family: $font-family-sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--craft-label);
+    margin-top: 3.5rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.home-lede {
+  font-size: 1.1875rem;
+  line-height: 1.55;
+  color: var(--craft-muted);
+  max-width: 38rem;
+}
+
+.craft-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .craft-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575.98px) {
+  .craft-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// The whole card is the link. A button inside would be a second interactive
+// target inside the first, and an anchor cannot nest inside an anchor.
+a.craft-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.75rem;
+  background: var(--craft-card);
+  border: 1px solid var(--craft-rule);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--craft-body);
+
+  // There is no button: the whole card is the link, so the card itself is
+  // what answers the pointer.
+  &:hover {
+    border-color: var(--craft-accent);
+    background: var(--craft-accent-wash, #F2E3D8);
+    color: var(--craft-body);
+  }
+
+  &:hover .craft-card-title {
+    color: var(--craft-accent-dark);
+  }
+
+  // Each card carries its own accent, so a unit's colour is recognisable
+  // here before you have opened it.
+  &.unit-1 { --craft-accent: #B4532A; --craft-accent-dark: #8E3F1F; --craft-accent-wash: #F7EDE6; }
+  &.unit-2 { --craft-accent: #2F6B5E; --craft-accent-dark: #24524A; --craft-accent-wash: #EBF3F0; }
+  &.unit-3 { --craft-accent: #3C5A8A; --craft-accent-dark: #2E466C; --craft-accent-wash: #EDF1F7; }
+}
+
+.craft-card-num {
+  font-family: $headings-font-family;
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--craft-accent);
+}
+
+.craft-card-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--craft-faint);
+}
+
+.craft-card-title {
+  font-family: $headings-font-family;
+  font-size: 1.5625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--craft-ink);
+}
+
+.craft-card-body {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--craft-muted);
+}
+
+// Pushed to the bottom so cards in a row line their footers up, however much
+// text sits above.
+.craft-card-foot {
+  margin-top: auto;
+  padding-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.craft-card-meta {
+  font-size: 0.8125rem;
+  color: var(--craft-faint);
+}
+
+// A page with no sidebar and no prev/next is a dead end without this.
+a.back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  margin-top: 3rem;
+  color: var(--craft-accent);
+  font-size: 0.9375rem;
+  text-decoration: none;
+
+  &::before {
+    content: "\2190";
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+
+  &:hover {
+    color: var(--craft-accent-dark);
+    text-decoration: underline;
+  }
+}
+
+.alpha-list ol {
+  list-style-type: lower-alpha;
+  
+}
+
+.alpha-list ol li::marker {
+  content: counter(list-item, lower-alpha) ") ";
+}

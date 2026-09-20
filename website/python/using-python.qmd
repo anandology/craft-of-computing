@@ -10,7 +10,7 @@ course:
 
 * the **interpreter**, where you type one line at a time and see the answer
   straight away
-* a **script**, a file of Python code that you run from the command line
+* a **script**, a file of Python code that Python can run as a program
 * a **notebook**, a page in the browser where code and notes sit together
 
 They run the same Python. What changes is how you work with it.
@@ -85,84 +85,26 @@ wrote, put it in a file.
 
 ## A script
 
-A **script** is a file with Python code in it. Python reads the file and runs
-the lines one by one, just as if you typed them - the same idea as a shell
-script.
+A **script** is a text file containing Python code. In this course, we will use
+JupyterLab's `%%file` cell magic to create scripts:
 
-### A place to keep it
-
-Python files will pile up, so let's give them a directory of their own. It is
-the same `python` directory your notebooks live in:
-
-```session
-$ cd
-```
-
-```session
-$ mkdir -p python
-```
-
-```session
-$ cd python
-```
-
-Everything in this chapter happens here.
-
-### Writing the file
-
-You need an editor. `nano` will do, and it runs in the terminal so you do not
-have to go anywhere else:
-
-```session
-$ nano hello.py
-```
-
-If you would rather use vscode, open this directory in it:
-
-```session
-$ code .
-```
-
-and make a new file called `hello.py` there. If you have not set up an editor
-yet, see [Setting up Editor](../setup/editor.qmd).
-
-Type one line into the file, and save:
-
-```{.python filename="hello.py"}
+```python
+%%file hello.py
 print("hello, world!")
 ```
 
-Run it by handing the file to `python`:
+We will run them from a notebook by putting `!` before the shell command:
 
-```session
-$ python hello.py
+```python
+!python hello.py
+```
+
+```text
 hello, world!
 ```
 
-Notice the `print`. In the interpreter, typing `5 + 2` was enough to see the
-answer - the interpreter prints the value of whatever you type. A script does
-not. It runs the lines and stays quiet unless you ask it to print something.
-
-See it for yourself. Make a file with two lines:
-
-```{.python filename="numbers.py"}
-5 + 2
-print(5 * 2)
-```
-
-```session
-$ python numbers.py
-10
-```
-
-Python worked out `5 + 2` and threw the answer away, because nothing asked for
-it. Only the line with `print` put anything on the screen.
-
-The name ends in `.py` by custom, so a directory listing tells you what the
-file is.
-
-A script is for code you want to keep and run again - today, tomorrow, or a
-hundred times.
+A script keeps a program that you want to run again. A later lesson develops
+this way of working in detail.
 
 ## A notebook
 

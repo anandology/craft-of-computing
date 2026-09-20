@@ -1,0 +1,221 @@
+---
+title: "Reading Errors"
+unit: 2
+cluster: "Getting Started"
+---
+
+When Python cannot run some code, it reports an error. The error message names
+the problem and shows where it happened. It is information that helps you fix
+the code.
+
+In this lesson, we'll learn how to:
+
+* find the useful parts of an error message
+* distinguish four common errors
+* use an error message to correct code
+
+**Read the last line of an error message first. It names the error and explains
+the immediate problem.**
+
+## Start with the last line
+
+This expression tries to add an integer and a string:
+
+```{python}
+#| error: true
+1 + "2"
+```
+
+Python reports an error. The last line is:
+
+```text
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+```
+
+The part before the colon, `TypeError`, is the name of the error. The part
+after the colon explains the problem.
+
+The lines above it show where the error happened. Look for the line of your
+code and an arrow or caret (`^`) that points to the relevant part. Start with
+the last line, then use this location information to find the code to fix.
+
+## SyntaxError
+
+A `SyntaxError` means that Python cannot understand the structure of the code.
+This expression has an operator but no value after it:
+
+```python
+2 +
+```
+
+The error message ends with:
+
+```text
+SyntaxError: invalid syntax
+```
+
+The expression is complete after a second value is added:
+
+```{python}
+2 + 3
+```
+
+## IndentationError
+
+Spaces at the start of a line have meaning in Python. An `IndentationError`
+means that these spaces do not match the structure Python expects. This line
+starts with spaces where Python does not expect them:
+
+```python
+    print("hello")
+```
+
+The error message ends with:
+
+```text
+IndentationError: unexpected indent
+```
+
+Remove the spaces to correct the line:
+
+```{python}
+print("hello")
+```
+
+`IndentationError` is a specific kind of `SyntaxError`. Later lessons will use
+indentation to group lines of code. For now, start each independent line at the
+left edge.
+
+## NameError
+
+A `NameError` means that Python does not know a name:
+
+```python
+total
+```
+
+If `total` has not been assigned a value, the error message ends with:
+
+```text
+NameError: name 'total' is not defined
+```
+
+Assign the value before using the name:
+
+```{python}
+total = 25
+total
+```
+
+A misspelled name causes the same error. Python treats `total`, `Total`, and
+`totla` as different names.
+
+## TypeError
+
+A `TypeError` means that an operation does not support the types of the values
+given to it. This is the error from the start of the lesson:
+
+```python
+1 + "2"
+```
+
+There is more than one possible correction. The correct choice depends on the
+intended result. Add two integers to produce `3`:
+
+```{python}
+1 + 2
+```
+
+Or join two strings to produce `"12"`:
+
+```{python}
+"1" + "2"
+```
+
+Python reports the error instead of guessing which result was intended.
+
+## Fix one error at a time
+
+Python stops a code cell when it reaches an error. It does not run later lines
+in that cell:
+
+```python
+print("before")
+1 + "2"
+print("after")
+```
+
+This code displays `before`, then reports a `TypeError`. It does not display
+`after`.
+
+Read the last line of the error, find the relevant line of code, and correct
+it. Then run the code again. If Python reports another error, repeat the same
+process.
+
+## Practice
+
+### Problem 1
+
+
+For each code sample below:
+
+* Name the error that Python will report.
+* Explain the problem.
+* Correct the code.
+
+
+::: {.alpha-list}
+
+1. 
+
+    ```python
+    10 *
+    ```
+
+2. 
+
+    ```python
+    print("Python")
+    ```
+
+3. 
+
+    ```python
+    score = 40
+    scroe + 2
+    ```
+
+4. 
+
+    ```python
+    5 + "5"
+    ```
+
+:::
+
+### Probem 2
+
+Run this code. Which lines run before the error? Which line does not run?
+
+```python
+print("first")
+print("second")
+"three" + 3
+print("fourth")
+```
+
+## Summary
+
+| Error or method | Meaning |
+|-----------------|---------|
+| `SyntaxError` | Python cannot understand the structure of the code |
+| `IndentationError` | spaces at the start of a line do not match the expected structure |
+| `NameError` | Python does not know the name being used |
+| `TypeError` | an operation does not support the types of the given values |
+| Read the last line first | find the error name and the immediate problem |
+| Look above the last line | find the line of code where the error happened |
+| Run the code again | check the correction and find any remaining error |
+
+And the one idea to carry forward: an error message is a description of a
+problem. Read its last line first, then use the location information to find
+the code that needs to change.

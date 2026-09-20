@@ -22,80 +22,140 @@ project:
 
 website:
   title: "The Craft of Computing"
-  # Next/previous links in the page footer, ordered by the sidebar below.
-  # On by default for books, off for websites, so it has to be asked for.
+  # Next/previous links in the page footer, ordered by the sidebar the page
+  # belongs to. On by default for books, off for websites, so it has to be
+  # asked for.
   page-navigation: true
+  bread-crumbs: true
   search:
-    location: sidebar
+    location: navbar
+
+  # The units live in the navbar, not inside a sidebar: each sidebar below
+  # shows one unit only, so the navbar is what moves you between them. One
+  # link per unit rather than a dropdown -- there are only two, and a menu
+  # that has to be opened to see two items hides more than it saves.
+  navbar:
+    left:
+      - href: cmdline/index.qmd
+        text: "Command Line"
+      - href: python/index.qmd
+        text: "Python"
+    right:
+      - href: setup/index.qmd
+        text: "Setup"
+      - href: overview/schedule.qmd
+        text: "Schedule"
+
+  # One sidebar per unit, each with an id. A page picks up the sidebar it is
+  # listed in; a page listed in none falls back to the first, so the
+  # course-wide sidebar is first. Pin an exception with `sidebar: unit1` in
+  # the page's frontmatter.
+  #
+  # No `- text: "---"` separators: they break prev/next, which should run
+  # from the first lesson of a unit to the last, across the clusters.
   sidebar:
-    style: docked
-    contents:
-      - section: "Course Overview"
-        contents:
-          - href: index.qmd
-            text: The Craft of Computing
-          - href: overview/schedule.qmd
-            text: Schedule
-      - section: cmdline/index.qmd
-        text: Computing with the Command-line
-        contents:
-          - href: cmdline/why.qmd
-            text: Why the command line?
-          - href: cmdline/getting-started.qmd
-          - href: cmdline/filesystem.qmd
-          - href: cmdline/working-with-files.qmd
-          - href: cmdline/wildcards.qmd
-          - href: cmdline/the-dollar-sign.qmd
-          - href: cmdline/installing-software.qmd
-          - href: cmdline/pipes-and-filters.qmd
-          - href: cmdline/more-pipes-and-filters.qmd
-          - href: cmdline/speak.qmd
-          - href: cmdline/practice-resize-images.qmd
-          - section: cmdline/scripting/index.qmd
-            text: Writing Shell Scripts
-            contents:
-              - href: cmdline/scripting/your-first-script.qmd
-              - href: cmdline/scripting/arguments-and-loops.qmd
-              - href: cmdline/scripting/conditionals.qmd
-              - href: cmdline/scripting/reading-input.qmd
-              - href: cmdline/scripting/environment.qmd
-              - href: cmdline/scripting/your-own-commands.qmd
-          - href: cmdline/blog.qmd
-      - section: "Writing with Markdown"
-        contents:
-          - href: markdown/index.qmd
-            text: Writing with Markdown
-          - href: markdown/tutorial.qmd
-            text: Markdown Tutorial
-          - href: markdown/vscode.qmd
-            text: Markdown in vscode
-          - href: markdown/tools.qmd
-            text: Markdown Tools
-      - section: python/index.qmd
-        text: Programming with Python
-        contents:
-          - href: python/using-python.qmd
-          - href: python/python-basics.qmd
-      - section: "Appendix"
-        contents:
-          - section: setup/index.qmd
-            text: Setup Instructions
-            contents:
-              - href: setup/ubuntu-wsl.qmd
-                text: Installing Ubuntu on Windows using WSL
-              - href: setup/editor.qmd
-              - href: setup/vscode.qmd
-              - href: setup/craft-magic.qmd
-          - href: notes/group-project-1.qmd
-            text: Group Project 1
-          - href: notes/group-project-1-groups.qmd
-            text: Group Project 1 Groups
+    - id: course
+      title: "The Craft of Computing"
+      style: docked
+      contents:
+        - href: index.qmd
+          text: "The Craft of Computing"
+        - href: overview/schedule.qmd
+          text: "Schedule"
+
+    # Setup reads as a unit of its own: its own sidebar, holding nothing but
+    # the setup pages, so prev/next runs from the first to the last of them.
+    - id: setup
+      title: "Setup"
+      style: docked
+      contents:
+        - href: setup/index.qmd
+          text: "Setup Instructions"
+        - href: setup/ubuntu-wsl.qmd
+          text: "Installing Ubuntu on Windows using WSL"
+        - href: setup/editor.qmd
+        - href: setup/vscode.qmd
+        - href: setup/craft-magic.qmd
+
+    - id: unit1
+      title: "Working with the command line"
+      style: docked
+      contents:
+        - href: cmdline/index.qmd
+        - section: "Working with the command line"
+          contents:
+            - href: cmdline/why.qmd
+              text: "Why the command line?"
+            - href: cmdline/getting-started.qmd
+            - href: cmdline/filesystem.qmd
+            - href: cmdline/working-with-files.qmd
+            - href: cmdline/wildcards.qmd
+            - href: cmdline/the-dollar-sign.qmd
+            - href: cmdline/installing-software.qmd
+            - href: cmdline/pipes-and-filters.qmd
+            - href: cmdline/more-pipes-and-filters.qmd
+            - href: cmdline/speak.qmd
+            - href: cmdline/practice-resize-images.qmd
+            - href: cmdline/blog.qmd
+        - section: "Writing shell scripts"
+          contents:
+            - href: cmdline/scripting/index.qmd
+              text: "About shell scripts"
+            - href: cmdline/scripting/your-first-script.qmd
+            - href: cmdline/scripting/arguments-and-loops.qmd
+            - href: cmdline/scripting/conditionals.qmd
+            - href: cmdline/scripting/reading-input.qmd
+            - href: cmdline/scripting/environment.qmd
+            - href: cmdline/scripting/your-own-commands.qmd
+        # Not a subdirectory of cmdline/ -- a sidebar cluster is a list of
+        # pages, so it does not have to match the layout on disk.
+        - section: "Writing with Markdown"
+          contents:
+            - href: markdown/index.qmd
+              text: "About Markdown"
+            - href: markdown/tutorial.qmd
+              text: "Markdown Tutorial"
+            - href: markdown/vscode.qmd
+              text: "Markdown in vscode"
+            - href: markdown/tools.qmd
+              text: "Markdown Tools"
+
+    - id: unit2
+      title: "Exploring Python"
+      style: docked
+      contents:
+        - href: python/index.qmd
+        - section: "Getting Started"
+          contents:
+            - href: python/using-python.qmd
+            - href: python/values-and-expressions.qmd
+            - href: python/variables.qmd
+            - href: python/types-and-errors.qmd
+            - href: python/reading-errors.qmd
+        - section: "Collections and Repetition"
+          contents:
+            - href: python/lists.qmd
+            - href: python/for-loop.qmd
+        - section: "Functions, Methods, and Modules"
+          contents:
+            - href: python/functions.qmd
+            - href: python/methods.qmd
+            - href: python/modules.qmd
+        - section: "Writing Programs"
+          contents:
+            - href: python/writing-scripts.qmd
+            - href: python/reading-files.qmd
+            - href: python/command-line-arguments.qmd
+            - href: python/word-count.qmd
+        - href: python/python-basics.qmd
+
 format:
   html:
     theme:
       - cosmo
-      - brand
+      - theme.scss
     filters:
       - session.lua
+    include-in-header: _fonts.html
     css: styles.css
     toc: true

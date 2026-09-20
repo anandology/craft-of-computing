@@ -1,0 +1,169 @@
+---
+title: "Lists"
+unit: 2
+cluster: "Collections and Repetition"
+---
+
+Several related values are easier to work with when they have one name. A
+Python list keeps those values together and preserves their order.
+
+In this lesson, we'll learn how to:
+
+* create a list
+* assign a list to a variable
+* find the length and sum of a list
+* select a value by its position
+
+**A list is an ordered collection of values. Each position in the list has an
+index, starting at `0`.**
+
+## Creating a list
+
+Write a list between square brackets (`[` and `]`). Separate its values with
+commas:
+
+```{python}
+[10, 20, 30]
+```
+
+The values in a list are called its **elements**. This list has three integer
+elements.
+
+A list is a value, so it can be assigned to a variable:
+
+```{python}
+marks = [10, 20, 30]
+marks
+```
+
+Strings can be elements too:
+
+```{python}
+languages = ["Python", "Shell", "Markdown"]
+languages
+```
+
+The order is part of the list. `"Python"` is first, `"Shell"` is second, and
+`"Markdown"` is third.
+
+## Length and sum
+
+The `len()` function returns the number of elements in a list:
+
+```{python}
+len(languages)
+```
+
+The result is `3` because `languages` has three elements.
+
+The `sum()` function adds the elements in a list of numbers:
+
+```{python}
+sum(marks)
+```
+
+The result is `60`, the sum of `10`, `20`, and `30`.
+
+## Selecting an element
+
+Use square brackets after a list name to select one element. The number inside
+the brackets is the element's **index**:
+
+```{python}
+languages[0]
+```
+
+The index of the first element is `0`, not `1`. The three elements have these
+indexes:
+
+| Index | Element |
+|-------|---------|
+| `0` | `"Python"` |
+| `1` | `"Shell"` |
+| `2` | `"Markdown"` |
+
+Use index `1` to select the second element:
+
+```{python}
+languages[1]
+```
+
+The length of `languages` is `3`, but its last index is `2`. A list with three
+elements has indexes `0`, `1`, and `2`.
+
+An index outside this range produces an `IndexError`:
+
+```python
+languages[3]
+```
+
+The last line of the error message is:
+
+```text
+IndexError: list index out of range
+```
+
+## Practice
+
+::: {.alpha-list}
+
+
+### Problem 1
+
+Consider the following code:
+
+```python
+temperatures = [29, 31, 30]
+```
+
+What will be value of the following expressions, after executing the above code. Write down the result of each expression. Then run the code and check your answers.
+
+1. `len(temperatures)`
+2. `sum(temperatures)`
+3. `temperatures[0]`
+4. `temperatures[2]`
+
+### Problem 2
+
+Complete the following program by replacing `___` with appropriate code. 
+
+The program creates a list called `cities` with the names of three cities "Bangalore", "Chennai", and "Mysore".
+
+
+```python
+cities = ___
+
+print("Cities:", ___)
+print("Number of cities:", ___)
+print("First city:", ___)
+print("Second city:", ___)
+print("Third city:", ___)
+```
+
+When executed the program produces the following output:
+
+```text
+Cities: ['Bangalore', 'Chennai', 'Mysore']
+Number of cities: 3
+First city: Bangalore
+Second city: Chennai
+Third city: Mystore 
+```
+
+:::
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `[10, 20, 30]` | a list with three integer elements |
+| `languages = ["Python", "Shell"]` | assigns a list of strings to `languages` |
+| `len(languages)` | returns the number of elements in `languages` |
+| `sum([10, 20, 30])` | adds the numeric elements and returns `60` |
+| `languages[0]` | selects the first element |
+| `languages[1]` | selects the second element |
+| `languages[2]` | selects the third element |
+| `languages[3]` | raises `IndexError` when the list has only three elements |
+
+And the one idea to carry forward: a list keeps values in order. Each value
+can be selected by an index, and the first index is `0`.

@@ -1,0 +1,170 @@
+---
+title: "Types and Errors"
+unit: 2
+cluster: "Getting Started"
+---
+
+The `+` operator can add two numbers or join two strings. It cannot add a
+number to a string. The types of the values determine which operation Python
+can perform.
+
+In this lesson, we'll learn how to:
+
+* identify the type of a value
+* use `type()` to inspect a value
+* explain how types affect an operation
+* read a `TypeError`
+
+**Every value has a type. Its type determines which operations Python can
+perform with it.**
+
+## Types of value
+
+The values in the previous lessons have three types:
+
+| Value | Type |
+|-------|------|
+| `42` | integer (`int`) |
+| `3.5` | floating-point number (`float`) |
+| `"hello"` | string (`str`) |
+
+The `type()` function reports the type of a value:
+
+```{python}
+type(42)
+```
+
+The result is `int`, the type of the value `42`.
+
+The same function works with other values:
+
+```{python}
+type(3.5)
+```
+
+```{python}
+type("hello")
+```
+
+The value `"42"` is a string, not an integer. The quotation marks tell Python
+that the value is text:
+
+```{python}
+type("42")
+```
+
+## Variables and types
+
+A variable does not have a fixed type. The value it refers to has a type:
+
+```{python}
+answer = 42
+type(answer)
+```
+
+The same variable can later refer to a value of another type:
+
+```{python}
+answer = "forty-two"
+type(answer)
+```
+
+The name `answer` has not changed. It first referred to an `int` value and now
+refers to a `str` value.
+
+## Types and operations
+
+An operator can have different meanings for different types. With integers,
+`+` performs addition:
+
+```{python}
+1 + 2
+```
+
+With strings, `+` joins text:
+
+```{python}
+"1" + "2"
+```
+
+An integer and a floating-point number can be used in the same calculation.
+The result is a floating-point number:
+
+```{python}
+2 + 0.5
+```
+
+Division with `/` also produces a `float`, even when the result is a whole
+number:
+
+```{python}
+8 / 2
+```
+
+## Type errors
+
+Python cannot use every operator with every combination of types. For example,
+`+` cannot combine an integer and a string:
+
+```python
+1 + "2"
+```
+
+Python displays a traceback. Its last line is:
+
+```text
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+```
+
+Read the last line in two parts:
+
+* `TypeError` is the name of the error.
+* The rest of the line explains the problem: `+` does not support an `int` on
+  one side and a `str` on the other.
+
+Python does not guess whether `"2"` should be treated as a number or whether
+`1` should be treated as text. The code must use types that support the
+intended operation.
+
+## Practice
+
+::: {.alpha-list}
+
+### Problem 1
+
+For each expression, write down its value and type. Then enter the expression
+in the interpreter and check your answer.
+
+1. `10 + 5`
+2. `10 / 5`
+3. `"10" + "5"`
+4. `"go" * 2`
+5. `3 + 0.5`
+
+### Problem 2
+
+Which of these expressions produces a `TypeError`? Why?
+
+1. `5 + 3`
+2. `"5" + "3"`
+3. `5 + "3"`
+4. `"5" * 3`
+5. `"5" * "3"`
+
+:::
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `type(42)` | reports the type `int` |
+| `type(3.5)` | reports the type `float` |
+| `type("hello")` | reports the type `str` |
+| `1 + 2` | integer addition; the value is `3` |
+| `"1" + "2"` | string joining; the value is `"12"` |
+| `2 + 0.5` | uses an `int` and a `float`; the value is the `float` `2.5` |
+| `8 / 2` | division produces the `float` `4.0` |
+| `1 + "2"` | raises a `TypeError` because `+` cannot combine `int` and `str` |
+
+And the one idea to carry forward: every value has a type. Python uses that
+type to decide which operations are valid and what each operation means.

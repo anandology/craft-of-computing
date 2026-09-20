@@ -28,7 +28,7 @@
 | Week 13 | Wed | Nov 04, 2026 | 8:30 am - 10:30 am | Class / Lab session | Working with Sensors (Session 1) |
 | Week 14 | Mon | Nov 09, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Working with Sensors (Session 2)<br>Activity Report 6 |
 | Week 14 | Wed | Nov 11, 2026 | 8:30 am - 10:30 am | Class / Lab session | In-class Reflection |
-| Assesment Week 1 | Mon | Nov 16, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | [Class / Lab session]{.holiday} |  |
-| Assesment Week 1 | Wed | Nov 18, 2026 | 8:30 am - 10:30 am | [Class / Lab session]{.holiday} | [] |
-| Assesment Week 2 | Mon | Nov 23, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Group project (Unit 3) |
+| Assessment Week 1 | Mon | Nov 16, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | [Class / Lab session]{.holiday} |  |
+| Assessment Week 1 | Wed | Nov 18, 2026 | 8:30 am - 10:30 am | [Class / Lab session]{.holiday} | [] |
+| Assessment Week 2 | Mon | Nov 23, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Group project (Unit 3) |
 | Assessment Week 2 | Wed | Nov 25, 2026 | 8:30 am - 10:30 am | Class / Lab session | Group project (Unit 3) (contd.) |

@@ -1,6 +1,8 @@
 ---
 title: "Schedule"
 toc: false
+sidebar: false
+page-navigation: false
 page-layout: full
 ---
 
@@ -20,3 +22,4 @@ The following is the tentative schedule for the course.
 
 :::
 
+<a class="back-home" href="../index.qmd">Back to the course home</a>

@@ -1,0 +1,251 @@
+---
+title: "Calling Functions"
+unit: 2
+cluster: "Functions, Methods, and Modules"
+---
+
+Programs often need to display text, convert a value to another type, or round
+a result. Python provides named operations for these common tasks. Calling a
+function asks Python to perform one of these operations.
+
+In this lesson, we'll learn how to:
+
+* call built-in functions with arguments
+* use returned values in variables and expressions
+* pass an expression as an argument
+* distinguish returning a value from displaying one
+
+**A function call uses parentheses after a function's name. The expressions
+inside the parentheses provide arguments for the function.**
+
+## Calling a built-in function
+
+Python makes some functions available automatically. These are **built-in
+functions**. `print()` is a built-in function. Parentheses after its name call
+the function:
+
+```{python}
+print("Hello")
+```
+
+This function call has three parts:
+
+| Part | Meaning |
+|------|---------|
+| `print` | the name of the function |
+| `(` and `)` | call the function |
+| `"Hello"` | the argument given to the function |
+
+An **argument** is a value passed to a function when the function is called.
+Here, `print()` uses the string as its argument and displays its text.
+
+Different built-in functions perform different operations. The `int()`
+function converts a string of digits to an integer:
+
+```{python}
+int("42")
+```
+
+The `str()` function converts an integer to a string:
+
+```{python}
+str(42)
+```
+
+The `round()` function returns the nearest integer to a floating-point number:
+
+```{python}
+round(3.6)
+```
+
+Some functions accept more than one argument. Separate the arguments with
+commas:
+
+```{python}
+course = "Python"
+students = 24
+print(course, students)
+```
+
+This call passes two arguments to `print()`. The function displays both values
+with a space between them.
+
+The same call syntax is used for `print("Hello")`, `int("42")`, `str(42)`, and
+`round(3.6)`. The function's name determines which operation Python performs.
+
+## Returned values
+
+A function call is an expression. Functions such as `int()`, `str()`, and
+`round()` **return** values that the rest of the code can use. A returned value
+can be assigned to a variable:
+
+```{python}
+answer = int("42")
+answer
+```
+
+A function call can be part of a larger expression. The `len()` function
+returns the number of elements in `names`, then Python adds `1`:
+
+```{python}
+names = ["Anand", "Mira", "Zoya"]
+len(names) + 1
+```
+
+An expression can also be an argument. In this call, Python first evaluates
+`2 / 3`, then passes the result to `round()`:
+
+```{python}
+round(2 / 3, 3)
+```
+
+The second argument tells `round()` to round to three decimal places. The
+expression can use a variable:
+
+```{python}
+n = 2
+round(n / 3, 4)
+```
+
+One expression can use values returned by several function calls:
+
+```{python}
+marks = [72, 85, 91]
+average = round(sum(marks) / len(marks), 1)
+average
+```
+
+`sum(marks)` returns the total of the marks. `len(marks)` returns the number of
+marks. Python divides those returned values and passes the result to `round()`.
+The assignment makes `average` refer to the final returned value.
+
+## Displaying and returning
+
+Functions such as `int()`, `str()`, and `round()` return useful results. The
+`print()` function is normally called for its visible effect: it displays its
+arguments. A value displayed by `print()` is output from the program, not the
+returned result of the call.
+
+## Practice
+
+### Problem 1
+
+Identify the function and its argument. Write down the returned value before
+running the code.
+
+```python
+int("9")
+```
+
+### Problem 2
+
+Identify the function and its argument. Write down the returned value before
+running the code.
+
+```python
+str(8)
+```
+
+### Problem 3
+
+Identify the function and its argument. Write down the returned value before
+running the code.
+
+```python
+round(8.376)
+```
+
+### Problem 4
+
+Identify the function and its argument. Write down the returned value before
+running the code.
+
+```python
+round(12.6)
+```
+
+### Problem 5
+
+Write code that displays `Learning Python`.
+
+### Problem 6
+
+Convert the integer `2026` to a string and keep the result in `year_text`.
+
+### Problem 7
+
+Round `12.3456` to the nearest integer and keep the result in
+`rounded_number`.
+
+### Problem 8
+
+Write code that displays `Year 2026` on one line.
+
+### Problem 9
+
+Replace `___` with an expression that uses `s` and returns an integer. The
+completed cell should display `22`.
+
+```python
+s = "21"
+n = ___
+n + 1
+```
+
+### Problem 10
+
+Predict what the notebook will display. Then run the cell and check your
+answer.
+
+```python
+names = ["red", "green", "blue"]
+len(names) + 1
+```
+
+### Problem 11
+
+Predict what the notebook will display. Then run the cell and check your
+answer.
+
+```python
+round(2 / 3, 2)
+```
+
+### Problem 12
+
+Predict what the notebook will display. Then run the cell and check your
+answer.
+
+```python
+n = 5
+round(n / 3, 3)
+```
+
+### Problem 13
+
+The built-in `sorted()` function returns a new list whose elements are in
+sorted order. Use `sorted()` to display the names in sorted order.
+
+```python
+names = ["Zoya", "Anand", "Mira"]
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| a built-in function | a function that Python makes available automatically |
+| `function(argument)` | calls a function with one argument |
+| `function(first_argument, second_argument)` | calls a function with two arguments |
+| `int("42")` | calls `int` and returns the integer `42` |
+| `str(42)` | calls `str` and returns the string `"42"` |
+| `answer = int("42")` | assigns the returned integer `42` to `answer` |
+| `len(names) + 1` | adds `1` to the value returned by `len()` |
+| `round(2 / 3, 3)` | evaluates `2 / 3`, then passes its value to `round()` |
+| `round(sum(marks) / len(marks), 1)` | passes a calculation using `sum()` and `len()` to `round()` |
+| returning a value | gives a result back to the code that made the call |
+| displaying a value | makes the value visible as output |
+
+And the one idea to carry forward: calling a function asks it to perform an
+operation. Arguments provide its input, and a returned value can be used by
+other code.

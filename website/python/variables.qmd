@@ -1,0 +1,174 @@
+---
+title: "Variables"
+unit: 2
+cluster: "Getting Started"
+---
+
+An expression produces a value. To refer to that value later, give it a name.
+
+In this lesson, we'll learn how to:
+
+* assign a value to a name
+* use a variable in an expression
+* assign a new value to a variable
+* choose a valid and clear variable name
+
+**A variable is a name that refers to a value.**
+
+## Assigning a value
+
+Use `=` to assign a value to a name:
+
+```{python}
+score = 42
+```
+
+This line is an **assignment statement**. The name is on the left of `=`. The
+value is on the right.
+
+An assignment does not display anything. Enter the name to see the value it
+refers to:
+
+```{python}
+score
+```
+
+In Python, `=` means "assign." It does not mean "is equal to" as it does in a
+mathematical equation.
+
+## Using a variable
+
+A variable can be used anywhere that its value can be used. This expression
+uses two variables:
+
+```{python}
+price = 120
+quantity = 3
+price * quantity
+```
+
+Python looks up the value that each name refers to, then evaluates the
+expression. The result is `360`.
+
+Variables can refer to strings too:
+
+```{python}
+greeting = "Hello"
+name = "Python"
+greeting + ", " + name
+```
+
+The quotation marks are not part of the strings. They tell Python that
+`"Hello"` and `"Python"` are strings.
+
+## Assigning a new value
+
+A variable can refer to a different value later. A new assignment changes
+which value the name refers to:
+
+```{python}
+score = 42
+score = 50
+score
+```
+
+The name `score` now refers to `50`. It no longer refers to `42`.
+
+The expression on the right of `=` is evaluated before the assignment happens.
+This means that the current value can be used to calculate the new value:
+
+```{python}
+score = 50
+score = score + 1
+score
+```
+
+Python evaluates `score + 1` first. The result is `51`. Python then assigns
+`51` to `score`.
+
+## Choosing a name
+
+A variable name can contain letters, digits, and underscores (`_`). It cannot
+start with a digit.
+
+| Valid name | Invalid name |
+|------------|--------------|
+| `score` | `2score` |
+| `total_marks` | `total-marks` |
+| `student2` | `student 2` |
+
+Python treats uppercase and lowercase letters as different. `score`, `Score`,
+and `SCORE` are three different names.
+
+Some words have a fixed meaning in Python and cannot be variable names. These
+words are called **keywords**. Examples include `for`, `if`, and `class`.
+
+Choose a name that describes the value. A name such as `total_marks` tells the
+reader more than a name such as `x`.
+
+## Practice
+
+### Problem 1
+
+What will be output of the following code?
+
+```python
+price = 50
+quantity = 4
+price * quantity
+```
+
+## Problem 2
+
+What will be output of the following code?
+
+```python
+count = 3
+count = count + 2
+count
+```
+
+## Problem 3
+
+What will be output of the following code?
+
+```python
+language = "Python"
+language = language + "!"
+language
+```
+
+## Problem 4
+
+
+Complete the following program by replacing `___` with appropriate code. 
+
+
+```python
+# program to compute the area of a rectangle
+
+length = 25
+width = 10
+area = ___
+
+print(area)
+```
+
+
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `score = 42` | assigns the integer `42` to the name `score` |
+| `language = "Python"` | assigns a string to the name `language` |
+| `score` | produces the value that `score` refers to |
+| `score = score + 1` | adds `1` to the current value and assigns the result to `score` |
+| `total_marks` | a valid variable name |
+| `2score` | invalid because a variable name cannot start with a digit |
+| `score` and `Score` | two different names |
+| `for` | a Python keyword, so it cannot be a variable name |
+
+And the one idea to carry forward: a variable is a name for a value. Python
+evaluates the right side of an assignment before it assigns the result to the
+name on the left.

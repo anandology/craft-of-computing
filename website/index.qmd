@@ -5,22 +5,46 @@ title: "The Craft of Computing"
 aliases:
   - overview/index.html
 toc: false
+sidebar: false
+page-navigation: false
 page-layout: full
+body-classes: page-home
 ---
 
-```
- _____ _             ____            __ _            __
-|_   _| |__   ___   / ___|_ __ __ _ / _| |_    ___  / _|
-  | | | '_ \ / _ \ | |   | '__/ _` | |_| __|  / _ \| |_
-  | | | | | |  __/ | |___| | | (_| |  _| |_  | (_) |  _|
-  |_| |_| |_|\___|  \____|_|  \__,_|_|  \__|  \___/|_|
+::: {.home-lede}
+Short lessons, one idea each. Read the lesson, try the practice at the end,
+and keep the summary for later.
+:::
 
-  ____                            _   _
- / ___|___  _ __ ___  _ __  _   _| |_(_)_ __   __ _
-| |   / _ \| '_ ` _ \| '_ \| | | | __| | '_ \ / _` |
-| |__| (_) | | | | | | |_) | |_| | |_| | | | | (_| |
- \____\___/|_| |_| |_| .__/ \__,_|\__|_|_| |_|\__, |
-                     |_|                      |___/
-```
+## Setup
 
-_Coming soon!_
+<div class="craft-cards">
+
+<a class="craft-card" href="setup/index.qmd">
+<span class="craft-card-label">Before you start</span>
+<span class="craft-card-title">Setup Instructions</span>
+<span class="craft-card-body">Get Ubuntu, an editor and the course tools onto your own laptop. Do this before the first class.</span>
+<span class="craft-card-foot"><span class="craft-card-meta">4 pages</span></span>
+</a>
+
+</div>
+
+## Units
+
+<div class="craft-cards">
+
+<a class="craft-card unit-1" href="cmdline/index.qmd">
+<span class="craft-card-num">1</span>
+<span class="craft-card-title">Working with the command line</span>
+<span class="craft-card-body">Talk to the computer by typing. Move around, join small tools together, and put a page on the web.</span>
+<span class="craft-card-foot"><span class="craft-card-meta">21 lessons</span></span>
+</a>
+
+<a class="craft-card unit-2" href="python/index.qmd">
+<span class="craft-card-num">2</span>
+<span class="craft-card-title">Programming with Python</span>
+<span class="craft-card-body">Write programs that do more than a single command can. Start in the interpreter, end with tools of your own.</span>
+<span class="craft-card-foot"><span class="craft-card-meta">2 lessons</span></span>
+</a>
+
+</div>

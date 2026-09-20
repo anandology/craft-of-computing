@@ -303,7 +303,7 @@
   topics:
     - In-class Reflection
 
-- week: Assesment Week 1
+- week: Assessment Week 1
   day: Mon
   date: Nov 16, 2026
   times:
@@ -313,7 +313,7 @@
   topics: []
   holiday: true
 
-- week: Assesment Week 1
+- week: Assessment Week 1
   day: Wed
   date: Nov 18, 2026
   times:
@@ -323,7 +323,7 @@
     - []
   holiday: true
 
-- week: Assesment Week 2
+- week: Assessment Week 2
   day: Mon
   date: Nov 23, 2026
   times:
