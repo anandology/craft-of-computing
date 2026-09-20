@@ -285,7 +285,7 @@ username@machine:path
 Let's try it. From inside your `blog` directory:
 
 ```session
-$ scp -r _site/* anand@coc.apucomputing.in:public_html/
+$ scp -r _site/* coc.apucomputing.in:public_html/
 index.html                             100% 4148    68.2KB/s   00:00
 about/index.html                       100% 3721    59.4KB/s   00:00
 assets/main.css                        100%   22KB  310.1KB/s   00:00
@@ -301,9 +301,8 @@ Reading that command from the left:
 * `_site/*` - the contents of `_site`. The wildcard matters: `_site/*` copies
   the files *inside*, while `_site` would copy the folder itself and you would
   end up with `public_html/_site/index.html`.
-* `anand@coc.apucomputing.in:public_html/` - the destination. Your username,
-  the machine, a colon, and where to put it. `public_html/` is relative to your
-  home directory on the server.
+* `coc.apucomputing.in:public_html/` - the destination. The machine, a colon, 
+  and where to put it. `public_html/` is relative to your home directory on the server.
 
 The first time you connect it will ask:
 
@@ -339,7 +338,7 @@ and then:
 
 ```session
 $ jekyll build
-$ scp -r _site/* anand@coc.apucomputing.in:public_html/
+$ scp -r _site/* coc.apucomputing.in:public_html/
 ```
 
 Write, look, build, copy.
@@ -357,7 +356,7 @@ almost always why.
 something in place - use `ssh`:
 
 ```session
-$ ssh anand@coc.apucomputing.in
+$ ssh coc.apucomputing.in
 anand@coc:~$
 ```
 
@@ -395,7 +394,7 @@ what running a server is.
 | Ctrl-C | stops the preview server |
 | `jekyll build` | builds the site into `_site/` |
 | `scp -r _site/* user@host:public_html/` | copies the built site to the server |
-| `ssh user@host` | a shell on the server |
+| `ssh host` | a shell on the server |
 | `exit` | back to your own machine |
 
 And the files:
