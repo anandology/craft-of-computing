@@ -1,0 +1,209 @@
+---
+title: Using Python
+---
+
+Python is a programming language. To use it, you write Python code somewhere
+and ask the computer to run it.
+
+There are three places to write that code, and we will use all three in this
+course:
+
+* the **interpreter**, where you type one line at a time and see the answer
+  straight away
+* a **script**, a file of Python code that you run from the command line
+* a **notebook**, a page in the browser where code and notes sit together
+
+They run the same Python. What changes is how you work with it.
+
+## The interpreter
+
+Type `python` at the prompt:
+
+```session
+$ python
+Python 3.14.4 (main, Jun 18 2026, 14:25:02) [GCC 15.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>>
+```
+
+The first lines tell you which version of Python you are running. The last
+line, `>>>`, is Python's prompt. It works like the `$` prompt in the shell:
+Python is waiting for you to type something.
+
+Type an expression and press Enter:
+
+```session
+$ python
+>>> 5 + 2
+7
+>>> 5 * 2
+10
+```
+
+Python works out the answer and prints it. No `print`, no file, no saving -
+you type, it answers.
+
+This is called the **interpreter**, or the **REPL**: it Reads what you type,
+Evaluates it, Prints the result, and Loops back for the next line.
+
+The usual arithmetic works as you would expect:
+
+```session
+>>> 7 - 3
+4
+>>> 10 / 4
+2.5
+```
+
+And Python is happy with numbers far larger than a calculator will take:
+
+```session
+>>> 2 ** 1000
+10715086071862673209484250490600018105614048117055336074437503883703510511249361224931983788156958581275946729175531468251871452856923140435984577574698574803934567774824230985421074605062371141877954182153046474983581941267398767559165543946077062914571196477686542167660429831652624386837205668069376
+```
+
+`**` means "to the power of". That is 2 multiplied by itself a thousand times,
+printed in full - Python does not round it off or give up.
+
+::: {.callout-tip}
+Work out `2 + 3` in the interpreter. Then try `100 * 100`, and `2 ** 64`.
+:::
+
+When you are done, type `exit()` and press Enter:
+
+```session
+>>> exit()
+$
+```
+
+The `$` prompt comes back - you are in the shell again. **Ctrl+D** does the
+same thing.
+
+The interpreter is for trying things out. It is quick, and nothing is kept:
+close it, and everything you typed is gone. When you want to keep what you
+wrote, put it in a file.
+
+## A script
+
+A **script** is a file with Python code in it. Python reads the file and runs
+the lines one by one, just as if you typed them - the same idea as a shell
+script.
+
+### A place to keep it
+
+Python files will pile up, so let's give them a directory of their own. It is
+the same `python` directory your notebooks live in:
+
+```session
+$ cd
+```
+
+```session
+$ mkdir -p python
+```
+
+```session
+$ cd python
+```
+
+Everything in this chapter happens here.
+
+### Writing the file
+
+You need an editor. `nano` will do, and it runs in the terminal so you do not
+have to go anywhere else:
+
+```session
+$ nano hello.py
+```
+
+If you would rather use vscode, open this directory in it:
+
+```session
+$ code .
+```
+
+and make a new file called `hello.py` there. If you have not set up an editor
+yet, see [Setting up Editor](../setup/editor.qmd).
+
+Type one line into the file, and save:
+
+```{.python filename="hello.py"}
+print("hello, world!")
+```
+
+Run it by handing the file to `python`:
+
+```session
+$ python hello.py
+hello, world!
+```
+
+Notice the `print`. In the interpreter, typing `5 + 2` was enough to see the
+answer - the interpreter prints the value of whatever you type. A script does
+not. It runs the lines and stays quiet unless you ask it to print something.
+
+See it for yourself. Make a file with two lines:
+
+```{.python filename="numbers.py"}
+5 + 2
+print(5 * 2)
+```
+
+```session
+$ python numbers.py
+10
+```
+
+Python worked out `5 + 2` and threw the answer away, because nothing asked for
+it. Only the line with `print` put anything on the screen.
+
+The name ends in `.py` by custom, so a directory listing tells you what the
+file is.
+
+A script is for code you want to keep and run again - today, tomorrow, or a
+hundred times.
+
+## A notebook
+
+A **notebook** is a page in your browser where code and notes live together.
+You write code in a box, run it, and the answer appears right below it. The
+answers stay on the page, along with whatever you wrote around them.
+
+Start JupyterLab from the terminal:
+
+```session
+$ jupyter lab
+```
+
+Your browser opens. On the left is a list of files. There is a notebook there
+already, `jupyterlab.ipynb` - open it by double-clicking.
+
+A notebook is made of **cells**. Some hold code, some hold notes written in
+Markdown. Click on a cell to put the cursor in it, and press **Shift+Enter**
+to run it. The result appears underneath, and the cursor moves to the next
+cell.
+
+Work through `jupyterlab.ipynb` from the top. It will ask you to run some code,
+write some notes, and try a few things out. Do them as you go - reading a
+notebook without running it teaches you very little.
+
+When you are finished, close the browser tab and press **Ctrl+C** in the
+terminal to stop JupyterLab.
+
+A notebook is for working something out and keeping a record of it: the code,
+the answers, and your notes on what you were doing.
+
+## Which one to use
+
+| | Good for | Kept? |
+|---|---|---|
+| Interpreter | trying one thing out | no |
+| Script | code you will run again | yes, as a `.py` file |
+| Notebook | working through a problem, with notes | yes, as an `.ipynb` file |
+
+We will use the interpreter to try small things, notebooks for most of the
+classwork, and scripts for programs worth keeping.
+
+And the one idea to carry forward: all three are the same Python. What you
+learn in one works in the others.

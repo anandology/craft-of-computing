@@ -1,0 +1,259 @@
+---
+title: Python Basics
+---
+
+Python is a simple and elegant programming language and it is very easy to get started. In this chapter, we'll learn enough Python to start solving interesting problems.
+
+## Variables
+
+A variable is a name for a value.
+
+```{python}
+x = 5
+```
+
+The name goes on the left of the `=`, the value on the right. Python does not
+print anything - it just remembers.
+
+Type the name to see what it holds.
+
+```{python}
+x
+```
+
+Once a name has a value, it can be used anywhere the value could be used.
+
+```{python}
+y = 2
+```
+
+```{python}
+x + y
+```
+
+The right side is worked out first, and the name is given to the answer. That
+is why this makes sense, even though it would be nonsense in mathematics:
+
+```{python}
+x = x + 1
+x
+```
+
+A variable is only a name. It has no type of its own, and it can be given a
+value of a different kind later.
+
+```{python}
+x = 1
+print(x)
+
+x = "python"
+print(x)
+```
+
+The values do have types, though, and Python will not mix them up.
+
+```{python}
+#| error: true
+1 + "2"
+```
+
+That is an **error**. Python stops, says what went wrong, and does not run the
+rest. Read the last line first: `+` does not work between a number (`int`) and
+a string (`str`).
+
+A name is made of letters, digits and underscores, and it cannot start with a
+digit. `total`, `total_marks` and `x2` are all fine; `2x` is not. Upper and
+lower case are different, so `total` and `Total` are two names, not one.
+
+Choose names that say what the value is. `marks` tells the reader something;
+`x` does not.
+
+## Comments
+
+TODO:
+
+## Datatypes
+
+Python has support for various types of data, called datatypes. The most common ones are numbers, strings and lists.
+
+### Numbers
+
+Python has two kinds of numbers - integers and floating point numbers. Integers are whole numbers like 1, -5, 47 etc. and floating point numbers are real numbers like 2.3, 1.0, -0.05 etc.
+
+Let's look at integers first. 
+
+```{python}
+1 + 2
+```
+
+```{python}
+2 ** 5
+```
+
+And floating point numbers.
+
+```{python}
+1.2 + 2.3
+```
+
+Pay attention to division. `/` always gives a floating point number.
+
+```{python}
+7 / 2
+```
+
+And `//` divides and throws away the part after the point.
+
+```{python}
+7 // 2
+```
+
+Floating point numbers are not exact.
+
+```{python}
+0.1 + 0.2
+```
+
+That is not a Python problem - it is how computers store these numbers. See
+<https://0.30000000000000004.com/> for the explanation.
+
+### Strings
+
+A string is a piece of text. It is enclosed either in double quotes or single
+quotes. Both mean the same.
+
+```{python}
+"hello"
+```
+
+```{python}
+'hello'
+```
+
+`+` joins two strings.
+
+```{python}
+"hello" + 'world'
+```
+
+And `*` repeats one.
+
+```{python}
+"hello" * 5
+```
+
+Which is a quick way to draw a line.
+
+```{python}
+print("=" * 40)
+```
+
+Python supports multi-line strings as well. They are enclosed in three single
+or double quotes.
+
+```{python}
+message = """
+Hello everyone,
+
+Welcome to the Craft of Computing!
+"""
+```
+
+```{python}
+message
+```
+
+The `\n` in there is the newline character, marking the end of a line.
+Printing the string shows the line breaks.
+
+```{python}
+print(message)
+```
+
+Python supports unicode text.
+
+```{python}
+print("అ ఆ ఇ ఈ") # Telugu
+print("ಅ ಆ ಇ ಈ") # Kannada
+print("அ ஆ இ ஈ") # Tamil
+print("അ ആ ഇ ഈ") # Malayalam
+print("अ आ इ ई") # Hindi
+```
+
+Every character has a number of its own, called its **code point**. The
+Telugu letter `అ` is character number 3077, which is written as 0c05 in
+hexadecimal - the way these numbers are usually written.
+
+Writing `\u0c05` in a string means "the character numbered 0c05". So these
+lines say the same thing as the ones above, and print the same output.
+
+```{python}
+print("\u0c05 \u0c06 \u0c07 \u0c08") # Telugu
+print("\u0c85 \u0c86 \u0c87 \u0c88") # Kannada
+print("\u0b85 \u0b86 \u0b87 \u0b88") # Tamil
+print("\u0d05 \u0d06 \u0d07 \u0d08") # Malayalam
+print("\u0905 \u0906 \u0907 \u0908") # Hindi
+```
+
+That is how you write a character your keyboard cannot type.
+
+::: {.callout-note}
+`\u` is always followed by exactly four hexadecimal digits. Four digits reach
+up to character number ffff, which covers most of the scripts in the world.
+
+Characters numbered beyond that need `\U`, with exactly eight digits. The
+capital letter is the only difference.
+:::
+
+Emoji are characters too, and their numbers are past that limit.
+
+```{python}
+print("\U0001f638")
+```
+
+```{python}
+cat = "\U0001f638"
+print(cat * 10)
+```
+
+### Lists
+
+Python has lists to represent a collection of values.
+
+```{python}
+[1, 2, 3, 4, 5]
+```
+
+```{python}
+numbers = [1, 2, 3, 4, 5]
+```
+
+```{python}
+sum(numbers)
+```
+
+We can access individual elements using the `[]` operator. Counting starts at
+0, so the first element is `names[0]`.
+
+```{python}
+names = ["Alice", "Bob", "Charlie", "Dave"]
+```
+
+```{python}
+len(names)
+```
+
+```{python}
+names[0]
+```
+
+```{python}
+names[1]
+```
+
+We use a `for` loop to go over all the values in a list.
+
+```{python}
+for name in names:
+    print("Hello", name)
+```
