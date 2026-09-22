@@ -45,6 +45,23 @@ website:
         text: "Setup"
       - href: overview/schedule.qmd
         text: "Schedule"
+      - href: about.qmd
+        text: "About"
+
+  # The footer is the same on every page: the course, the three pages that are
+  # not lessons, and the licence.
+  page-footer:
+    left: |
+      [The Craft of Computing](/index.qmd)
+    center: |
+      &copy; 2026 Anand Chitipothu. Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+    right:
+      - href: about.qmd
+        text: "About"
+      - href: overview/schedule.qmd
+        text: "Schedule"
+      - href: setup/index.qmd
+        text: "Setup"
 
   # One sidebar per unit, each with an id. A page picks up the sidebar it is
   # listed in; a page listed in none falls back to the first, so the
@@ -62,6 +79,8 @@ website:
           text: "The Craft of Computing"
         - href: overview/schedule.qmd
           text: "Schedule"
+        - href: about.qmd
+          text: "About this course"
 
     # Setup reads as a unit of its own: its own sidebar, holding nothing but
     # the setup pages, so prev/next runs from the first to the last of them.
@@ -141,6 +160,11 @@ website:
             - href: python/functions.qmd
             - href: python/methods.qmd
             - href: python/modules.qmd
+        - section: "String Art"
+          contents:
+            - href: python/stringart/index.qmd
+            - href: python/stringart/repeating-with-loops.qmd
+            - href: python/stringart/reusing-with-functions.qmd
         - section: "Writing Programs"
           contents:
             - href: python/writing-scripts.qmd

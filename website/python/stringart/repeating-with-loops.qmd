@@ -1,0 +1,299 @@
+---
+title: "Repeating with Loops"
+unit: 2
+cluster: "String Art"
+---
+
+Programs often need to repeat a task many times, with a small change each time.
+In string art, for example, we may connect many points using the same rule.
+
+We could draw 100 threads by writing 100 calls to `connect()`. A loop gives us
+a simpler approach. Instead of writing every connection, we write the rule for
+making one connection. Python repeats that rule with a different point number
+each time.
+
+In this lesson, we'll learn how to:
+
+* find a rule in similar calls to `connect()`
+* use a loop to repeat the rule
+* change the number of points in a pattern
+* change the distance between connected points
+
+**A loop expresses repeated work as a rule. Variables make that rule work with
+different values.**
+
+First import the String Art functions:
+
+```{python}
+from stringart import *
+```
+
+## Drawing a pentagon
+
+We can draw a pentagon with five calls to `connect()`:
+
+```{python}
+make_circle(5)
+
+connect(0, 1)
+connect(1, 2)
+connect(2, 3)
+connect(3, 4)
+connect(4, 5)
+
+show()
+```
+
+The calls make these connections:
+
+| From point | To point |
+|------------|----------|
+| `0` | `1` |
+| `1` | `2` |
+| `2` | `3` |
+| `3` | `4` |
+| `4` | `5` (the same as point `0`) |
+
+Can you identify the rule used for every connection?
+
+The *To point* is always one more than the *From point*.
+
+The rule is: **connect each point to the next point.**
+
+## Writing the rule as a loop
+
+We can write the same rule using a loop:
+
+```{python}
+make_circle(5)
+
+for i in range(5):
+    connect(i, i+1)
+
+show()
+```
+
+The loop runs once for each point. It connects point `i` to the next point,
+`i+1`.
+
+On the last iteration, `i` is `4`. The call `connect(4, 5)` connects point `4`
+back to point `0`, because point numbers wrap around the circle. This last
+thread closes the pentagon.
+
+## Changing the number of points
+
+The number `5` appears twice in the pentagon program. A variable lets us give
+that number a name and use it in both places:
+
+```{python}
+n = 5
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, i+1)
+
+show()
+```
+
+The variable `n` controls both the number of points and the number of
+iterations.
+
+Now change `n` to `6`. The rest of the code stays the same:
+
+```{python}
+n = 6
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, i+1)
+
+show()
+```
+
+Change `n` to `8` and run the code again. What happens?
+
+## Drawing a pentagonal star
+
+Connecting each point to the next point draws a polygon. Connecting each point
+to the point two positions ahead draws a pentagonal star:
+
+```{python}
+make_circle(5)
+
+for i in range(5):
+    connect(i, i+2)
+
+show()
+```
+
+Only the connection rule changed. The expression `i+2` skips one point before
+making each connection.
+
+## Changing the connection rule
+
+We can use a second variable for the distance between the two connected
+points. We will call this distance `k`:
+
+```{python}
+n = 5
+k = 2
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, i+k)
+
+show()
+```
+
+The variable `n` controls the number of points. The variable `k` controls how
+far each thread moves around the circle.
+
+Now change the values to `n = 18` and `k = 8`:
+
+```{python}
+n = 18
+k = 8
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, i+k)
+
+show()
+```
+
+The loop has not changed. New values for `n` and `k` produce a new pattern.
+
+## Practice
+
+### Problem 1
+
+Write Python code to make the pattern shown below. Use a loop.
+
+```{python}
+#| echo: false
+
+n = 12
+k = 5
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, i+k)
+
+show()
+```
+
+### Problem 2
+
+Write Python code to make the pattern shown below. Use a loop.
+
+```{python}
+#| echo: false
+
+n = 18
+k = 0
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, k)
+
+show()
+```
+
+### Problem 3
+
+Write Python code to make the pattern shown below. Use a loop.
+
+```{python}
+#| echo: false
+
+n = 18
+k = 9
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, k)
+
+show()
+```
+
+### Problem 4
+
+The following pattern is called a *cardioid*. Point `1` connects to point `2`,
+point `2` connects to point `4`, point `3` connects to point `6`, and so on.
+
+Write Python code that uses a loop to make this pattern. The pattern has 36
+points.
+
+```{python}
+#| echo: false
+
+n = 36
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, i+i)
+
+show()
+```
+
+
+### Problem 5
+
+Write Python code to make the pattern shown below. Use a loop.
+
+```{python}
+#| echo: false
+
+n = 18
+k = 6
+
+make_circle(n)
+
+for i in range(n-k+1):
+    connect(i, i+k)
+
+show()
+```
+
+Use the following code as the starting point. Use `n` and `k` in your loop. The
+last connection should end at point `n`, which wraps to point `0`. Your code
+should follow the same rule if you change `n` or `k`.
+
+```python
+
+# number of points on the circle
+n = 18
+
+# the distance between connected points (point 3 gets connected to 9)
+k = 6
+
+make_circle(n)
+
+# TODO: write your code here
+
+show()
+```
+
+Hint: Count the number of threads in the pattern.
+
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `for i in range(n):` | repeats the loop body once for each point number |
+| `connect(i, i+1)` | connects each point to the next point |
+| `connect(i, i+k)` | connects each point to the point `k` positions ahead |
+| `n` | controls the number of points and loop iterations |
+| `k` | controls the distance between connected points |
+
+And the one idea to carry forward: put a connection rule inside a loop to
+apply that rule to every point in the drawing.

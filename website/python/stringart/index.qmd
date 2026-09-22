@@ -1,0 +1,194 @@
+---
+title: "Introduction to String Art"
+unit: 2
+cluster: "String Art"
+---
+
+String art is a craft of making patterns by connecting points with thread,
+usually around a circle. Every thread is straight, but many threads together
+can form curves and intricate patterns.
+
+![Three layers of straight threads form one pattern. [View the program that made it.](https://github.com/anandology/stringart/blob/main/examples/three-circles.py)](/images/stringart-three-circles.svg){fig-alt="A circular string art pattern with three overlapping layers of curved shapes formed entirely from straight lines."}
+
+The craft grew out of *curve stitching*, a technique developed by
+[Mary Everest Boole](https://en.wikipedia.org/wiki/Mary_Everest_Boole) in the
+late 1800s to explore geometry by sewing lines on cards. The `stringart` Python
+library lets us explore the same idea by connecting numbered points on the
+screen.
+
+Small changes to the connections can produce a completely different picture.
+That makes string art a useful way to experiment with code: every program
+creates something to inspect, and a mistake is often visible in the drawing.
+
+In this lesson, we'll learn how to:
+
+* start a new string art drawing
+* connect two numbered points
+* add several threads to a drawing
+* display the drawing in a notebook
+
+**A string art drawing starts with numbered points. Each call to `connect()`
+adds one straight thread between two of those points.**
+
+## Starting a drawing
+
+First import the functions from the `stringart` module:
+
+```{python}
+from stringart import *
+```
+
+The `*` makes the module's drawing functions available by their short names.
+We can call `make_circle()` instead of writing `stringart.make_circle()`.
+
+The `make_circle()` function starts a new drawing. Its argument is the number
+of points to place around the circle:
+
+```{python}
+make_circle(6)
+show()
+```
+
+The six points are numbered from `0` to `5`. As with list indexes, the
+numbering starts at `0`.
+
+The `show()` function displays the current drawing. There are no threads yet,
+so the drawing contains only the numbered points.
+
+Every example below starts with `make_circle()`, so it creates a complete
+drawing without depending on an earlier example.
+
+## Connecting two points
+
+The `connect()` function takes two point numbers as arguments. This call adds a
+thread from point `0` to point `3`:
+
+```{python}
+make_circle(6)
+
+connect(0, 3)
+
+show()
+```
+
+Calling `connect()` changes the current drawing. Calling `show()` afterwards
+displays that change.
+
+To add several threads to one drawing, call `connect()` several times before
+calling `show()`:
+
+```{python}
+make_circle(6)
+
+connect(0, 3)
+connect(1, 4)
+connect(2, 5)
+
+show()
+```
+
+The three threads connect opposite points on the circle. They meet at the
+centre even though no point was placed there.
+
+## Connecting every second point
+
+The next drawing connects each point to the point two positions ahead:
+
+```{python}
+make_circle(6)
+connect(0, 2)
+connect(2, 4)
+connect(4, 6)
+show()
+```
+
+These three connections form a triangle. The circle has points `0` to `5`, but
+the last call uses point `6`. Point numbers wrap around the circle, so point `6`
+is point `0` again. Therefore, `connect(4, 6)` closes the triangle by connecting
+point `4` to point `0`.
+
+Starting with the odd-numbered points produces another triangle. Both triangles
+can be part of the same drawing:
+
+```{python}
+make_circle(6)
+
+# top triangle
+connect(0, 2)
+connect(2, 4)
+connect(4, 6)
+
+# bottom triangle
+connect(1, 3)
+connect(3, 5)
+connect(5, 7)
+
+show()
+```
+
+Together, the two triangles form a six-pointed star. Every call follows the
+same rule: connect a point to the point two positions ahead. This rule can later
+be written as `connect(i, i+2)`, without treating the last connection as a
+special case.
+
+## Practice
+
+### Problem 1
+
+Write python code to make the pattern shown below.
+
+```{python}
+#| echo: false
+make_circle(5)
+for i in range(5):
+    connect(i, i+1)
+show()
+```
+
+### Problem 2
+
+Write python code to make the pattern shown below.
+
+```{python}
+#| echo: false
+make_circle(5)
+for i in range(5):
+    connect(i, i+2)
+show()
+```
+
+### Problem 3
+
+
+Write python code to make the pattern shown below.
+
+```{python}
+#| echo: false
+
+make_circle(8)
+
+connect(0, 2)
+connect(2, 4)
+connect(4, 6)
+connect(6, 8)
+
+connect(1, 5)
+connect(3, 7)
+
+show()
+```
+
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `from stringart import *` | makes the String Art drawing functions available by their short names |
+| `make_circle(6)` | starts a new string art drawing with `6` points, numbered from `0` to `5` |
+| `connect(0, 3)` | adds a straight thread between points `0` and `3` |
+| `connect(4, 6)` with six points | connects point `4` to point `0` because point numbers wrap around |
+| several calls to `connect()` | add several threads to the current drawing |
+| `show()` | displays the current drawing in a notebook |
+
+And the one idea to carry forward: a string art pattern is built one thread at
+a time by connecting numbered points.

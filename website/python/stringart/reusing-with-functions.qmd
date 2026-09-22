@@ -1,0 +1,223 @@
+---
+title: "Reusing with Functions"
+unit: 2
+cluster: "String Art"
+---
+
+A program may use the same subpattern in more than one place. We could write
+all the steps again each time, but that would duplicate the code.
+
+A function gives a name to a group of steps. We write those steps once and
+call the function whenever we need that subpattern.
+
+In this lesson, we'll learn how to:
+
+* identify a subpattern used more than once
+* use a function as a named operation
+* use arguments to make variations of the subpattern
+* combine function calls to make a larger pattern
+
+**A function lets us treat a group of steps as one named operation.**
+
+First import the String Art functions:
+
+```{python}
+from stringart import *
+```
+
+## Repeating a subpattern
+
+This program uses two loops to make one drawing:
+
+```{python}
+n = 18
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, i+5)
+
+for i in range(n):
+    connect(i, i+7)
+
+show()
+```
+
+Each loop adds one set of connections to the drawing. We will call each set a
+**ring**. Both loops make a ring in the same way. Only the distance between the
+connected points is different.
+
+Copying the loop works, but it writes the same steps in two places. If we
+change how a ring is made, we must remember to change both loops.
+
+## A function for one ring
+
+We can put the steps for making one ring in a function named
+`connect_ring()`:
+
+```{python}
+def connect_ring(n, k):
+    for i in range(n):
+        connect(i, i+k)
+```
+
+In this function, `n` is the number of points and `k` is the distance between
+the connected points.
+
+We can now use the function twice in the drawing:
+
+```{python}
+n = 18
+
+make_circle(n)
+
+connect_ring(n, 5)
+connect_ring(n, 7)
+
+show()
+```
+
+The two calls make the same two rings as the two loops in the earlier program:
+
+| Function call | Operation |
+|---------------|-----------|
+| `connect_ring(n, 5)` | connects every point to the point 5 positions ahead |
+| `connect_ring(n, 7)` | connects every point to the point 7 positions ahead |
+
+The `connect_ring()` function adds threads to the current drawing. It does not
+start or display the drawing, so the program still calls `make_circle()` and
+`show()` separately.
+
+## Using the named operation
+
+The two programs are similar in length because each loop contains only one
+line. The important change is that the rule for making a ring now appears in
+one place.
+
+When we read `connect_ring(n, 5)`, we can think about the operation as a whole:
+add a ring with a distance of 5. We do not need to follow the loop each time we
+use the function.
+
+This is an **abstraction**. An abstraction lets us use an operation through its
+name and arguments without considering all its steps every time.
+
+Another call adds another ring. We do not need another copy of the loop:
+
+```{python}
+n = 18
+
+make_circle(n)
+
+connect_ring(n, 3)
+connect_ring(n, 5)
+connect_ring(n, 7)
+
+show()
+```
+
+The program uses one function three times. Each call uses the same operation
+with a different value for `k`.
+
+## Practice
+
+### Problem 1
+
+The Following pattern connect point 0 to every point. Can you write a function to do that and make the pattern by calling that function.
+
+```{python}
+#| echo: false
+
+n = 18
+k = 0
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, k)
+
+show()
+```
+
+### Problem 2
+
+Can you reuse the function defined in the previous problem to make the following pattern.
+
+
+```{python}
+#| echo: false
+
+n = 18
+k = 9
+
+make_circle(n)
+
+for i in range(n):
+    connect(i, k)
+
+show()
+```
+
+### Problem 3
+
+The following pattern is called _Sunrise_. It is made of 18 points and each of the points 7, 9 and 11 are connected to all points .
+
+Can you reuse the function defined in the previous problem to make the following pattern.
+
+
+```{python}
+#| echo: false
+
+def connect_all(n, k):
+    for i in range(n):
+        connect(i, k)
+
+n = 18
+
+make_circle(n)
+
+for i in range(n):
+    connect_all(n, 11)
+    connect_all(n, 9)
+    connect_all(n, 7)
+
+
+show()
+```
+
+
+### Problem 4
+
+Write Python code to make the pattern shown below. Use a function.
+
+```{python}
+#| echo: false
+
+def connect_ring(n, k):
+    for i in range(n):
+        connect(i, i+k)
+
+
+n = 18
+
+make_circle(n)
+
+connect_ring(n, 9)
+connect_ring(n, 6)
+
+show()
+```
+
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `connect_ring(n, k)` | represents the operation of adding one ring |
+| the body of `connect_ring()` | keeps the rule for making a ring in one place |
+| `connect_ring(18, 5)` | adds one ring to the current drawing |
+| several calls to `connect_ring()` | reuse the same operation to add several rings |
+| changing the function body | changes the operation for every call |
+| abstraction | using a named operation without considering all its steps every time |
+
+And the one idea to carry forward: a function makes a group of steps available
+as one named operation that can be used wherever it is needed.
