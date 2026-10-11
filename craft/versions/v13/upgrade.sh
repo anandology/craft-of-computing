@@ -18,7 +18,7 @@ install_sigma() {
 
     # --reinstall-package makes a retry replace sigma even though the
     # version number has not changed.
-    uv pip install --reinstall-package sigma ./sigma-0.1.0-py3-none-any.whl
+    uv pip install --reinstall-package sigma ./sigma-0.1.1-py3-none-any.whl
 }
 
 install_jupyterlab_execute_time() {

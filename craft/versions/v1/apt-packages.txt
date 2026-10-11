@@ -1,0 +1,13 @@
+tree
+vim
+git
+curl
+zip
+unzip
+espeak-ng
+imagemagick
+openssh-client
+jekyll
+pandoc
+poppler-utils
+weasyprint
