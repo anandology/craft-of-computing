@@ -1,0 +1,21 @@
+{
+  "number": "12951",
+  "name": "Mumbai Central-New Delhi Rajdhani Express",
+  "type": "Raj",
+  "zone": "WR",
+  "from_station_code": "BCT",
+  "from_station_name": "Mumbai Central",
+  "to_station_code": "NDLS",
+  "to_station_name": "NEW DELHI",
+  "departure": "16:40:00",
+  "arrival": "08:30:00",
+  "duration_h": 15.0,
+  "duration_m": 50.0,
+  "distance": 1384.0,
+  "return_train": "12952",
+  "ticket_classes": [
+    "3A",
+    "2A",
+    "1A"
+  ]
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Notebook",
+    "price": 45
+  },
+  {
+    "name": "Pen",
+    "price": 10
+  },
+  {
+    "name": "Pencil",
+    "price": 5
+  },
+  {
+    "name": "Eraser",
+    "price": 3
+  },
+  {
+    "name": "Ruler",
+    "price": 15
+  },
+  {
+    "name": "Stapler",
+    "price": 120
+  },
+  {
+    "name": "Glue Stick",
+    "price": 25
+  },
+  {
+    "name": "Scissors",
+    "price": 60
+  }
+]

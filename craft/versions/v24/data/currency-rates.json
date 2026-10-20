@@ -1,0 +1,38 @@
+[
+  {
+    "date": "2026-10-19",
+    "base": "USD",
+    "quote": "AED",
+    "rate": 3.6725
+  },
+  {
+    "date": "2026-10-19",
+    "base": "USD",
+    "quote": "EUR",
+    "rate": 0.89011
+  },
+  {
+    "date": "2026-10-19",
+    "base": "USD",
+    "quote": "GBP",
+    "rate": 0.75144
+  },
+  {
+    "date": "2026-10-19",
+    "base": "USD",
+    "quote": "INR",
+    "rate": 94.93
+  },
+  {
+    "date": "2026-10-19",
+    "base": "USD",
+    "quote": "JPY",
+    "rate": 158.05
+  },
+  {
+    "date": "2026-10-19",
+    "base": "USD",
+    "quote": "SGD",
+    "rate": 1.2803
+  }
+]
