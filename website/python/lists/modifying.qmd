@@ -1,0 +1,288 @@
+---
+title: "Modifying Lists"
+unit: 2
+cluster: "Working with Lists"
+---
+
+A list can be changed after it is created. This lesson covers replacing an
+element, adding an element at the end, and building a new list one element at
+a time.
+
+In this lesson, we'll learn how to:
+
+* replace an element by assigning to its index
+* add an element to the end of a list with `append()`
+* tell when two names refer to the same list
+* build a new list with a loop and `append()`
+
+**Assigning to an index replaces the element at that index. The `append()`
+method adds an element at the end. Both change the list itself.**
+
+## Replacing an element
+
+This list has the names of three cities:
+
+```{python}
+cities = ["Bangalore", "Chennai", "Mysore"]
+cities
+```
+
+Bangalore was renamed Bengaluru. To replace the first element, assign a new
+value to index `0`:
+
+```{python}
+cities[0] = "Bengaluru"
+cities
+```
+
+The assignment changed `cities`. The list still has three elements, and the
+other two are unchanged.
+
+A negative index works too. Mysore was renamed Mysuru, and it is the last
+element:
+
+```{python}
+cities[-1] = "Mysuru"
+cities
+```
+
+Assignment can only replace an element that exists. An index outside the list
+produces an `IndexError`:
+
+```python
+cities[3] = "Delhi"
+```
+
+```text
+IndexError: list assignment index out of range
+```
+
+## Adding an element
+
+`"Delhi"` could not be added by assigning to index `3`, because that index does
+not exist. The `append()` method adds an element at the end of a list:
+
+```{python}
+cities.append("Delhi")
+cities
+```
+
+`append()` does not create a new list. It changes `cities` itself. The list
+that had three elements now has four:
+
+```{python}
+len(cities)
+```
+
+## Two names for one list
+
+Assigning a list to a second variable does not copy the list. Both variables
+refer to the same list. This matters as soon as the list is changed.
+
+Start with one list:
+
+```{python}
+x = [1, 2, 3, 4]
+```
+
+![`x` refers to a list.](images/names-one.svg)
+
+Assign it to a second variable:
+
+```{python}
+y = x
+```
+
+![After `y = x`, there is still only one list. Both `x` and `y` refer to it.](images/names-shared.svg)
+
+Now append to the list through `x`, and display `y`:
+
+```{python}
+x.append(5)
+y
+```
+
+![`append()` changed the one list, so the change is visible through both names.](images/names-shared-append.svg)
+
+The code never used `y` to change anything, but `y` shows the new element.
+There is only one list, and `x` and `y` are two names for it.
+
+**A change made through one name is visible through every name that refers to
+the same list.**
+
+### Making a copy
+
+A slice produces a new list. Leaving out both the start and the stop, `x[:]`,
+selects every element, so it makes a copy of the whole list:
+
+```{python}
+x = [1, 2, 3, 4]
+y = x[:]
+```
+
+![After `y = x[:]`, there are two separate lists with the same elements.](images/names-copy.svg)
+
+Appending to `x` now changes only the list that `x` refers to:
+
+```{python}
+x.append(5)
+x
+```
+
+```{python}
+y
+```
+
+![`x` refers to the changed list. `y` still refers to its own copy.](images/names-copy-append.svg)
+
+::: {.callout-warning}
+## `append()` returns `None`
+
+`append()` changes the list. It does not return the changed list. Its return
+value is `None`, Python's value for "nothing". Assigning that result to a
+variable loses the list:
+
+```{python}
+numbers = [1, 2, 3, 4]
+numbers = numbers.append(5)
+print(numbers)
+```
+
+Call `append()` on its own line, without an assignment.
+:::
+
+## Building a new list
+
+A new list can be built one element at a time. Start with an empty list, `[]`,
+and append to it inside a loop.
+
+This loop builds a list of the lengths of the words in a sentence:
+
+```{python}
+words = "this too shall pass".split()
+
+lengths = []
+for word in words:
+    lengths.append(len(word))
+
+lengths
+```
+
+`lengths` starts empty. Each time the loop runs, it appends the length of one
+word. After the loop, `lengths` has one element for each word.
+
+The same pattern works inside a function. This function returns a new list with
+the square of each number:
+
+```{python}
+def squares(numbers):
+    result = []
+    for n in numbers:
+        result.append(n * n)
+    return result
+
+squares([1, 2, 3, 4, 5])
+```
+
+The function builds `result` and returns it. The list passed to `squares()` is
+not changed.
+
+A loop can also choose which elements to append. This function keeps only the
+words longer than three letters:
+
+```{python}
+def long_words(words):
+    result = []
+    for word in words:
+        if len(word) > 3:
+            result.append(word)
+    return result
+
+long_words(["this", "too", "shall", "pass"])
+```
+
+## Practice
+
+### Problem 1
+
+Consider the following code:
+
+```python
+marks = [10, 20, 30]
+marks[1] = 25
+marks.append(40)
+print(marks)
+print(len(marks))
+```
+
+What will be the output of this code? Write down your answer. Then run the
+code and check it.
+
+### Problem 2
+
+Consider the following code:
+
+```python
+a = ["red", "green"]
+b = a
+c = a[:]
+a.append("blue")
+print(a)
+print(b)
+print(c)
+```
+
+What will be the output of this code? Write down your answer, and draw a
+picture like the ones in this lesson to explain it. Then run the code and check
+your answer.
+
+### Problem 3
+
+This program converts a list of words into uppercase. Complete it by replacing
+each `___` with appropriate code.
+
+```python
+words = ["red", "green", "blue"]
+
+upper_words = ___
+for word in words:
+    ___
+
+print(upper_words)
+```
+
+When executed, the program produces the following output:
+
+```text
+['RED', 'GREEN', 'BLUE']
+```
+
+### Problem 4
+
+This code is meant to add `"Delhi"` to the list and print it, but it prints
+`None`. Explain why, and correct it.
+
+```python
+cities = ["Bengaluru", "Chennai"]
+cities = cities.append("Delhi")
+print(cities)
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `cities[0] = "Bengaluru"` | replaces the element at index `0` |
+| `cities[-1] = "Mysuru"` | replaces the last element |
+| `cities[3] = "Delhi"` with three elements | raises `IndexError: list assignment index out of range` |
+| `cities.append("Delhi")` | adds an element at the end of `cities`, changing the list itself |
+| `y = x` | makes `y` refer to the same list as `x`; it does not copy the list |
+| a change through `x` after `y = x` | is visible through `y` too |
+| `y = x[:]` | makes `y` refer to a new copy of the list |
+| `append()` | changes the list and returns `None` |
+| `result = []` | creates an empty list |
+| a loop with `result.append(...)` | builds a new list one element at a time |
+
+And the one idea to carry forward: assigning to an index and `append()` change
+the list itself. To build a new list, start with `[]` and append to it in a
+loop.

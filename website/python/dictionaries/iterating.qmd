@@ -1,0 +1,217 @@
+---
+title: "Iterating over a Dictionary"
+unit: 2
+cluster: "Working with Dictionaries"
+---
+
+Programs often need to work with every entry of a dictionary: display all of
+them, add up the values, or find the entries that meet a condition. A `for`
+loop can iterate over the keys of a dictionary, over its values, or over both
+together.
+
+In this lesson, we'll learn how to:
+
+* iterate over the keys of a dictionary
+* iterate over the values with `values()`
+* iterate over the keys and the values together with `items()`
+
+## Iterating over the keys
+
+This dictionary has the price of a kilogram of each fruit in a shop, in
+rupees. The keys are the names of the fruits:
+
+```{python}
+prices = {"mango": 120, "apple": 180, "orange": 80, "banana": 60}
+```
+
+The `keys()` method gives the keys of a dictionary:
+
+```{python}
+prices.keys()
+```
+
+The result is displayed as `dict_keys([...])`. It is not a list, but a `for`
+loop can iterate over it in the same way:
+
+```{python}
+for fruit in prices.keys():
+    print(fruit)
+```
+
+The loop variable `fruit` is a key on each iteration. The keys come in the
+order in which the entries were added to the dictionary.
+
+A `for` loop over the dictionary itself also iterates over its keys, so
+`.keys()` can be left out:
+
+```{python}
+for fruit in prices:
+    print(fruit)
+```
+
+The loop body can use the key to look up its value:
+
+```{python}
+for fruit in prices:
+    print(fruit, prices[fruit])
+```
+
+## Iterating over the values
+
+Some calculations need only the values. The `values()` method gives the values
+of a dictionary without the keys:
+
+```{python}
+prices.values()
+```
+
+```{python}
+for price in prices.values():
+    print(price)
+```
+
+Functions that take a list of numbers also work with the values. This code
+finds the highest price and the average price:
+
+```{python}
+max(prices.values())
+```
+
+```{python}
+sum(prices.values()) / len(prices)
+```
+
+## Iterating over the keys and the values together
+
+The `items()` method gives each key with its value:
+
+```{python}
+prices.items()
+```
+
+Each pair of parentheses has one key and its value. A loop over `items()` has
+two loop variables: the first is the key and the second is the value.
+
+```{python}
+for fruit, price in prices.items():
+    print(fruit, price)
+```
+
+This is the same form as a loop over `zip()`, which also has two loop
+variables.
+
+The loop body can use both variables. This loop displays the fruits that cost
+more than ₹100 a kilogram:
+
+```{python}
+for fruit, price in prices.items():
+    if price > 100:
+        print(fruit, price)
+```
+
+A list comprehension can iterate over `items()` in the same way. This one
+makes a list of the fruits that cost less than ₹100:
+
+```{python}
+[fruit for fruit, price in prices.items() if price < 100]
+```
+
+## Practice
+
+### Problem 1
+
+Write down the complete output of this code. Then run it and check your answer.
+
+```python
+stock = {"pen": 12, "notebook": 0, "eraser": 5}
+
+for item in stock:
+    print(item)
+
+print(sum(stock.values()))
+
+for item, count in stock.items():
+    if count == 0:
+        print(item, "is out of stock")
+```
+
+### Problem 2
+
+A dictionary finds a value by its key, not a key by its value. Write a program
+that displays the state whose capital is the value of `city`.
+
+```python
+capitals = {
+    "Karnataka": "Bengaluru",
+    "Kerala": "Thiruvananthapuram",
+    "Odisha": "Bhubaneswar",
+    "Tamil Nadu": "Chennai",
+}
+
+city = "Bhubaneswar"
+```
+
+The expected output is:
+
+```text
+Odisha
+```
+
+### Problem 3
+
+Two dictionaries have the theory marks and the practical marks of the same
+students. The students are not in the same order in the two dictionaries.
+Write a program that displays the total marks of each student.
+
+```python
+theory = {"Charlie": 60, "Alice": 72, "Bob": 40}
+practical = {"Bob": 65, "Charlie": 28, "Alice": 30}
+```
+
+The expected output is:
+
+```text
+Charlie 88
+Alice 102
+Bob 105
+```
+
+### Problem 4
+
+A shop has the prices below for a kilogram of each fruit. A customer buys the
+quantities in `quantity`, in kilograms. Write a program that prepares the
+bill: one line for each fruit bought, with its quantity and its amount, and
+the total on the last line.
+
+```python
+prices = {"mango": 120, "apple": 180, "orange": 80, "banana": 60}
+
+quantity = {"apple": 2, "banana": 3, "mango": 1}
+```
+
+The expected output is:
+
+```text
+apple 2 360
+banana 3 180
+mango 1 120
+total 660
+```
+
+## Summary
+
+A `for` loop over a dictionary iterates over its keys. The `values()` method
+gives the values, and the `items()` method gives each key with its value.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `prices.keys()` | gives the keys of the dictionary |
+| `for fruit in prices.keys():` | iterates over the keys |
+| `for fruit in prices:` | also iterates over the keys; `.keys()` can be left out |
+| the order of iteration | the order in which the entries were added |
+| `prices[fruit]` in the loop body | looks up the value of each key |
+| `for price in prices.values():` | iterates over the values |
+| `max(prices.values())` | returns the largest value |
+| `sum(prices.values())` | returns the total of the values |
+| `for fruit, price in prices.items():` | iterates over the keys and the values together, with two loop variables |
+| `[fruit for fruit, price in prices.items() if price < 100]` | a list of the keys whose values meet a condition |

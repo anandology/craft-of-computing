@@ -1,0 +1,239 @@
+---
+title: "List Slicing"
+unit: 2
+cluster: "Working with Lists"
+---
+
+We have seen how to select one element of a list by its index. A **slice**
+selects several elements at once, such as the first three, the last two, or
+every second element. The result is a new list.
+
+In this lesson, we'll learn how to:
+
+* select a range of elements with a slice
+* leave out the start or the end of a slice
+* use negative indexes in a slice
+* select every second element, or reverse a list, with a step
+
+**A slice `[start:stop]` selects the elements from index `start` up to, but not
+including, index `stop`.**
+
+## Selecting a range
+
+This list has the twelve months of the year:
+
+```{python}
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+```
+
+A slice is written with two indexes inside the square brackets, separated by a
+colon (`:`). This slice selects the first three months:
+
+```{python}
+months[0:3]
+```
+
+The element at index `0` is included. The element at index `3`, `"Apr"`, is not.
+The stop index is the first element that is left out.
+
+This slice selects the next three months:
+
+```{python}
+months[3:6]
+```
+
+The number of elements in a slice is `stop - start`. Both slices above have
+`3` elements.
+
+The result of a slice is a list, even when it has only one element:
+
+```{python}
+months[3:4]
+```
+
+## Leaving out the start or the end
+
+When the start index is left out, the slice starts at the beginning of the
+list:
+
+```{python}
+months[:3]
+```
+
+When the stop index is left out, the slice goes to the end of the list:
+
+```{python}
+months[9:]
+```
+
+## Negative indexes in a slice
+
+A slice can use negative indexes, which count from the end. This slice selects
+the last three months:
+
+```{python}
+months[-3:]
+```
+
+This slice selects everything except the last month:
+
+```{python}
+months[:-1]
+```
+
+## Slicing command-line arguments
+
+`sys.argv` is a list. Its first element is the script name, and the command-line
+arguments come after it. The slice `sys.argv[1:]` selects only the arguments.
+Use `%%file` to create `args.py`:
+
+```{python}
+%%file args.py
+import sys
+
+print(sys.argv[1:])
+```
+
+Run it with three arguments:
+
+```{python}
+!python args.py one two three
+```
+
+The script prints a list of the three arguments, without the script name.
+
+## Slices out of range
+
+An index outside the list produces an `IndexError`. A slice does not. A slice
+selects the elements that exist in its range, and ignores the rest:
+
+```{python}
+months[10:20]
+```
+
+The list has no index `20`, so the slice stops at the end of the list. A slice
+that selects nothing produces an empty list:
+
+```{python}
+months[20:30]
+```
+
+## Taking a step
+
+A slice can have a third number, the **step**. The step is the distance from
+one selected element to the next. This slice selects every third month,
+starting from the first:
+
+```{python}
+months[0:12:3]
+```
+
+Start and stop can be left out here too. `months[::3]` selects every third
+month from the whole list:
+
+```{python}
+months[::3]
+```
+
+A negative step goes backwards. A step of `-1` selects every element, from the
+end to the start, which gives the list in reverse order:
+
+```{python}
+print(months[::-1])
+```
+
+The slice does not change `months`. It produces a new list, and `months` keeps
+its original order:
+
+```{python}
+print(months)
+```
+
+The two lists are printed with `print()` because they are too long to display
+on one line.
+
+## Practice
+
+### Problem 1
+
+Consider the following code:
+
+```python
+numbers = [10, 20, 30, 40, 50, 60]
+```
+
+Write down the value of each expression. Then run the code and check your
+answers.
+
+1. `numbers[1:4]`
+2. `numbers[:2]`
+3. `numbers[3:]`
+4. `numbers[-2:]`
+5. `numbers[::2]`
+6. `numbers[6:10]`
+
+### Problem 2
+
+Complete the following program by replacing each `___` with appropriate code.
+The program should still work if the sentence changes.
+
+```python
+sentence = "the quick brown fox jumps over the lazy dog"
+words = sentence.split()
+
+print("First three words:", ___)
+print("Last two words:", ___)
+print("Every second word:", ___)
+print("Reversed:", ___)
+```
+
+When executed, the program produces the following output:
+
+```text
+First three words: ['the', 'quick', 'brown']
+Last two words: ['lazy', 'dog']
+Every second word: ['the', 'brown', 'jumps', 'the', 'dog']
+Reversed: ['dog', 'lazy', 'the', 'over', 'jumps', 'fox', 'brown', 'quick', 'the']
+```
+
+### Problem 3
+
+Use `%%file` to create a script named `greet.py` that greets every name given
+on the command line, one per line. It should produce these results:
+
+```python
+!python greet.py Alice Bob Charlie
+```
+
+```text
+Hello, Alice
+Hello, Bob
+Hello, Charlie
+```
+
+```python
+!python greet.py Mira
+```
+
+```text
+Hello, Mira
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `months[0:3]` | selects the elements at indexes `0`, `1` and `2` |
+| `months[start:stop]` | includes index `start` and leaves out index `stop` |
+| `months[:3]` | selects the first three elements |
+| `months[9:]` | selects the elements from index `9` to the end |
+| `months[-3:]` | selects the last three elements |
+| `months[:-1]` | selects every element except the last |
+| `months[::3]` | selects every third element, starting from the first |
+| `months[::-1]` | selects every element in reverse order |
+| a slice beyond the end of the list | stops at the end, without an error |
+| any slice | produces a new list and leaves the original list unchanged |
+
+And the one idea to carry forward: a slice selects a range of a list and
+produces a new list. The start index is included and the stop index is not.

@@ -1,0 +1,251 @@
+---
+title: "Reading JSON"
+unit: 2
+cluster: "Working with Dictionaries"
+---
+
+Programs often get their data from a file or from another program, and the
+data arrives as text. **JSON** is a common text format for lists and records,
+and Python's `json` module converts JSON text into lists and dictionaries.
+
+In this lesson, we'll learn how to:
+
+* read JSON text and match it to Python values
+* convert JSON text into Python values with `json.loads()`
+* read a JSON file with `json.load()`
+* convert Python values into JSON text with `json.dumps()`
+
+## JSON text
+
+Use a `%%file` cell to create a file named `train.json` with the record of one
+train:
+
+```{python}
+%%file train.json
+{
+  "number": "12951",
+  "name": "Mumbai - New Delhi Rajdhani Express",
+  "distance": 1384,
+  "pantry": true,
+  "classes": ["3A", "2A", "1A"]
+}
+```
+
+The text looks like a Python dictionary. Reading the file gives a string, not
+a dictionary:
+
+```{python}
+text = open("train.json").read()
+type(text)
+```
+
+A string cannot be looked up by a key:
+
+```python
+text["name"]
+```
+
+```text
+TypeError: string indices must be integers, not 'str'
+```
+
+To use the details, the text has to be converted into Python values.
+
+JSON is close to Python, but it is not Python. Each JSON form has a Python
+value that matches it:
+
+| JSON | Python |
+|------|--------|
+| `{"name": "Pen", "price": 10}`, an object | a dictionary |
+| `["3A", "2A"]`, an array | a list |
+| `"Pen"`, a string in double quotes | a string |
+| `10` and `3.5`, numbers | an integer and a floating-point number |
+| `true` and `false` | `True` and `False` |
+| `null` | `None` |
+
+The keys of a JSON object are always strings, and JSON strings always use
+double quotes.
+
+## Converting JSON text
+
+The `loads()` function of the `json` module takes JSON text as a string and
+returns the matching Python value. The `s` at the end of its name stands for
+string:
+
+```{python}
+import json
+
+train = json.loads(text)
+train
+```
+
+JSON `true` became Python `True`. The result is a dictionary:
+
+```{python}
+type(train)
+```
+
+Everything from the earlier lessons now works with it:
+
+```{python}
+train["name"]
+```
+
+```{python}
+"SL" in train["classes"]
+```
+
+Text that is not valid JSON raises an error. Single quotes are valid in
+Python, but not in JSON:
+
+```python
+json.loads("{'name': 'Pen'}")
+```
+
+```text
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+```
+
+The message says what the module expected, and where in the text it stopped:
+line 1, column 2, at the first single quote.
+
+## Reading a JSON file
+
+A JSON file often has a list of records. Create `trains.json` with four
+trains:
+
+```{python}
+%%file trains.json
+[
+  {"number": "12028", "name": "Bangalore - Chennai Shatabdi Express", "distance": 362, "classes": ["CC"]},
+  {"number": "12627", "name": "Karnataka Express", "distance": 2406, "classes": ["SL", "3A", "2A", "1A"]},
+  {"number": "12951", "name": "Mumbai - New Delhi Rajdhani Express", "distance": 1384, "classes": ["3A", "2A", "1A"]},
+  {"number": "16526", "name": "Bangalore - Kanniyakumari Island Express", "distance": 944, "classes": ["SL", "3A", "2A"]}
+]
+```
+
+The `load()` function, without the `s`, takes a file object and reads the JSON
+text from it. There is no need to call `read()` first:
+
+```{python}
+trains = json.load(open("trains.json"))
+len(trains)
+```
+
+The result is a list of records, so a comprehension can answer questions about
+it:
+
+```{python}
+[train["name"] for train in trains if "SL" in train["classes"]]
+```
+
+## Converting Python values into JSON text
+
+The `dumps()` function goes the other way. It takes a Python value and returns
+JSON text as a string:
+
+```{python}
+json.dumps(train)
+```
+
+The result is a string. Python `True` became JSON `true`, and every string is
+in double quotes.
+
+The `indent` argument puts each entry on its own line, indented by the given
+number of spaces:
+
+```{python}
+print(json.dumps(train, indent=2))
+```
+
+## Practice
+
+### Problem 1
+
+Write down the value that `json.loads()` returns for each string. Then run the
+code and check your answers.
+
+1. `json.loads('[1, 2, 3]')`
+2. `json.loads('{"ok": true}')`
+3. `json.loads('"hello"')`
+4. `json.loads('null')`
+5. `json.loads('{"a": [1, {"b": false}]}')`
+
+### Problem 2
+
+This text is not valid JSON. Find the two mistakes and correct them, so that
+`json.loads()` returns a dictionary.
+
+```python
+text = "{'name': 'Pen', 'in_stock': True}"
+```
+
+### Problem 3
+
+Use a `%%file` cell to create `prices.json`:
+
+```text
+[
+  {"name": "Notebook", "price": 45},
+  {"name": "Pen", "price": 10},
+  {"name": "Pencil", "price": 5},
+  {"name": "Eraser", "price": 3},
+  {"name": "Ruler", "price": 15},
+  {"name": "Stapler", "price": 120},
+  {"name": "Glue Stick", "price": 25},
+  {"name": "Scissors", "price": 60}
+]
+```
+
+Write a program that reads the file and displays the total of all the prices,
+then the name of the most expensive item.
+
+The expected output is:
+
+```text
+283
+Stapler
+```
+
+### Problem 4
+
+Use a `%%file` cell to create `stations.json`:
+
+```text
+[
+  {"code": "SBC", "name": "Bangalore City Jn", "state": "Karnataka"},
+  {"code": "MAS", "name": "Chennai Central", "state": "Tamil Nadu"},
+  {"code": "MYS", "name": "Mysore Jn", "state": "Karnataka"},
+  {"code": "ERS", "name": "Ernakulam Jn", "state": "Kerala"},
+  {"code": "UBL", "name": "Hubli Jn", "state": "Karnataka"}
+]
+```
+
+Write a program that reads the file and displays the code and the name of
+each station in Karnataka, one station on each line, sorted by name.
+
+The expected output is:
+
+```text
+SBC Bangalore City Jn
+UBL Hubli Jn
+MYS Mysore Jn
+```
+
+## Summary
+
+JSON is text. `json.loads()` and `json.load()` convert it into Python values,
+with objects as dictionaries and arrays as lists, and `json.dumps()` converts
+Python values back into JSON text.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| a JSON object, `{"name": "Pen"}` | becomes a dictionary |
+| a JSON array, `["3A", "2A"]` | becomes a list |
+| `true`, `false` and `null` | become `True`, `False` and `None` |
+| JSON strings | always use double quotes |
+| `json.loads(text)` | converts the JSON text in the string `text` into Python values |
+| `json.load(open("trains.json"))` | reads a JSON file and converts its text into Python values |
+| text that is not valid JSON | raises `json.decoder.JSONDecodeError` |
+| `json.dumps(value)` | converts a Python value into JSON text, as a string |
+| `json.dumps(value, indent=2)` | puts each entry on its own line, indented by two spaces |

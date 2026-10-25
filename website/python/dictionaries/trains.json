@@ -1,0 +1,6 @@
+[
+  {"number": "12028", "name": "Bangalore - Chennai Shatabdi Express", "distance": 362, "classes": ["CC"]},
+  {"number": "12627", "name": "Karnataka Express", "distance": 2406, "classes": ["SL", "3A", "2A", "1A"]},
+  {"number": "12951", "name": "Mumbai - New Delhi Rajdhani Express", "distance": 1384, "classes": ["3A", "2A", "1A"]},
+  {"number": "16526", "name": "Bangalore - Kanniyakumari Island Express", "distance": 944, "classes": ["SL", "3A", "2A"]}
+]

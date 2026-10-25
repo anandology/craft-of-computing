@@ -1,0 +1,171 @@
+---
+title: "Writing Your Own Modules"
+unit: 2
+cluster: "Writing Modules"
+---
+
+A function written in one Python file is often useful in other programs. Any
+Python file can be imported as a module.
+
+In this lesson, we'll learn how to:
+
+* import a Python file as a module
+* see what happens when a module is imported more than once
+* reimport a module after changing it
+
+## Importing a Python file
+
+Let's create a python file `mymodule.py` with the following content.
+
+```python
+%%file mymodule.py
+
+print("BEGIN mymodule")
+x = 2
+
+def add(a, b):
+    return a + b
+
+print(add(3, 4))
+print("END mymodule")
+```
+
+```text
+Writing mymodule.py
+```
+
+Let's see what happens when we run this file as a script:
+
+```python
+!python mymodule.py
+```
+
+```text
+BEGIN mymodule
+7
+END mymodule
+```
+
+Let's see what happens when we import this file as a module.
+
+```python
+import mymodule
+```
+
+```text
+BEGIN mymodule
+7
+END mymodule
+```
+
+```python
+mymodule.x
+```
+
+```text
+2
+```
+
+```python
+mymodule.add(10, 20)
+```
+
+```text
+30
+```
+
+As you can see, a python file can be imported as a module and the code in that
+file gets executed, just the same way as when it is run as a script.
+
+The output would be the same if we import the module from another python file
+or the program is passed directly from python command-line[^python-c].
+
+```python
+!python -c "import mymodule; print(mymodule.add(10, 20))"
+```
+
+```text
+BEGIN mymodule
+7
+END mymodule
+30
+```
+
+[^python-c]: The python command-line flag `-c` allows passing the program
+directly from the command line. It is handy to quickly try some small snippets
+of code. When the code is multiple statements, they are usually separated by a
+semicolon.
+
+## Reimporting a module
+
+The code of the module is executed only once even if the module is imported
+more than once.
+
+```python
+import mymodule
+import mymodule
+```
+
+That means, if you make some changes to the file of a module after it is
+imported, you'll not see the changes even if you import it again.
+
+::: {.callout-warning}
+This is especially annoying when you are working in a Jupyter notebook.
+:::
+
+The work-around to that issue is to reimport a module using `importlib`.
+
+```python
+import mymodule
+
+# and make some changes to mymodule.py
+
+import importlib
+importlib.reload(mymodule)
+```
+
+```text
+BEGIN mymodule
+7
+END mymodule
+<module 'mymodule' from '/home/anand/python/mymodule.py'>
+```
+
+## Practice
+
+### Problem 1
+
+Use a `%%file` cell to create `words.py` with a function `count_words()` that
+takes a sentence and returns the number of words in it. Import the `words`
+module and use the function. It should produce these results:
+
+```python
+import words
+words.count_words("Python programs can read text files.")
+```
+
+```text
+6
+```
+
+```python
+words.count_words("Anything that can go wrong, will go wrong.")
+```
+
+```text
+8
+```
+
+## Summary
+
+A Python file can be imported as a module; the code in the file runs the
+first time it is imported, just as when the file is run as a script.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `import mymodule` | runs `mymodule.py` and makes the module available |
+| `mymodule.add(10, 20)` | calls a function defined in `mymodule.py` |
+| `mymodule.x` | the value of a variable defined in `mymodule.py` |
+| a second `import mymodule` | does not run the file again |
+| `importlib.reload(mymodule)` | runs the file again and loads the changes |
+| `python -c "import mymodule"` | runs a program given on the command line |

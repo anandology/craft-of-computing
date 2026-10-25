@@ -1,0 +1,465 @@
+---
+title: "The argparse Module"
+unit: 2
+cluster: "Writing Programs"
+---
+
+If you notice most of the command-line programs in Unix, support help and provide various options and flags. They also report error when the command is used incorrectly. 
+
+The `argparse` module in Python gives a script all of these just from a short description of its arguments.
+
+In this lesson, we'll learn how to:
+
+* declare the arguments of a script
+* read the help and the error messages that `argparse` provides
+* add an option that takes a value
+* add a flag
+
+## Declaring an argument
+
+The `argparse` module is part of the standard library. Use a `%%file` cell to
+create `hello.py`:
+
+```python
+%%file hello.py
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("name")
+args = parser.parse_args()
+
+print(args)
+print("Hello,", args.name)
+```
+
+The three lines after the import do the work:
+
+| Line | Meaning |
+|------|---------|
+| `parser = argparse.ArgumentParser()` | creates a **parser**, the object that reads the command line |
+| `parser.add_argument("name")` | declares that the script takes one argument, called `name` |
+| `args = parser.parse_args()` | reads the command line and returns the values |
+
+Run the script with one argument:
+
+```python
+!python hello.py Alice
+```
+
+```text
+Namespace(name='Alice')
+Hello, Alice
+```
+
+The first line of output shows the value that `parse_args()` returned. It
+holds one name for each declared argument. The expression `args.name` selects
+the value of `name`, with a dot, in the same way that `sys.argv` selects
+`argv` from the `sys` module.
+
+An argument declared with a plain name, such as `"name"`, is a **positional
+argument**. It is required, and it is identified by its position in the
+command.
+
+## Help and error messages
+
+The script never mentions `--help`, but the parser accepts it:
+
+```python
+!python hello.py --help
+```
+
+```text
+usage: hello.py [-h] name
+
+positional arguments:
+  name
+
+options:
+  -h, --help  show this help message and exit
+```
+
+The `usage` line shows how to write the command. Square brackets mark a part
+that can be left out, so `-h` is optional and `name` is required. `-h` is the
+short form of `--help`.
+
+The parser also checks the command. Run the script without an argument:
+
+```python
+!python hello.py
+```
+
+```text
+usage: hello.py [-h] name
+hello.py: error: the following arguments are required: name
+```
+
+An argument that was not declared is an error too:
+
+```python
+!python hello.py Alice Bob
+```
+
+```text
+usage: hello.py [-h] name
+hello.py: error: unrecognized arguments: Bob
+```
+
+In all three runs, `parse_args()` displayed a message and stopped the script.
+The two `print()` calls below it never ran.
+
+## An option that takes a value
+
+An **option** is an argument that starts with a dash. It can be left out, and
+it is identified by its name, not by its position. This version of `hello.py`
+adds an option for the number of times to display the greeting:
+
+```python
+%%file hello.py
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("name")
+parser.add_argument("-r", "--repeat", type=int, default=1)
+args = parser.parse_args()
+
+for i in range(args.repeat):
+    print("Hello,", args.name)
+```
+
+The new `add_argument()` call has four arguments:
+
+| Argument | Meaning |
+|----------|---------|
+| `"-r"` | the short form of the option |
+| `"--repeat"` | the long form of the option |
+| `type=int` | convert the value from a string to an integer |
+| `default=1` | the value to use when the option is not given |
+
+`type=int` and `default=1` are **keyword arguments**: arguments passed with a
+name.
+
+The value is available as `args.repeat`. The name comes from the long form of
+the option, without the dashes.
+
+Without the option, `args.repeat` is the default value:
+
+```python
+!python hello.py Alice
+```
+
+```text
+Hello, Alice
+```
+
+With the option, the value follows it in the command:
+
+```python
+!python hello.py Alice -r 3
+```
+
+```text
+Hello, Alice
+Hello, Alice
+Hello, Alice
+```
+
+The long form does the same, and an option can come before the positional
+argument. All three of these commands display the greeting three times:
+
+```text
+python hello.py Alice -r 3
+python hello.py Alice --repeat 3
+python hello.py -r 3 Alice
+```
+
+Because of `type=int`, the parser converts the value and `args.repeat` is an
+integer, ready for `range()`. A value that cannot be converted is an error:
+
+```python
+!python hello.py Alice -r three
+```
+
+```text
+usage: hello.py [-h] [-r REPEAT] name
+hello.py: error: argument -r/--repeat: invalid int value: 'three'
+```
+
+The `usage` line now shows the option as `[-r REPEAT]`: optional, and followed
+by a value.
+
+`type=int` works for a positional argument in the same way.
+
+## A flag
+
+A **flag** is an option that takes no value. It is either present in the
+command or absent. This version adds a flag for upper case:
+
+```python
+%%file hello.py
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("name")
+parser.add_argument("-r", "--repeat", type=int, default=1)
+parser.add_argument("-u", "--upper", action="store_true")
+args = parser.parse_args()
+
+message = "Hello, " + args.name
+if args.upper:
+    message = message.upper()
+
+for i in range(args.repeat):
+    print(message)
+```
+
+The keyword argument `action="store_true"` declares a flag. `args.upper` is
+`True` when the flag is in the command and `False` when it is not, so it can
+be used as the condition of an `if` statement.
+
+Without the flag, the message is unchanged:
+
+```python
+!python hello.py Alice
+```
+
+```text
+Hello, Alice
+```
+
+With the flag, the `if` block runs:
+
+```python
+!python hello.py Alice -u
+```
+
+```text
+HELLO, ALICE
+```
+
+Options and flags can be combined in one command:
+
+```python
+!python hello.py Alice --upper -r 2
+```
+
+```text
+HELLO, ALICE
+HELLO, ALICE
+```
+
+## Describing the arguments
+
+The help so far lists the arguments but does not say what they are for:
+
+```python
+!python hello.py --help
+```
+
+```text
+usage: hello.py [-h] [-r REPEAT] [-u] name
+
+positional arguments:
+  name
+
+options:
+  -h, --help            show this help message and exit
+  -r REPEAT, --repeat REPEAT
+  -u, --upper
+```
+
+Two more keyword arguments supply the text. `description=` describes the
+script, and `help=` describes one argument. Only the three declarations
+change:
+
+```python
+%%file hello.py
+import argparse
+
+parser = argparse.ArgumentParser(description="Greet a person by name.")
+parser.add_argument("name", help="the name to greet")
+parser.add_argument("-r", "--repeat", type=int, default=1, help="times to greet")
+parser.add_argument("-u", "--upper", action="store_true", help="use upper case")
+args = parser.parse_args()
+
+message = "Hello, " + args.name
+if args.upper:
+    message = message.upper()
+
+for i in range(args.repeat):
+    print(message)
+```
+
+The same command now explains the script:
+
+```python
+!python hello.py --help
+```
+
+```text
+usage: hello.py [-h] [-r REPEAT] [-u] name
+
+Greet a person by name.
+
+positional arguments:
+  name                  the name to greet
+
+options:
+  -h, --help            show this help message and exit
+  -r REPEAT, --repeat REPEAT
+                        times to greet
+  -u, --upper           use upper case
+```
+
+## Practice
+
+### Problem 1
+
+Use `%%file` to create a script named `square.py` that takes one integer and
+displays its square. Use `argparse` to convert the argument.
+
+```python
+!python square.py 5
+```
+
+```text
+25
+```
+
+The script should display this help:
+
+```python
+!python square.py --help
+```
+
+```text
+usage: square.py [-h] number
+
+Display the square of a number.
+
+positional arguments:
+  number      the number to square
+
+options:
+  -h, --help  show this help message and exit
+```
+
+### Problem 2
+
+Use `%%file` to create a script named `ls.py` that displays the name of each
+file in the current directory, one per line. With the `-e` or `--ext` option,
+it displays only the files with that extension.
+
+In a directory that contains `hello.py`, `square.py`, `ls.py`, `three.txt`
+and `article.txt`, the script behaves like this. Your files and their order
+may be different.
+
+```python
+!python ls.py
+```
+
+```text
+three.txt
+article.txt
+ls.py
+hello.py
+square.py
+```
+
+```python
+!python ls.py -e txt
+```
+
+```text
+three.txt
+article.txt
+```
+
+Hint: an option without `type=` has a string value. Give this option the
+default value `""`, and check for that value in the script.
+
+### Problem 3
+
+Use `%%file` to create a script named `grep.py` that takes a pattern and a
+filename, and displays the lines of the file that contain the pattern. The
+script has two flags:
+
+| Flag | Meaning |
+|------|---------|
+| `-i` or `--ignore-case` | treat upper case and lower case letters as the same |
+| `-c` or `--count` | display the number of matching lines, and not the lines |
+
+To try the script, use `%%file` to create `blake.txt`:
+
+```python
+%%file blake.txt
+Piping down the valleys wild
+Piping songs of pleasant glee
+On a cloud I saw a child.
+And he laughing said to me.
+
+Pipe a song about a Lamb;
+So I piped with merry chear,
+Piper pipe that song again—
+So I piped, he wept to hear.
+```
+
+The script should behave like this:
+
+```python
+!python grep.py pipe blake.txt
+```
+
+```text
+So I piped with merry chear,
+Piper pipe that song again—
+So I piped, he wept to hear.
+```
+
+```python
+!python grep.py -i pipe blake.txt
+```
+
+```text
+Pipe a song about a Lamb;
+So I piped with merry chear,
+Piper pipe that song again—
+So I piped, he wept to hear.
+```
+
+```python
+!python grep.py -c pipe blake.txt
+```
+
+```text
+3
+```
+
+Hint: the value of `--ignore-case` is available as `args.ignore_case`. A dash
+inside the name of an option becomes an underscore.
+
+Hint: each string from `readlines()` ends with a line break, and `print()`
+adds another one. Use `print(line, end="")` to display a line without the
+extra line break.
+
+## Summary
+
+A script declares its arguments with `add_argument()`, and `parse_args()`
+reads the command line, converts and checks the values, and provides the help
+and the error messages.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `import argparse` | makes the `argparse` module available |
+| `parser = argparse.ArgumentParser()` | creates a parser |
+| `parser.add_argument("name")` | declares a positional argument: required, identified by its position |
+| `parser.add_argument("-r", "--repeat")` | declares an option: can be left out, identified by its name |
+| `type=int` | converts the value from a string to an integer |
+| `default=1` | the value of an option that is not in the command |
+| `action="store_true"` | declares a flag: `True` when it is in the command, `False` when it is not |
+| `help="the name to greet"` | describes one argument in the help |
+| `description="Greet a person by name."` | describes the script in the help |
+| `args = parser.parse_args()` | reads the command line and returns the values |
+| `args.repeat` | the value of the `--repeat` option |
+| `python hello.py --help` | displays the help and stops the script |
+| a missing, unknown, or invalid argument | displays the usage and an error, and stops the script |
+| `[-r REPEAT]` in the usage | square brackets mark a part that can be left out |

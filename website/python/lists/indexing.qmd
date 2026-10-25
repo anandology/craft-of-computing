@@ -1,0 +1,191 @@
+---
+title: "List Indexing"
+unit: 2
+cluster: "Working with Lists"
+---
+
+We have seen how to select an element of a list by its index, counting from the
+start. Python also lets us count from the end. This makes it easy to select the
+last element, or the second-to-last, without knowing the length of the list.
+
+In this lesson, we'll learn how to:
+
+* select an element by counting from the start
+* select an element by counting from the end, with negative indexes
+* select the last word of a sentence
+* tell which indexes are out of range
+
+**Every element of a list has two indexes. Counting from the start, the first
+index is `0`. Counting from the end, the last index is `-1`.**
+
+## Counting from the start
+
+This list has five elements:
+
+```{python}
+days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+```
+
+Indexes counted from the start begin at `0`, so the first element has index
+`0` and the last element has index `4`:
+
+```{python}
+days[0]
+```
+
+```{python}
+days[4]
+```
+
+The last index is always one less than the length of the list. An index can be
+any expression that produces an integer, so the last element can be selected
+without knowing the length in advance:
+
+```{python}
+days[len(days) - 1]
+```
+
+This works for a list of any length, but it is long to write and easy to get
+wrong.
+
+## Counting from the end
+
+A **negative index** counts from the end of the list. Index `-1` selects the
+last element:
+
+```{python}
+days[-1]
+```
+
+Index `-2` selects the second element from the end:
+
+```{python}
+days[-2]
+```
+
+Each element of `days` has both kinds of index:
+
+| Element | `"Mon"` | `"Tue"` | `"Wed"` | `"Thu"` | `"Fri"` |
+|---------|---------|---------|---------|---------|---------|
+| Index | `0` | `1` | `2` | `3` | `4` |
+| Negative index | `-5` | `-4` | `-3` | `-2` | `-1` |
+
+`days[4]` and `days[-1]` select the same element. `days[-1]` keeps selecting
+the last element when the list grows or shrinks; `days[4]` does not.
+
+## The last word of a sentence
+
+The `split()` method returns a list of words, so a negative index selects
+words from the end of a sentence:
+
+```{python}
+sentence = "this too shall pass"
+words = sentence.split()
+words[-1]
+```
+
+The sentence has four words, but the code does not depend on that. It selects
+the last word of any sentence.
+
+The two steps can also be written as one expression. Python calls `split()`
+first, then indexes the list it returns:
+
+```{python}
+sentence.split()[-1]
+```
+
+## Indexes out of range
+
+A list with five elements has indexes `0` to `4` and `-5` to `-1`. Any other
+index produces an `IndexError`, from either end:
+
+```python
+days[5]
+```
+
+```python
+days[-6]
+```
+
+The last line of the error message is the same for both:
+
+```text
+IndexError: list index out of range
+```
+
+## Practice
+
+### Problem 1
+
+Consider the following code:
+
+```python
+planets = ["Mercury", "Venus", "Earth", "Mars"]
+```
+
+Write down the value of each expression. Then run the code and check your
+answers.
+
+1. `planets[-1]`
+2. `planets[-4]`
+3. `planets[len(planets) - 2]`
+4. `planets[-5]`
+
+### Problem 2
+
+Complete the following program by replacing each `___` with appropriate code.
+The program should still work if the sentence changes.
+
+```python
+sentence = "the quick brown fox jumps"
+words = ___
+
+print("First word:", ___)
+print("Last word:", ___)
+print("Second-to-last word:", ___)
+```
+
+When executed, the program produces the following output:
+
+```text
+First word: the
+Last word: jumps
+Second-to-last word: fox
+```
+
+### Problem 3
+
+Use `%%file` to create a script named `last.py` that prints its last
+command-line argument, however many arguments it is given. It should produce
+these results:
+
+```python
+!python last.py one two three
+```
+
+```text
+three
+```
+
+```python
+!python last.py hello
+```
+
+```text
+hello
+```
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `days[0]` | selects the first element |
+| `days[-1]` | selects the last element |
+| `days[-2]` | selects the second element from the end |
+| `days[len(days) - 1]` | selects the last element by counting from the start |
+| `sentence.split()[-1]` | selects the last word of `sentence` |
+| a list of length `n` | has indexes `0` to `n - 1` and `-n` to `-1` |
+| any other index | raises `IndexError: list index out of range` |
+
+And the one idea to carry forward: an index can count from either end of a
+list. Index `0` is the first element and index `-1` is the last.

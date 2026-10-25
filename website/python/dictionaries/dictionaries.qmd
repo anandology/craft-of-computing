@@ -1,0 +1,377 @@
+---
+title: "Dictionaries"
+unit: 2
+cluster: "Working with Dictionaries"
+---
+
+Programs often need to store values under names and find a value by its name:
+the meaning of a word, the phone number of a person, the price of an item.
+Python uses a **dictionary** for this.
+
+In this lesson, we'll learn how to:
+
+* create a dictionary and look up a value by its key
+* replace a value and add an entry
+* use a dictionary as a record and as a lookup table
+* handle a key that is not in the dictionary
+
+## Creating a dictionary
+
+This dictionary describes one student:
+
+```{python}
+student = {"name": "Alice", "email": "alice@example.com", "marks": 72}
+student
+```
+
+A dictionary is a collection of **entries**. Each entry has a **key** and a
+**value**:
+
+| Part | Meaning |
+|------|---------|
+| `{` and `}` | start and end the dictionary |
+| `"name": "Alice"` | an entry with the key `"name"` and the value `"Alice"` |
+| `:` | separates a key from its value |
+| `,` | separates one entry from the next |
+
+A dictionary with many entries is easier to read with one entry on each line:
+
+```{python}
+student = {
+    "name": "Alice",
+    "email": "alice@example.com",
+    "marks": 72,
+}
+```
+
+The comma after the last entry is optional. The `len()` function returns the
+number of entries:
+
+```{python}
+len(student)
+```
+
+## Looking up a value
+
+Write the key in square brackets to look up its value:
+
+```{python}
+student["name"]
+```
+
+```{python}
+student["marks"]
+```
+
+The square brackets are the same as in list indexing. A list finds an element
+by its position. A dictionary finds a value by its key.
+
+A key that is not in the dictionary produces a `KeyError`:
+
+```python
+student["phone"]
+```
+
+The last line of the error message is:
+
+```text
+KeyError: 'phone'
+```
+
+The message names the key that Python did not find.
+
+## Changing a dictionary
+
+Assigning to a key that is in the dictionary replaces its value:
+
+```{python}
+student["marks"] = 85
+student
+```
+
+Assigning to a key that is not in the dictionary adds a new entry:
+
+```{python}
+student["phone"] = "12345"
+student
+```
+
+Both statements have the same form. A dictionary never has two entries with the
+same key, so an assignment either replaces the value of a key or adds the key.
+
+## Two ways to use a dictionary
+
+A dictionary is commonly used in one of two ways: as a record or as a lookup
+table. The
+syntax is the same. The difference is in what the keys are.
+
+### A record
+
+A **record** describes one thing. The `student` dictionary is a record: its
+keys are the names of the details of one student.
+
+The keys of a record are decided when the program is written, so the code
+names each key it needs:
+
+```{python}
+print(student["name"], "scored", student["marks"])
+```
+
+A record keeps the details of one thing together under one name. A function
+can then take the whole record as one argument:
+
+```{python}
+def show_result(student):
+    if student["marks"] >= 35:
+        print(student["name"], "pass")
+    else:
+        print(student["name"], "fail")
+
+show_result(student)
+```
+
+### A lookup table
+
+A **lookup table** translates one value into another. This dictionary has the
+price of each item in a canteen, in rupees. Its keys are the names of the
+items:
+
+```{python}
+prices = {"tea": 10, "coffee": 15, "samosa": 12}
+```
+
+All the keys are the same kind of value, and so are all the values. The code
+does not name a key. The key comes from a variable:
+
+```{python}
+item = "coffee"
+prices[item]
+```
+
+The same code works for any item in the table:
+
+```{python}
+item = "samosa"
+quantity = 3
+
+quantity * prices[item]
+```
+
+This table compares the two uses:
+
+| | Record | Lookup table |
+|---|--------|--------------|
+| describes | one thing | how to translate one value into another |
+| keys | the names of the details, such as `"name"` and `"marks"` | values of one kind, such as the names of items |
+| values | can be of different types | are usually of the same type |
+| the key in the code | written as a string: `student["name"]` | comes from a variable: `prices[item]` |
+
+## Greeting in many languages
+
+A lookup table can do the work of an `if` statement with many `elif` parts.
+This table has the greeting used in four languages. Its keys are language
+codes:
+
+```{python}
+greetings = {
+    "en": "Hello",
+    "hi": "Namaste",
+    "kn": "Namaskara",
+    "it": "Ciao",
+}
+```
+
+This function greets a person in the language it is given:
+
+```{python}
+def greet(name, lang):
+    greeting = greetings[lang]
+    print(greeting, name)
+
+greet("Alice", "en")
+greet("Alice", "hi")
+greet("Alice", "it")
+```
+
+The function has no `if` statement, although it does something different for
+each language. The decision is made by the lookup.
+
+To support another language, add an entry to the table. The function does not
+change:
+
+```{python}
+greetings["es"] = "Hola"
+
+greet("Alice", "es")
+```
+
+## A key that is not in the dictionary
+
+A lookup table cannot have an entry for every possible key. The `greetings`
+table has no entry for French:
+
+```python
+greet("Alice", "fr")
+```
+
+```text
+KeyError: 'fr'
+```
+
+The `in` operator checks whether a key is in a dictionary:
+
+```{python}
+"hi" in greetings
+```
+
+```{python}
+"fr" in greetings
+```
+
+The `in` operator checks only the keys. `"Hello"` is a value in `greetings`,
+not a key:
+
+```{python}
+"Hello" in greetings
+```
+
+With `in`, the function can use `Hello` when the language is not in the table:
+
+```{python}
+def greet(name, lang):
+    if lang in greetings:
+        greeting = greetings[lang]
+    else:
+        greeting = "Hello"
+    print(greeting, name)
+
+greet("Alice", "hi")
+greet("Alice", "fr")
+```
+
+Looking up a key and using another value when the key is missing is common
+enough that dictionaries have a method for it. The `get()` method takes a key
+and a **default value**. It returns the value of the key when the key is in
+the dictionary, and the default value when it is not:
+
+```{python}
+greetings.get("hi", "Hello")
+```
+
+```{python}
+greetings.get("fr", "Hello")
+```
+
+The `get()` method does not add an entry. `"fr"` is still not in `greetings`:
+
+```{python}
+"fr" in greetings
+```
+
+With `get()`, the function is as short as the first version:
+
+```{python}
+def greet(name, lang):
+    greeting = greetings.get(lang, "Hello")
+    print(greeting, name)
+
+greet("Alice", "hi")
+greet("Alice", "fr")
+```
+
+## Practice
+
+### Problem 1
+
+Write down the complete output of this code. Then run it and check your answer.
+
+```python
+runs = {"Alice": 10, "Bob": 15}
+
+runs["Alice"] = 12
+runs["Charlie"] = 25
+
+print(len(runs))
+print(runs["Alice"])
+print("Bob" in runs)
+print(15 in runs)
+print(runs.get("Dave", 0))
+```
+
+### Problem 2
+
+A canteen has the prices below, and a customer orders the items in `order`.
+Write a program that displays the total bill.
+
+```python
+prices = {"tea": 10, "coffee": 15, "samosa": 12, "vada": 20}
+
+order = ["tea", "samosa", "samosa", "coffee", "tea"]
+```
+
+The expected output is:
+
+```text
+59
+```
+
+### Problem 3
+
+People write short forms of words in text messages. The dictionary below has
+the full word for some short forms. Write a program that displays the words of
+`message` one on each line, with every short form replaced by its full word. A
+word that is not a short form is displayed as it is.
+
+```python
+short_forms = {"u": "you", "r": "are", "gr8": "great", "thx": "thanks"}
+
+message = "thx u r gr8 and very kind"
+```
+
+The expected output is:
+
+```text
+thanks
+you
+are
+great
+and
+very
+kind
+```
+
+### Problem 4
+
+A student passes with at least 35 marks in both theory and practical. Write a
+function `add_result(student)` that adds an entry with the key `"result"` and
+the value `"pass"` or `"fail"` to the record it is given.
+
+```python
+alice = {"name": "Alice", "theory": 72, "practical": 30}
+bob = {"name": "Bob", "theory": 40, "practical": 65}
+```
+
+After `add_result(alice)` and `add_result(bob)`, the two records should be:
+
+```text
+{'name': 'Alice', 'theory': 72, 'practical': 30, 'result': 'fail'}
+{'name': 'Bob', 'theory': 40, 'practical': 65, 'result': 'pass'}
+```
+
+## Summary
+
+A dictionary is a collection of entries. Each entry has a key and a value, and
+the dictionary finds a value by its key.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `{"name": "Alice", "marks": 72}` | a dictionary with two entries |
+| `"name": "Alice"` | an entry with the key `"name"` and the value `"Alice"` |
+| `len(student)` | returns the number of entries |
+| `student["name"]` | looks up the value of the key `"name"` |
+| `student["marks"] = 85` | replaces the value when the key is in the dictionary, and adds an entry when it is not |
+| a key that is not in the dictionary | a lookup raises `KeyError` |
+| a record | a dictionary that describes one thing; the code names its keys |
+| a lookup table | a dictionary that translates one value into another; the key comes from a variable, as in `prices[item]` |
+| `"hi" in greetings` | `True` when `"hi"` is a key of the dictionary |
+| `greetings.get(lang, "Hello")` | returns the value of the key, or `"Hello"` when the key is not in the dictionary |

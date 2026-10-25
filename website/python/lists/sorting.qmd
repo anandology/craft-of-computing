@@ -1,0 +1,256 @@
+---
+title: "Sorting Lists"
+unit: 2
+cluster: "Working with Lists"
+---
+
+Python has built-in functions to find the largest and smallest values in a
+list, and to put a list in order.
+
+In this lesson, we'll learn how to:
+
+* find the largest and smallest value with `max()` and `min()`
+* sort a list of strings or numbers, in either order
+* find the top few values by sorting and slicing
+
+**`max()` and `min()` return one element of a list. `sorted()` returns a new
+list with all the elements in order, and leaves the original list unchanged.**
+
+## Largest and smallest
+
+This list has the annual rainfall in Bangalore, in millimetres, for each year
+from 2016 to 2025:
+
+```{python}
+rainfall = [791, 1696, 618, 960, 1213, 1511, 1958, 1020, 1154, 1045]
+```
+
+The figures are measured by the India Meteorological Department (IMD), rounded
+to whole millimetres. They come from the
+[Bengaluru rainfall dataset](https://data.opencity.in/dataset/bengaluru-rainfall)
+published by OpenCity.
+
+The built-in `max()` function returns the largest element of a list:
+
+```{python}
+max(rainfall)
+```
+
+The `min()` function returns the smallest element:
+
+```{python}
+min(rainfall)
+```
+
+`max()` and `min()` work with a list of strings too. The largest string is the
+one that comes last in alphabetical order, and the smallest is the one that
+comes first:
+
+```{python}
+fruits = ["mango", "apple", "cherry", "banana"]
+max(fruits)
+```
+
+```{python}
+min(fruits)
+```
+
+## Sorting strings
+
+The `sorted()` function takes a list as its argument and returns a new list
+with the elements in order. A list of strings is sorted in alphabetical order:
+
+```{python}
+sorted(fruits)
+```
+
+Python compares strings one character at a time, from the first character. All
+uppercase letters come before all lowercase letters, so a capitalised word
+comes first:
+
+```{python}
+sorted(["banana", "Cherry", "apple"])
+```
+
+::: {.callout-warning}
+## Numbers stored as strings
+
+Strings are compared character by character, even when they contain digits.
+`"100"` comes before `"25"` because its first character, `"1"`, comes before
+`"2"`:
+
+```{python}
+sorted(["10", "9", "100", "25"])
+```
+
+There is no error. The list is sorted, but not in numerical order. Convert the
+strings to integers before sorting them as numbers.
+:::
+
+## Sorting numbers
+
+A list of numbers is sorted from lowest to highest:
+
+```{python}
+sorted(rainfall)
+```
+
+The returned list is a new list. `rainfall` still has its original order:
+
+```{python}
+rainfall
+```
+
+To keep the sorted list, assign it to a variable:
+
+```{python}
+sorted_rainfall = sorted(rainfall)
+sorted_rainfall
+```
+
+::: {.callout-warning}
+## The `sort()` method
+
+Lists also have a `sort()` method. Unlike `sorted()`, it does not return a new
+list. It changes the list itself, so the original order is lost. Prefer
+`sorted()` over the `sort()` method.
+
+This is how the `sort()` method changes a list:
+
+```{python}
+scores = [72, 95, 64]
+scores.sort()
+scores
+```
+:::
+
+## Sorting in reverse
+
+`sorted()` accepts a second argument, `reverse=True`, to sort from highest to
+lowest:
+
+```{python}
+sorted(rainfall, reverse=True)
+```
+
+`reverse=True` is a **keyword argument**: an argument passed with a name. The
+name says what the value means, which a plain `True` would not.
+
+## The top few values
+
+`max()` gives only the highest value. For the two highest rainfall figures,
+sort the list in reverse and slice the first two elements:
+
+```{python}
+sorted(rainfall, reverse=True)[:2]
+```
+
+For the two lowest rainfall figures, sort the list from lowest to highest and
+slice the first two elements:
+
+```{python}
+sorted(rainfall)[:2]
+```
+
+## Practice
+
+### Problem 1
+
+Consider the following code:
+
+```python
+prices = [45, 30, 60, 25, 50]
+```
+
+Write down the value of each expression. Then run the code and check your
+answers.
+
+1. `sorted(prices)`
+2. `sorted(prices, reverse=True)`
+3. `max(prices)`
+4. `sorted(prices)[:2]`
+5. `prices`
+
+### Problem 2
+
+Complete the following program by replacing each `___` with appropriate code.
+The program should still work if the sentence changes.
+
+```python
+sentence = "the quick brown fox jumps over the lazy dog"
+words = sentence.split()
+
+print("Sorted words:", ___)
+print("First word alphabetically:", ___)
+print("Last word alphabetically:", ___)
+```
+
+When executed, the program produces the following output:
+
+```text
+Sorted words: ['brown', 'dog', 'fox', 'jumps', 'lazy', 'over', 'quick', 'the', 'the']
+First word alphabetically: brown
+Last word alphabetically: the
+```
+
+### Problem 3
+
+Use `%%file` to create a script named `sortargs.py` that prints its
+command-line arguments in sorted order, one per line. It should produce this
+result:
+
+```python
+!python sortargs.py mango apple cherry
+```
+
+```text
+apple
+cherry
+mango
+```
+
+### Problem 4
+
+Predict what your `sortargs.py` script prints for this command. Then run it and
+explain why the result is not in numerical order.
+
+```python
+!python sortargs.py 10 9 100 25
+```
+
+### Problem 5
+
+Use `%%file` to create a script named `largest.py` that prints the largest
+number given on the command line. It should produce this result:
+
+```python
+!python largest.py 10 9 100 25
+```
+
+```text
+100
+```
+
+What does it print if the arguments are not converted to integers? Why?
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `max(rainfall)` | returns the largest element |
+| `min(rainfall)` | returns the smallest element |
+| `max(fruits)` | returns the string that comes last in alphabetical order |
+| `sorted(fruits)` | returns a new list of strings in alphabetical order |
+| `sorted(rainfall)` | returns a new list of numbers from lowest to highest |
+| `sorted(rainfall, reverse=True)` | returns a new list from highest to lowest |
+| `reverse=True` | a keyword argument: an argument passed with a name |
+| `sorted(rainfall, reverse=True)[:2]` | the two highest values |
+| `sorted(rainfall)[:2]` | the two lowest values |
+| sorting strings | uppercase letters come before lowercase letters |
+| sorting strings of digits | compares characters, so `"100"` comes before `"25"` |
+| `sorted()` | leaves the original list unchanged |
+| `scores.sort()` | sorts `scores` in place and changes it; prefer `sorted()` |
+
+And the one idea to carry forward: use `max()` or `min()` for one value, and
+`sorted()` with a slice for the top or bottom few. `sorted()` returns a new
+list and leaves the original list as it was.

@@ -1,0 +1,169 @@
+---
+title: "Running a Module as a Script"
+unit: 2
+cluster: "Writing Modules"
+---
+
+A Python file is often useful both as a module to import and as a script to
+run. Python's special variable `__name__` tells the code in a file which of
+the two is happening.
+
+In this lesson, we'll learn how to:
+
+* find out whether a file is run as a script or imported as a module
+* run some code only when a file is run as a script
+* write a `main()` function for a script
+
+## The `__name__` magic variable
+
+Python has a special variable `__name__`, which is set by the runtime.
+
+The value of the `__name__` will be different in each module or Python file.
+If a Python file is executed as a script, the value of `__name__` will be
+`"__main__"`. When a python file is imported as a module, the value of
+`__name__` would be the module name.
+
+Let's try this with an example.
+
+```python
+%%file mymodule2.py
+
+x = 2
+
+def add(a, b):
+    return a+b
+
+print(__name__)
+print(add(3, 4))
+```
+
+```text
+Writing mymodule2.py
+```
+
+```python
+!python mymodule2.py
+```
+
+```text
+__main__
+7
+```
+
+The value of `__name__` is `"__main__"` because the file is executed as a
+script.
+
+```python
+!python -c "import mymodule2"
+```
+
+```text
+mymodule2
+7
+```
+
+Since we have now imported the file as a module, the value of `__name__` is
+`"mymodule2"`, the name of the module.
+
+## Running code only as a script
+
+If you notice, the module is printing the value of `add(3, 4)` even when the
+file is imported as a module, which is not desirable. How do we stop it?
+
+```python
+%%file mymodule3.py
+
+x = 2
+
+def add(a, b):
+    return a+b
+
+# run the following only when this file is run as a script
+if __name__ == "__main__":
+    print(add(3, 4))
+```
+
+```text
+Writing mymodule3.py
+```
+
+We could check if the program is run as a script by using the condition
+`if __name__ == "__main__":` and then only run whatever we want to run when
+the file is used as a script.
+
+## Example: square module
+
+```python
+%%file sq.py
+import sys
+
+def square(x):
+    return x*x
+
+def main():
+    n = int(sys.argv[1])
+    print(square(n))
+
+if __name__ == "__main__":
+    main()
+```
+
+```text
+Writing sq.py
+```
+
+```python
+!python sq.py 5
+```
+
+```text
+25
+```
+
+```python
+import sq
+sq.square(5)
+```
+
+```text
+25
+```
+
+## Practice
+
+### Problem 1
+
+Change `words.py` so that it also works as a script. When it is run as a
+script, it should display the number of words in the sentence given as the
+first command-line argument. When it is imported, it should display nothing.
+It should produce these results:
+
+```python
+!python words.py "Python programs can read text files."
+```
+
+```text
+6
+```
+
+```python
+!python -c "import words; print(words.count_words('Anything that can go wrong, will go wrong.'))"
+```
+
+```text
+8
+```
+
+## Summary
+
+The value of `__name__` is `"__main__"` when a file is run as a script, and
+the module name when it is imported, so `if __name__ == "__main__":` runs code
+only when the file is run as a script.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `__name__` | a variable that Python sets in every module |
+| `__name__` in a file run as a script | `"__main__"` |
+| `__name__` in a file imported as a module | the module name, such as `"mymodule2"` |
+| `if __name__ == "__main__":` | runs the indented code only when the file is run as a script |
+| `def main():` | a function that holds the code the script runs |

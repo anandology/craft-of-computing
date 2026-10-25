@@ -1,0 +1,278 @@
+---
+title: "Lists of Records"
+unit: 2
+cluster: "Working with Dictionaries"
+---
+
+Programs often work with many things of the same kind, each with the same
+details: the students in a class, the items in a shop, the trains between two
+cities. Python keeps them as a **list of records**: a list whose elements are
+dictionaries with the same keys.
+
+In this lesson, we'll learn how to:
+
+* look up a detail of a record in a list
+* collect one detail from every record
+* select the records that match a condition, and total a detail
+* sort records by one of their details
+
+## A list of records
+
+Each dictionary in this list is a record of one train. Every record has the
+same four keys: the train's number, its name, its distance in kilometres, and
+the ticket classes it offers:
+
+```{python}
+trains = [
+    {
+        "number": "12028",
+        "name": "Bangalore - Chennai Shatabdi Express",
+        "distance": 362,
+        "classes": ["CC"],
+    },
+    {
+        "number": "12627",
+        "name": "Karnataka Express",
+        "distance": 2406,
+        "classes": ["SL", "3A", "2A", "1A"],
+    },
+    {
+        "number": "12951",
+        "name": "Mumbai - New Delhi Rajdhani Express",
+        "distance": 1384,
+        "classes": ["3A", "2A", "1A"],
+    },
+    {
+        "number": "16526",
+        "name": "Bangalore - Kanniyakumari Island Express",
+        "distance": 944,
+        "classes": ["SL", "3A", "2A"],
+    },
+]
+```
+
+`trains` is a list, so `len()` returns the number of records:
+
+```{python}
+len(trains)
+```
+
+Indexing the list returns one record, a dictionary:
+
+```{python}
+trains[0]
+```
+
+A second pair of square brackets looks up a detail of that record:
+
+```{python}
+trains[0]["name"]
+```
+
+Read the expression from left to right. `trains[0]` finds the first record by
+its position. `["name"]` then finds the name in that record by its key.
+
+The value of a key can itself be a list. The ticket classes of a train are a
+list of strings:
+
+```{python}
+trains[1]["classes"]
+```
+
+The `in` operator checks whether that list has an element:
+
+```{python}
+"SL" in trains[1]["classes"]
+```
+
+## Looping over records
+
+A `for` loop over the list takes one record on each iteration. The loop body
+looks up the details it needs:
+
+```{python}
+for train in trains:
+    print(train["number"], train["name"])
+```
+
+The loop variable has the singular name `train`, because it refers to one
+record. The list has the plural name `trains`.
+
+## One detail from every record
+
+A list comprehension collects one detail from every record:
+
+```{python}
+[train["name"] for train in trains]
+```
+
+```{python}
+distances = [train["distance"] for train in trains]
+distances
+```
+
+The result is a list of numbers, so `sum()` and `max()` work with it:
+
+```{python}
+sum(distances)
+```
+
+```{python}
+max(distances)
+```
+
+`max()` returns the longest distance, but not the train that has it. The last
+section of this lesson finds the record itself.
+
+## Records that match a condition
+
+A comprehension with a condition selects the records that match. This one
+gives the names of the trains that travel more than 1000 kilometres:
+
+```{python}
+[train["name"] for train in trains if train["distance"] > 1000]
+```
+
+The condition can look inside the list of ticket classes. This one gives the
+names of the trains that offer sleeper class, `SL`:
+
+```{python}
+[train["name"] for train in trains if "SL" in train["classes"]]
+```
+
+## Sorting records
+
+`sorted()` cannot sort the records by themselves:
+
+```python
+sorted(trains)
+```
+
+The last line of the error message is:
+
+```text
+TypeError: '<' not supported between instances of 'dict' and 'dict'
+```
+
+Python cannot tell whether one dictionary is less than another. The code must
+say which detail to compare. A `key` function gives that rule: it takes a
+record and returns the detail to sort by.
+
+This function takes a train and returns its distance:
+
+```{python}
+def get_distance(train):
+    return train["distance"]
+```
+
+The call `get_distance(trains[0])` returns the first train's distance:
+
+```{python}
+get_distance(trains[0])
+```
+
+Passing `get_distance` as the key sorts the trains by distance:
+
+```{python}
+for train in sorted(trains, key=get_distance):
+    print(train["distance"], train["name"])
+```
+
+With the same key, `max()` returns the record of the longest train. A second
+pair of square brackets looks up its name:
+
+```{python}
+max(trains, key=get_distance)["name"]
+```
+
+## Practice
+
+### Problem 1
+
+Write down the complete output of this code. Then run it and check your answer.
+
+```python
+items = [
+    {"name": "Pen", "price": 10, "stock": 40},
+    {"name": "Notebook", "price": 45, "stock": 0},
+    {"name": "Eraser", "price": 5, "stock": 12},
+]
+
+print(len(items))
+print(items[1]["name"])
+print([item["price"] for item in items])
+print([item["name"] for item in items if item["stock"] == 0])
+
+for item in items:
+    print(item["name"], item["price"] * item["stock"])
+```
+
+### Problem 2
+
+A student passes with at least 35 marks. Write a program that displays the
+names of the students who passed, and then the average marks of the class.
+
+```python
+students = [
+    {"name": "Alice", "marks": 72},
+    {"name": "Bob", "marks": 28},
+    {"name": "Charlie", "marks": 65},
+    {"name": "Dev", "marks": 34},
+    {"name": "Esha", "marks": 91},
+]
+```
+
+The expected output is:
+
+```text
+['Alice', 'Charlie', 'Esha']
+58.0
+```
+
+### Problem 3
+
+Write a program that displays the `students` from Problem 2 with the highest
+marks first, one student on each line.
+
+The expected output is:
+
+```text
+Esha 91
+Alice 72
+Charlie 65
+Dev 34
+Bob 28
+```
+
+### Problem 4
+
+Using the `trains` list from this lesson, write a program that displays the
+name of the train that offers the most ticket classes, and the name of the
+train that offers the fewest.
+
+The expected output is:
+
+```text
+Karnataka Express
+Bangalore - Chennai Shatabdi Express
+```
+
+## Summary
+
+A list of records is a list of dictionaries with the same keys. Code visits
+the records with a loop or a comprehension, and names the key of each detail
+it needs.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `[{"name": "Pen", "price": 10}, {"name": "Ink", "price": 25}]` | a list of two records |
+| `records[0]` | the first record, a dictionary |
+| `records[0]["name"]` | the value of the key `"name"` in the first record |
+| `"SL" in train["classes"]` | `True` when the list under the key `"classes"` has `"SL"` |
+| `for record in records:` | takes one record on each iteration |
+| `[record["name"] for record in records]` | a list of one detail from every record |
+| `[record["name"] for record in records if record["price"] > 20]` | the details of the records that match a condition |
+| `sum([record["price"] for record in records])` | the total of one detail |
+| `sorted(records)` | raises `TypeError`, because dictionaries cannot be compared |
+| `sorted(records, key=get_price)` | sorts the records by the value `get_price()` returns for each record |
+| `max(records, key=get_price)` | returns the record for which `get_price()` returns the largest value |

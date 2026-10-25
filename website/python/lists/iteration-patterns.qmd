@@ -1,0 +1,210 @@
+---
+title: "Iteration Patterns"
+unit: 2
+cluster: "Working with Lists"
+---
+
+A `for` loop can go over more than the elements of one list. This lesson
+collects the common patterns: iterating over a list, over a sequence of
+numbers, over two lists together, and over the index and the element together.
+Each pattern can be written as a loop or as a list comprehension.
+
+In this lesson, we'll learn how to:
+
+* iterate over a sequence of numbers with `range()`
+* iterate over two lists together with `zip()`
+* iterate over the index and the element together with `enumerate()`
+
+**The pattern decides what the loop goes over: a list, `range()`, `zip()` of
+two lists, or `enumerate()` of a list. The loop and the comprehension work the
+same way for all of them.**
+
+## Iterating over a list
+
+The loop variable takes each element of the list in turn:
+
+```{python}
+words = ["red", "green", "blue"]
+
+for word in words:
+    print(word, word.upper())
+```
+
+The list comprehension form builds a list from the same elements:
+
+```{python}
+[word.upper() for word in words]
+```
+
+## Iterating over a sequence of numbers
+
+The built-in `range()` function produces a sequence of numbers. `range(5)`
+produces the numbers from `0` up to, but not including, `5`. The `list()`
+function converts the sequence into a list, so that we can see the numbers:
+
+```{python}
+list(range(5))
+```
+
+A loop can go over the sequence directly, without converting it:
+
+```{python}
+for i in range(5):
+    print(i, i * i)
+```
+
+The list comprehension form:
+
+```{python}
+[i * i for i in range(5)]
+```
+
+`range()` can also take a start and a stop. Like a slice, the start is included
+and the stop is not:
+
+```{python}
+list(range(1, 6))
+```
+
+## Iterating over two lists together
+
+Two lists can hold related values in the same order. This list has the years
+from 2016 to 2025, made with `range()`:
+
+```{python}
+years = list(range(2016, 2026))
+years
+```
+
+This list has the annual rainfall in Bangalore for those years, in
+millimetres:
+
+```{python}
+rainfall = [791, 1696, 618, 960, 1213, 1511, 1958, 1020, 1154, 1045]
+```
+
+The figures are measured by the India Meteorological Department (IMD), from the
+[Bengaluru rainfall dataset](https://data.opencity.in/dataset/bengaluru-rainfall)
+published by OpenCity.
+
+The two lists are in the same order: the first rainfall figure belongs to the
+first year. The built-in `zip()` function pairs the elements of two lists:
+the first with the first, the second with the second, and so on. A loop over
+`zip()` has two loop variables, one for each list:
+
+```{python}
+for year, mm in zip(years, rainfall):
+    print(year, mm)
+```
+
+Each time the loop runs, `year` is an element of `years` and `mm` is the
+element of `rainfall` at the same position.
+
+The list comprehension form can use both variables. This one finds the years
+with more than 1500 mm of rain:
+
+```{python}
+[year for year, mm in zip(years, rainfall) if mm > 1500]
+```
+
+## Iterating over the index and the element together
+
+Sometimes a loop needs the position of each element as well as the element.
+The built-in `enumerate()` function pairs each element with its index:
+
+```{python}
+chapters = ["List Indexing", "List Slicing", "Sorting Lists", "Modifying Lists"]
+
+for i, title in enumerate(chapters):
+    print("Chapter", i, title)
+```
+
+The index starts at `0`. To start counting from `1`, pass `start=1`:
+
+```{python}
+for i, title in enumerate(chapters, start=1):
+    print("Chapter", i, title)
+```
+
+`start=1` changes only the numbers that `enumerate()` produces. The elements
+are the same.
+
+The list comprehension form can build a numbered title for each chapter. `str()`
+converts the number to a string, so that it can be joined to the title with
+`+`. The result is printed with `print()` because it is too long to display on
+one line:
+
+```{python}
+print([str(i) + ". " + title for i, title in enumerate(chapters, start=1)])
+```
+
+## Practice
+
+### Problem 1
+
+Write a loop that prints the numbers from `1` to `10` and the cube of each
+number, one pair per line:
+
+```text
+1 1
+2 8
+3 27
+...
+10 1000
+```
+
+### Problem 2
+
+Write a function `vector_add` that adds two lists of numbers element by
+element:
+
+```python
+>>> vector_add([1, 2, 3, 4], [10, 20, 30, 40])
+[11, 22, 33, 44]
+>>> sum(vector_add([1, 2, 3, 4], [10, 20, 30, 40]))
+110
+```
+
+### Problem 3
+
+Complete the following program by replacing each `___` with appropriate code.
+It prints a numbered list of the cities, starting from `1`.
+
+```python
+cities = ["Bengaluru", "Chennai", "Mysuru"]
+
+for ___ in ___:
+    print(i, city)
+```
+
+When executed, the program produces the following output:
+
+```text
+1 Bengaluru
+2 Chennai
+3 Mysuru
+```
+
+### Problem 4
+
+Using `years` and `rainfall` from this lesson, write a list comprehension that
+gives the years with less than 1000 mm of rain.
+
+## Summary
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `for word in words:` | iterates over the elements of a list |
+| `range(5)` | the numbers `0`, `1`, `2`, `3`, `4` |
+| `range(2016, 2026)` | the numbers from `2016` up to, but not including, `2026` |
+| `list(range(5))` | converts the sequence into the list `[0, 1, 2, 3, 4]` |
+| `for year, mm in zip(years, rainfall):` | iterates over two lists together, one element from each |
+| `for i, title in enumerate(chapters):` | iterates over the index and the element together |
+| `enumerate(chapters, start=1)` | counts the index from `1` instead of `0` |
+| `[str(i) + ". " + title for i, title in enumerate(chapters, start=1)]` | a comprehension over the index and the element together |
+| `[i * i for i in range(5)]` | a comprehension over a sequence of numbers |
+| `[year for year, mm in zip(years, rainfall) if mm > 1500]` | a comprehension over two lists together |
+
+And the one idea to carry forward: choose what the loop goes over. A list,
+`range()`, `zip()` and `enumerate()` all work the same way in a loop and in a
+list comprehension.

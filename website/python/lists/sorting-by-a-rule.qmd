@@ -1,0 +1,254 @@
+---
+title: "Sorting by a Rule"
+unit: 2
+cluster: "Working with Lists"
+---
+
+Programs often need a list in an order other than the usual one: words by
+their length, or names without regard to uppercase and lowercase. The
+`sorted()` function takes a `key` argument, a function that gives the rule for
+the order.
+
+In this lesson, we'll learn how to:
+
+* sort a list by the value a function returns for each element
+* pass a function as an argument without calling it
+* sort strings of digits as numbers
+* write a function that gives the rule
+* find the largest or smallest element by a rule
+
+## Sorting words by length
+
+This list has the names of some cities:
+
+```{python}
+cities = ["Mysuru", "Goa", "Chennai", "Pune", "Delhi"]
+```
+
+`sorted()` puts them in alphabetical order:
+
+```{python}
+sorted(cities)
+```
+
+What if we want to sort these by length?
+
+Let's first print the lengths and see.
+
+```{python}
+for city in cities:
+    print(city, len(city))
+```
+
+It may be tempting to take the lengths and sort them, but that won't give what
+we need.
+
+```{python}
+lengths = [len(city) for city in cities]
+```
+
+```{python}
+lengths
+```
+
+```{python}
+sorted(lengths)
+```
+
+That is just the lengths sorted. We want to sort the cities, using their
+length.
+
+Python provides an elegant way to sort values by any rule. All we have to do
+is pass the function that computes the rule as the keyword argument `key` to
+`sorted()`.
+
+Since we want to sort by length, we pass `len` as the `key` argument.
+
+```{python}
+sorted(cities, key=len)
+```
+
+`sorted()` calls the rule on each element, which is the `len` function in this
+case, and sorts the elements by the returned values.
+
+We could see it clearly by writing our own function `my_len`. It returns the
+same value as `len()`, and also prints each value it is given. The `return`
+statement ends the function and gives a value back to the code that called it:
+
+```{python}
+def my_len(value):
+    print("my_len", value)
+    return len(value)
+
+sorted(cities, key=my_len)
+```
+
+`sorted()` called `my_len` once for each city.
+
+If we want the longest name first, we could pass `reverse=True`.
+
+```{python}
+sorted(cities, key=len, reverse=True)
+```
+
+## A function, not a call
+
+`key=len` passes the function `len` itself. There are no parentheses after
+`len`, so the function is not called. `sorted()` calls it later, once for each
+element.
+
+With parentheses, Python calls `len()` before `sorted()` starts, and with no
+argument:
+
+```python
+# fails: len() is called with no argument
+sorted(cities, key=len())
+```
+
+The last line of the error message is:
+
+```text
+TypeError: len() takes exactly one argument (0 given)
+```
+
+The error comes from `len()`, not from `sorted()`. Remove the parentheses to
+pass the function instead of calling it.
+
+## Strings of digits as numbers
+
+Strings are compared character by character, even when they contain digits.
+Passing `int` as the key compares them as numbers:
+
+```{python}
+numbers = ["10", "9", "100", "25"]
+sorted(numbers, key=int)
+```
+
+The elements of the result are still strings. Only the comparison used
+integers.
+
+## Writing your own rule
+
+All uppercase letters come before all lowercase letters, so the capitalised
+names come first:
+
+```{python}
+fruits = ["apple", "Mango", "banana", "Cherry"]
+sorted(fruits)
+```
+
+The key can be any function that takes one element and returns a value,
+including a function we write. This one returns a word in lowercase:
+
+```{python}
+def lowercase(word):
+    return word.lower()
+```
+
+The call `lowercase("Mango")` returns the word in lowercase:
+
+```{python}
+lowercase("Mango")
+```
+
+Passing `lowercase` as the key compares the fruits in lowercase:
+
+```{python}
+sorted(fruits, key=lowercase)
+```
+
+The order is alphabetical, without regard to case. The elements in the result
+keep their original case, because the lowercase strings are used only to
+compare them.
+
+## Largest and smallest by a rule
+
+`max()` and `min()` take a `key` argument too. They return the element for
+which the function returns the largest or the smallest value:
+
+```{python}
+max(cities, key=len)
+```
+
+```{python}
+min(cities, key=len)
+```
+
+Without a key, `max()` compares strings of digits character by character. With
+`key=int`, it compares them as numbers:
+
+```{python}
+max(numbers)
+```
+
+```{python}
+max(numbers, key=int)
+```
+
+## Practice
+
+### Problem 1
+
+Consider the following code:
+
+```python
+words = ["kiwi", "fig", "banana", "Mango", "jackfruit"]
+```
+
+Write down the value of each expression. Then run the code and check your
+answers.
+
+1. `sorted(words)`
+2. `sorted(words, key=len)`
+3. `sorted(words, key=len, reverse=True)`
+4. `max(words, key=len)`
+5. `min(words, key=len)`
+
+### Problem 2
+
+Write a script named `sortlines.py` that takes the name of a text file on the
+command line and prints the lines of that file sorted by the number of words,
+from the line with the fewest words to the line with the most.
+
+Each line read from a file ends with a newline. Use `print(line, end="")` to
+display a line without adding another one.
+
+To try it, use `%%file` to create a text file named `fly.txt`:
+
+```text
+There once was a fly on the wall,
+I wonder, why didn't it fall?
+Because its feet stuck? Or was it just luck?
+Or does gravity miss things so small?
+```
+
+Running the script on this file should produce this result:
+
+```python
+!python sortlines.py fly.txt
+```
+
+```text
+I wonder, why didn't it fall?
+Or does gravity miss things so small?
+There once was a fly on the wall,
+Because its feet stuck? Or was it just luck?
+```
+
+## Summary
+
+The `key` argument gives `sorted()`, `max()` and `min()` a function. They call
+the function on each element and compare the returned values instead of the
+elements.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `sorted(cities, key=len)` | returns a new list of the cities, shortest first |
+| `sorted(cities, key=len, reverse=True)` | returns a new list of the cities, longest first |
+| `key=len` | passes the function `len`; `sorted()` calls it on each element |
+| `key=len()` | calls `len()` with no argument and raises `TypeError` |
+| `sorted(numbers, key=int)` | sorts strings of digits as numbers; the elements stay strings |
+| `sorted(fruits, key=lowercase)` | sorts by the value that a function we wrote returns for each element |
+| `max(cities, key=len)` | returns the element for which `len()` returns the largest value |
+| `min(cities, key=len)` | returns the element for which `len()` returns the smallest value |
+| the key values | are used only to compare; the result has the original elements |

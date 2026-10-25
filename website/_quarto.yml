@@ -179,7 +179,26 @@ website:
             - href: python/reading-files.qmd
             - href: python/command-line-arguments.qmd
             - href: python/word-count.qmd
-        - href: python/python-basics.qmd
+            - href: python/argparse.qmd
+        - section: "Working with Lists"
+          contents:
+            - href: python/lists/indexing.qmd
+            - href: python/lists/slicing.qmd
+            - href: python/lists/modifying.qmd
+            - href: python/lists/list-comprehensions.qmd
+            - href: python/lists/iteration-patterns.qmd
+            - href: python/lists/sorting.qmd
+            - href: python/lists/sorting-by-a-rule.qmd
+        - section: "Working with Dictionaries"
+          contents:
+            - href: python/dictionaries/dictionaries.qmd
+            - href: python/dictionaries/iterating.qmd
+            - href: python/dictionaries/records.qmd
+            - href: python/dictionaries/reading-json.qmd
+        - section: "Writing Modules"
+          contents:
+            - href: python/writing-modules/own-modules.qmd
+            - href: python/writing-modules/module-as-script.qmd
 
 format:
   html:
