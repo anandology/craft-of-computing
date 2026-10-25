@@ -9,6 +9,7 @@ project:
     - "!drafts/**"
     - "*.qmd"
     - "**/*.qmd"
+    - "class-notes/*.ipynb"
   # Released by craft/Makefile, not part of the site source. Listed here
   # because the explicit render: list above means quarto would otherwise
   # not copy them into _site.
@@ -45,6 +46,8 @@ website:
         text: "Setup"
       - href: overview/schedule.qmd
         text: "Schedule"
+      - href: class-notes/index.qmd
+        text: "Class Notes"
       - href: about.qmd
         text: "About"
 

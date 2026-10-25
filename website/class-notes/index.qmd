@@ -1,0 +1,13 @@
+---
+title: "Class Notes"
+listing:
+  contents: "*.ipynb"
+  type: table
+  sort: "date asc"
+  fields: [date, title]
+  date-format: "ddd MMM D, YYYY"
+  sort-ui: false
+  filter-ui: false
+---
+
+The notebook from each class session, as it was written during the class.
