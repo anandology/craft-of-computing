@@ -1,0 +1,304 @@
+---
+title: "Boolean Expressions"
+unit: 2
+cluster: "Making Decisions"
+---
+
+Programs ask many kinds of question before making a decision: are two values
+equal, is a name in a list, does a filename end with `.py`, does a file exist.
+In Python, each of these questions is a **boolean expression**: an expression
+whose value is `True` or `False`.
+
+In this lesson, we'll learn how to:
+
+* evaluate a boolean expression on its own
+* compare numbers and strings
+* check whether a value is in a string or a list
+* check whether a file exists
+
+## True and False
+
+The condition of an `if` statement is an expression, so Python can evaluate it
+on its own, without the `if`:
+
+```{python}
+marks = 72
+marks >= 35
+```
+
+```{python}
+marks = 20
+marks >= 35
+```
+
+`True` and `False` are values, just as `72` and `"pass"` are values. They are
+called boolean values, and their type is `bool`. Python writes them with a
+capital first letter.
+
+```{python}
+type(marks >= 35)
+```
+
+A condition is a boolean expression used in an `if` statement. The `if`
+statement evaluates its condition. It runs the block when the value is `True`
+and skips the block when the value is `False`.
+
+A boolean value can be assigned to a variable and used later as a condition:
+
+```{python}
+marks = 72
+passed = marks >= 35
+
+if passed:
+    print("pass")
+```
+
+The variable `passed` refers to `True`, so the block runs.
+
+## Numbers
+
+Six operators compare two numbers:
+
+| Operator | Meaning | Example | Value |
+|----------|---------|---------|-------|
+| `==` | equal to | `5 == 5` | `True` |
+| `!=` | not equal to | `5 != 5` | `False` |
+| `<` | less than | `3 < 5` | `True` |
+| `>` | greater than | `3 > 5` | `False` |
+| `<=` | less than or equal to | `5 <= 5` | `True` |
+| `>=` | greater than or equal to | `3 >= 5` | `False` |
+
+Either side of the operator can be any expression that produces a number:
+
+```{python}
+price = 40
+quantity = 3
+price * quantity > 100
+```
+
+The operator `==` has two equals signs. A single `=` assigns a value to a
+variable. It does not compare. Using `=` in a condition is an error:
+
+```python
+if marks = 100:
+    print("full marks")
+```
+
+```text
+SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?
+```
+
+The message suggests `==`, and that is the correction:
+
+```{python}
+marks = 100
+
+if marks == 100:
+    print("full marks")
+```
+
+## Strings
+
+The operators `==` and `!=` compare strings too:
+
+```{python}
+language = "Python"
+language == "Python"
+```
+
+```{python}
+language != "Shell"
+```
+
+Two strings are equal only when every character is the same. An uppercase
+letter and a lowercase letter are different characters:
+
+```{python}
+language == "python"
+```
+
+To compare two strings without considering uppercase and lowercase, convert
+the string to lowercase first:
+
+```{python}
+language.lower() == "python"
+```
+
+The `in` operator checks whether one string appears anywhere in another:
+
+```{python}
+email = "alice@example.com"
+"@" in email
+```
+
+The string methods `startswith()` and `endswith()` check the beginning and the
+end of a string:
+
+```{python}
+filename = "hello.py"
+filename.endswith(".py")
+```
+
+```{python}
+filename.startswith("test")
+```
+
+Each of these expressions can be used as a condition. This loop displays only
+the Python files in a list of filenames:
+
+```{python}
+filenames = ["notes.txt", "hello.py", "marks.csv", "average.py"]
+
+for filename in filenames:
+    if filename.endswith(".py"):
+        print(filename)
+```
+
+The `if` statement has no `else` part, so the loop displays nothing for the
+other filenames.
+
+## Lists
+
+With a list, the `in` operator checks whether a value is one of the elements:
+
+```{python}
+languages = ["Python", "Shell", "Markdown"]
+"Shell" in languages
+```
+
+```{python}
+"Ruby" in languages
+```
+
+The value must be a whole element. A part of an element does not count:
+
+```{python}
+"She" in languages
+```
+
+An `in` expression can be the condition of an `if` statement:
+
+```{python}
+language = "Ruby"
+
+if language in languages:
+    print(language, "is taught in this course")
+else:
+    print(language, "is not taught in this course")
+```
+
+The word `in` also appears in a `for` statement, where it has a different job.
+In `for language in languages:`, it names the list to loop over. In a
+condition, it produces `True` or `False`.
+
+## Files and directories
+
+The `os.path` module has functions that answer questions about files and
+directories. It is a module inside the `os` module, so importing `os` makes it
+available.
+
+The examples in this section were run in a directory that contains four files
+and one directory, named `data`:
+
+```python
+import os
+os.listdir()
+```
+
+```text
+['data', 'average.py', 'notes.txt', 'hello.py', 'conditions.ipynb']
+```
+
+The `os.path.exists()` function checks whether a file or a directory with the
+given name exists:
+
+```python
+os.path.exists("hello.py")
+```
+
+```text
+True
+```
+
+```python
+os.path.exists("missing.py")
+```
+
+```text
+False
+```
+
+The `os.path.isfile()` function checks whether the name is a file. The name
+`data` exists, but it is a directory and not a file:
+
+```python
+os.path.exists("data")
+```
+
+```text
+True
+```
+
+```python
+os.path.isfile("data")
+```
+
+```text
+False
+```
+
+This loop displays only the files in the current directory:
+
+```python
+for name in os.listdir():
+    if os.path.isfile(name):
+        print(name)
+```
+
+```text
+average.py
+notes.txt
+hello.py
+conditions.ipynb
+```
+
+Your results will show the names in your own directory.
+
+## Practice
+
+### Problem 1
+
+Write down the value of each expression. Then run them and check your answers.
+
+1. `"py" in "python"`
+2. `"py" in ["python", "shell"]`
+3. `"Python" == "python"`
+4. `"report.txt".endswith("txt")`
+5. `len("three") != 5`
+
+### Problem 2
+
+The `os.path.isdir()` function returns `True` when a name is a directory.
+Write a program that displays the names of the directories in the current
+directory.
+
+## Summary
+
+A boolean expression is an expression whose value is `True` or `False`.
+Comparison operators, the `in` operator, and some methods and functions all
+produce these values.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `True`, `False` | the two boolean values; their type is `bool` |
+| a condition | a boolean expression used in an `if` statement |
+| `==`, `!=` | equal to, not equal to |
+| `<`, `>`, `<=`, `>=` | less than, greater than, less than or equal to, greater than or equal to |
+| `=` | assigns a value to a variable; it does not compare |
+| `language == "Python"` | `True` when the two strings have the same characters |
+| `"@" in email` | `True` when the first string appears in the second |
+| `filename.startswith("test")` | `True` when the string begins with `test` |
+| `filename.endswith(".py")` | `True` when the string ends with `.py` |
+| `"Shell" in languages` | `True` when the value is an element of the list |
+| `os.path.exists(name)` | `True` when a file or directory with that name exists |
+| `os.path.isfile(name)` | `True` when the name is a file and not a directory |

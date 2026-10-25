@@ -163,6 +163,11 @@ website:
             - href: python/functions.qmd
             - href: python/methods.qmd
             - href: python/modules.qmd
+        - section: "Making Decisions"
+          contents:
+            - href: python/making-decisions/if-statement.qmd
+            - href: python/making-decisions/boolean-expressions.qmd
+            - href: python/making-decisions/combining-boolean-expressions.qmd
         - section: "String Art"
           contents:
             - href: python/stringart/index.qmd

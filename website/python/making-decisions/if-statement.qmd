@@ -1,0 +1,310 @@
+---
+title: "The If Statement"
+unit: 2
+cluster: "Making Decisions"
+---
+
+Programs often need to make decisions: run one part of the code when a
+condition is met, and another part when it is not. Python uses the `if`
+statement for this.
+
+In this lesson, we'll learn how to:
+
+* write an `if` statement
+* use `else` for the case when the condition is false
+* use `elif` to check more conditions
+* write an `if` statement inside a function or a loop
+
+## Writing an if statement
+
+A student needs 35 marks to pass an exam. This code displays `pass` when the
+marks are high enough:
+
+```{python}
+marks = 72
+
+if marks >= 35:
+    print("pass")
+```
+
+The first line of the `if` statement has three parts:
+
+| Part | Meaning |
+|------|---------|
+| `if` | starts the statement |
+| `marks >= 35` | the condition |
+| `:` | ends the first line |
+
+A **condition** is an expression that is either true or false. The operator
+`>=` means "greater than or equal to". The operators `>`, `<` and `<=` work in
+the same way: greater than, less than, and less than or equal to.
+
+The indented lines under the `if` are called a **block**. Here the block has
+one line. The body of a `for` loop is a block too.
+
+The condition `marks >= 35` is true because `72` is greater than `35`, so
+Python runs the block.
+
+Change `marks` to a value below `35` and run the same statement:
+
+```{python}
+marks = 20
+
+if marks >= 35:
+    print("pass")
+```
+
+Nothing is displayed. The condition is false, so Python skips the block.
+
+## The indented block
+
+A block can have more than one line. Indentation tells Python which lines are
+in the block:
+
+```{python}
+marks = 72
+
+if marks >= 35:
+    print("pass")
+    print("Well done")
+print("Result recorded")
+```
+
+The first two `print()` calls are indented, so they are in the block. The last
+`print()` is not indented. It is not part of the `if` statement.
+
+Run the same code with marks that are too low:
+
+```{python}
+marks = 20
+
+if marks >= 35:
+    print("pass")
+    print("Well done")
+print("Result recorded")
+```
+
+Python skips both lines of the block together. The unindented line still
+runs.
+
+Use four spaces for the block, and give every line in the block the same
+indentation. You do not have to type the spaces one by one. Press the `Tab`
+key once: most editors, including JupyterLab, insert four spaces.
+
+An `if` statement must have a block. If no line is indented under the `if`,
+Python reports an error:
+
+```python
+if marks >= 35:
+print("pass")
+```
+
+```text
+IndentationError: expected an indented block after 'if' statement on line 1
+```
+
+## Choosing between two blocks
+
+An `if` statement on its own does nothing when its condition is false. An
+`else` part adds a second block, which runs in that case:
+
+```{python}
+marks = 20
+
+if marks >= 35:
+    print("pass")
+else:
+    print("fail")
+```
+
+The word `else` starts at the same position as `if`, has no condition, and
+ends with a colon. Its block is indented in the same way.
+
+Python runs exactly one of the two blocks. With `72` marks, it runs the first
+block and skips the second:
+
+```{python}
+marks = 72
+
+if marks >= 35:
+    print("pass")
+else:
+    print("fail")
+```
+
+## Choosing among several blocks
+
+Some decisions have more than two outcomes. An `elif` part adds another
+condition and another block. The word `elif` is short for "else if":
+
+```{python}
+number = 42
+
+if number < 10:
+    print(number, "is a single-digit number")
+elif number < 100:
+    print(number, "is a two-digit number")
+else:
+    print(number, "is a big number")
+```
+
+Python checks the conditions from top to bottom:
+
+1. `number < 10` is false, because `42` is not less than `10`. Python skips
+   the first block.
+2. `number < 100` is true. Python runs the second block.
+3. Python skips the `else` block.
+
+Python runs the block of the first condition that is true and then leaves the
+`if` statement. It does not check the conditions below that one:
+
+```{python}
+number = 1
+
+if number < 10:
+    print(number, "is a single-digit number")
+elif number < 100:
+    print(number, "is a two-digit number")
+else:
+    print(number, "is a big number")
+```
+
+The number `1` is also less than `100`, but only one line is displayed. The
+first condition was true, so Python never checked the second.
+
+An `if` statement can have many `elif` parts. The `else` part is optional and
+always comes last.
+
+## Inside a function or a loop
+
+An `if` statement can be written inside another block, such as the body of a
+function or the body of a loop. It is indented with that block, and each of
+its own blocks is indented once more.
+
+This function checks any number it is given:
+
+```{python}
+def check_number(number):
+    if number < 10:
+        print(number, "is a single-digit number")
+    elif number < 100:
+        print(number, "is a two-digit number")
+    else:
+        print(number, "is a big number")
+```
+
+The code has two levels of indentation:
+
+| Indentation | Lines | They are in |
+|-------------|-------|-------------|
+| none | `def` | no block |
+| four spaces | `if`, `elif` and `else` | the function body |
+| eight spaces | the three `print()` calls | a block of the `if` statement |
+
+The `if` statement is indented by four spaces, so it is part of the function
+body. Each block inside it is indented by four more spaces: a block inside a
+block.
+
+Every call runs the `if` statement again with a new value of `number`:
+
+```{python}
+check_number(1)
+check_number(42)
+check_number(500)
+```
+
+Each call runs one of the three blocks. With the `if` statement in a function,
+we can try every outcome without editing the code.
+
+The body of a loop works in the same way. This loop checks the marks of every
+student in a class:
+
+```{python}
+class_marks = [72, 20, 35, 91]
+
+for marks in class_marks:
+    if marks >= 35:
+        print(marks, "pass")
+    else:
+        print(marks, "fail")
+```
+
+The `if` statement is in the loop body, so it runs once for each element. On
+each iteration, Python checks the condition with the new value of `marks` and
+runs one of the two blocks.
+
+## Practice
+
+### Problem 1
+
+Write down the complete output of this code. Then run it and check your answer.
+
+```python
+temperature = 25
+
+if temperature < 20:
+    print("cold")
+    print("wear a jacket")
+print("done")
+```
+
+### Problem 2
+
+Write a program that displays the words in this sentence that are longer than
+five letters.
+
+```python
+sentence = "Python makes simple programs easy to write and pleasant to read"
+```
+
+The expected output is:
+
+```text
+Python
+simple
+programs
+pleasant
+```
+
+### Problem 3
+
+An electricity bill depends on the number of units used.
+
+| Units | Price of each unit |
+|-------|--------------------|
+| the first 100 units | ₹3 |
+| the next 100 units | ₹5 |
+| every unit after that | ₹8 |
+
+Write a program that displays the bill for the number of units below.
+
+```python
+units = 80
+```
+
+Check your program with these values:
+
+| Units | Bill |
+|-------|------|
+| 80 | 240 |
+| 150 | 550 |
+| 250 | 1200 |
+
+## Summary
+
+An `if` statement checks a condition and runs a block of code only when the
+condition is true. Indentation decides which lines are in the block.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `if marks >= 35:` | starts an `if` statement with the condition `marks >= 35` |
+| a condition | an expression that is either true or false |
+| `marks >= 35` | true when `marks` is greater than or equal to `35` |
+| `>`, `<`, `<=` | greater than, less than, less than or equal to |
+| a block | the indented lines under `if`, `elif` or `else` |
+| the block under `if` | runs only when the condition is true |
+| `else:` | starts the block that runs when no condition above it is true |
+| `elif number < 100:` | checks another condition when the conditions above it are false |
+| `if`, `elif`, `else` | Python runs the block of the first true condition and skips the rest |
+| an unindented line after the statement | runs whether the condition is true or false |
+| an `if` statement inside a function or a loop | is indented once; its blocks are indented twice |

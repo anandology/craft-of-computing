@@ -1,0 +1,269 @@
+---
+title: "Combining Boolean Expressions"
+unit: 2
+cluster: "Making Decisions"
+---
+
+A decision often depends on more than one condition. A student passes only
+with enough marks in both theory and practical. A day is a holiday when it is
+a Saturday or a Sunday. Python combines boolean expressions with the operators
+`and`, `or` and `not`.
+
+In this lesson, we'll learn how to:
+
+* require two conditions with `and`
+* accept either of two conditions with `or`
+* reverse a condition with `not`
+* use parentheses when an expression mixes `and` and `or`
+
+## Both conditions with and
+
+A student needs at least 35 marks in theory and at least 35 marks in practical
+to pass. Each requirement is a boolean expression:
+
+```{python}
+theory = 72
+practical = 30
+theory >= 35
+```
+
+```{python}
+practical >= 35
+```
+
+The `and` operator combines two boolean expressions into one. The result is
+`True` only when both sides are `True`:
+
+```{python}
+theory >= 35 and practical >= 35
+```
+
+The combined expression can be used as a condition:
+
+```{python}
+if theory >= 35 and practical >= 35:
+    print("pass")
+else:
+    print("fail")
+```
+
+The same operator checks whether a number is within a range:
+
+```{python}
+marks = 72
+marks >= 0 and marks <= 100
+```
+
+## Either condition with or
+
+The `or` operator also combines two boolean expressions. The result is `True`
+when at least one side is `True`:
+
+```{python}
+day = "Sunday"
+day == "Saturday" or day == "Sunday"
+```
+
+```{python}
+day = "Monday"
+day == "Saturday" or day == "Sunday"
+```
+
+An `or` expression can be used as a condition in the same way:
+
+```{python}
+day = "Sunday"
+
+if day == "Saturday" or day == "Sunday":
+    print("holiday")
+else:
+    print("working day")
+```
+
+This table shows the result of `and` and `or` for every pair of values:
+
+| Left side | Right side | `and` | `or` |
+|-----------|------------|-------|------|
+| `True` | `True` | `True` | `True` |
+| `True` | `False` | `False` | `True` |
+| `False` | `True` | `False` | `True` |
+| `False` | `False` | `False` | `False` |
+
+### A complete expression on each side
+
+Each side of `and` and `or` must be a complete boolean expression. In English
+we say "the day is Saturday or Sunday". In Python, the comparison must be
+written on both sides. This code leaves it out on the right side:
+
+```{python}
+day = "Monday"
+
+# This condition has a mistake.
+if day == "Saturday" or "Sunday":
+    print("holiday")
+else:
+    print("working day")
+```
+
+The output is wrong, and Python does not report an error. The right side of
+`or` is only the string `"Sunday"`. It is not a comparison. Python treats a
+string that is not empty as true, so the block runs for every day.
+
+Write the comparison on both sides: `day == "Saturday" or day == "Sunday"`.
+
+## Reversing a condition with not
+
+The `not` operator reverses a boolean value. `not True` is `False`, and
+`not False` is `True`:
+
+```{python}
+filename = "notes.txt"
+filename.endswith(".py")
+```
+
+```{python}
+not filename.endswith(".py")
+```
+
+This loop displays the filenames that are not Python files:
+
+```{python}
+filenames = ["notes.txt", "hello.py", "marks.csv", "average.py"]
+
+for filename in filenames:
+    if not filename.endswith(".py"):
+        print(filename)
+```
+
+With the `in` operator, `not` is written before `in`:
+
+```{python}
+languages = ["Python", "Shell", "Markdown"]
+"Ruby" not in languages
+```
+
+The operators `and`, `or` and `not` are called **boolean operators**. They can
+be used together. This expression is `True` for a Python file that is not a
+test file:
+
+```{python}
+filename = "hello.py"
+filename.endswith(".py") and not filename.startswith("test_")
+```
+
+## Mixing and with or
+
+Entry to a museum is free for anyone who is under 12 or is 60 or older, except
+on Sundays. A child of 8 visits on a Sunday, so the result should be `False`:
+
+```{python}
+age = 8
+day = "Sunday"
+
+age < 12 or age >= 60 and day != "Sunday"
+```
+
+The result is wrong. When an expression has both `and` and `or`, Python
+evaluates `and` first. It combined `age >= 60` with `day != "Sunday"`, and
+only then applied `or` to `age < 12`.
+
+Parentheses decide which part is evaluated first, as they do in arithmetic:
+
+```{python}
+(age < 12 or age >= 60) and day != "Sunday"
+```
+
+Whenever an expression mixes `and` and `or`, use parentheses to show which
+parts go together.
+
+## Practice
+
+### Problem 1
+
+Write down the value of each expression when `n` is `15`. Then run them and
+check your answers.
+
+1. `n > 10 and n < 20`
+2. `n < 10 or n > 20`
+3. `not n == 15`
+4. `n > 10 or n < 5 and n == 0`
+5. `"a" in "cat" and "z" not in "cat"`
+
+### Problem 2
+
+A settings file has comments, which start with `#`, and empty lines. Its lines
+are given below as a list. Write a program that displays only the lines that
+are not empty and are not comments.
+
+```python
+lines = [
+    "# settings for the course",
+    "name = Craft of Computing",
+    "",
+    "# number of weeks",
+    "weeks = 12",
+    "",
+    "language = Python",
+]
+```
+
+The expected output is:
+
+```text
+name = Craft of Computing
+weeks = 12
+language = Python
+```
+
+### Problem 3
+
+A ticket costs ₹100. Children under 5 enter free. Children under 12 and
+people who are 60 or older pay half. Write a program that displays the price
+of a ticket for the age below.
+
+```python
+age = 30
+```
+
+Check your program with these values:
+
+| Age | Price |
+|-----|-------|
+| 3 | 0 |
+| 8 | 50 |
+| 30 | 100 |
+| 65 | 50 |
+
+### Problem 4
+
+An email address is accepted when it contains `@`, ends with `.com`, and has
+no spaces. Write a program that displays `accepted` or `rejected` for the
+address below.
+
+```python
+email = "alice@example.com"
+```
+
+Check your program with these values:
+
+| Email | Result |
+|-------|--------|
+| `alice@example.com` | `accepted` |
+| `alice.example.com` | `rejected` |
+| `alice@example` | `rejected` |
+| `alice smith@example.com` | `rejected` |
+
+## Summary
+
+The boolean operators `and`, `or` and `not` build a boolean expression from
+other boolean expressions.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `theory >= 35 and practical >= 35` | `True` only when both sides are `True` |
+| `day == "Saturday" or day == "Sunday"` | `True` when at least one side is `True` |
+| `not filename.endswith(".py")` | `True` when the expression after `not` is `False` |
+| `"Ruby" not in languages` | `True` when the value is not an element of the list |
+| `day == "Saturday" or "Sunday"` | a mistake: the right side is not a comparison, and Python reports no error |
+| `age < 12 or age >= 60 and day != "Sunday"` | Python evaluates `and` before `or` |
+| `(age < 12 or age >= 60) and day != "Sunday"` | parentheses decide which part is evaluated first |
