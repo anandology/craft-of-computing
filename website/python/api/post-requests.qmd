@@ -1,0 +1,227 @@
+---
+title: "Sending Data with POST"
+unit: 2
+cluster: "Working with APIs"
+---
+
+There are two common ways to send data to a server. A `GET` request carries
+it as query parameters in the URL, and a `POST` request carries it in the
+**body** of the request.
+
+`GET` is meant for asking the server for something. `POST` is used when the
+request changes something on the server, like saving a record, or when the
+data is too large or too structured to fit in a URL. In Python, the `post()`
+function of `requests` sends a `POST` request, with a Python value in the body
+as JSON.
+
+In this lesson, we'll learn how to:
+
+* send a `POST` request with a JSON body
+* tell a request body from query parameters
+* read the status codes for a wrong body and for the wrong method
+
+## A request with a body
+
+The `/product` endpoint of the numbers API multiplies a list of numbers. It
+takes a `POST` request with a JSON object in the body, and the list goes
+under the key `numbers`:
+
+```json
+{"numbers": [2, 3, 4]}
+```
+
+The keyword argument `json` of `post()` takes a Python value and sends it as
+the body:
+
+```python
+import requests
+
+url = "https://numbers.apps.pipal.in/product"
+data = {"numbers": [2, 3, 4]}
+response = requests.post(url, json=data)
+response.json()
+```
+
+```text
+{'result': 24}
+```
+
+`requests` converted the dictionary into JSON text, and added the header
+`Content-Type: application/json` to tell the server that the body is JSON.
+The answer is a JSON object too, and `2 × 3 × 4` is `24`.
+
+The `/stats` endpoint takes the same body, and answers with several values at
+once:
+
+```python
+url = "https://numbers.apps.pipal.in/stats"
+data = {"numbers": [4, 8, 15, 16, 23, 42]}
+requests.post(url, json=data).json()
+```
+
+```text
+{'count': 6, 'sum': 108, 'mean': 18.0, 'min': 4, 'max': 42}
+```
+
+## Several fields in the body
+
+A body can have several keys. The `/range` endpoint works like Python's
+`range()`, and takes `start`, `stop` and `step`:
+
+```python
+url = "https://numbers.apps.pipal.in/range"
+data = {"start": 1, "stop": 20, "step": 2}
+requests.post(url, json=data).json()
+```
+
+```text
+{'result': [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]}
+```
+
+Like `range()`, it starts at `0` and steps by `1` when `start` and `step` are
+left out:
+
+```python
+requests.post(url, json={"stop": 5}).json()
+```
+
+```text
+{'result': [0, 1, 2, 3, 4]}
+```
+
+## Body and query parameters
+
+Query parameters and a body both carry the input of a request, but in
+different places:
+
+| Query parameters | A JSON body |
+|------------------|-------------|
+| in the URL, after the `?` | after the headers of the request |
+| `requests.get(url, params=params)` | `requests.post(url, json=data)` |
+| every value becomes text | numbers stay numbers, and lists and dictionaries keep their shape |
+
+An API decides where its input goes. The documentation of each endpoint says
+which method it takes, and whether the input goes in the URL or in the body.
+
+## Errors
+
+A body without the key `numbers` gives the status code `400`, *bad request*,
+and an error message:
+
+```python
+url = "https://numbers.apps.pipal.in/product"
+response = requests.post(url, json={"number": [2, 3, 4]})
+response.status_code
+```
+
+```text
+400
+```
+
+```python
+response.json()
+```
+
+```text
+{'error': 'numbers is required'}
+```
+
+The key was spelled `number`, without the `s`. The server checks the values
+too:
+
+```python
+response = requests.post(url, json={"numbers": [2, "three", 4]})
+response.json()
+```
+
+```text
+{'error': 'numbers must contain only numbers'}
+```
+
+A `GET` request to `/product` gives a different status code:
+
+```python
+response = requests.get(url)
+response.status_code
+```
+
+```text
+405
+```
+
+```python
+response.json()
+```
+
+```text
+{'error': 'method not allowed'}
+```
+
+The code `405` means *method not allowed*: the URL exists, but it does not
+take a `GET` request. A browser always sends `GET` when you open a URL, so
+opening `/product` in a browser gives the same error.
+
+## Practice
+
+### Problem 1
+
+The `/average` endpoint of the numbers API takes a `POST` request with
+`{"numbers": [...]}` in the body, and returns the average of the numbers
+under the key `result`. Use it to find the average of `[5, 3, 9, 1]`.
+
+### Problem 2
+
+Write a function `api_average(numbers)` that returns the average of a list of
+numbers from the `/average` endpoint:
+
+```python
+api_average([5, 3, 9, 1])
+```
+
+```text
+4.5
+```
+
+```python
+api_average([2, 4, 6])
+```
+
+```text
+4.0
+```
+
+### Problem 3
+
+Write a function `api_range(start, stop, step)` that returns the list from
+the `/range` endpoint:
+
+```python
+api_range(0, 5, 1)
+```
+
+```text
+[0, 1, 2, 3, 4]
+```
+
+```python
+api_range(1, 10, 3)
+```
+
+```text
+[1, 4, 7]
+```
+
+## Summary
+
+A `POST` request carries its input in the body, and
+`requests.post(url, json=data)` sends a Python value there as JSON.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `POST` | the method of a request that sends data to the server in its body |
+| `requests.post(url, json=data)` | sends a `POST` request with `data` as JSON in the body |
+| `Content-Type: application/json` | the header that says the body of a request or a response is JSON |
+| query parameters | input in the URL, as text |
+| a JSON body | input after the headers, with numbers, lists and dictionaries kept as they are |
+| `400` | *bad request*: the body is missing a key or has a wrong value |
+| `405` | *method not allowed*: the URL does not take this method |

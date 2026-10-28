@@ -1,0 +1,266 @@
+---
+title: "Query Parameters"
+unit: 2
+cluster: "Working with APIs"
+---
+
+Most APIs need some input from us: the text to draw, or how many numbers to
+send back. The input goes at the end of the URL as **query parameters**, and
+`requests` can build that part of the URL from a dictionary.
+
+In this lesson, we'll learn how to:
+
+* read the query parameters in a URL
+* send several query parameters in one request
+* let `requests` build the URL with `params=`, and check it with `response.url`
+
+## The parts of a URL
+
+The figlet API URL has two parts, joined by a `?`:
+
+```text
+https://figlet.apps.pipal.in/api/figlet?text=hello
+```
+
+Before the `?` is the address of the API: the server, then the **path**,
+`/api/figlet`. After the `?` is the **query string**, `text=hello`. It holds
+one query parameter, written as a name, an `=` and a value. The name is
+`text`, and the value is `hello`.
+
+The figlet API also takes a `font` parameter, the name of the style of the
+letters. Parameters are joined with `&`:
+
+```python
+!curl 'https://figlet.apps.pipal.in/api/figlet?text=hello&font=slant'
+```
+
+```text
+    __         ____
+   / /_  ___  / / /___
+  / __ \/ _ \/ / / __ \
+ / / / /  __/ / / /_/ /
+/_/ /_/\___/_/_/\____/
+
+```
+
+The quotes around the URL matter even more now. In the shell, `&` runs a
+command in the background, so without them the shell would cut the URL at
+`&`.
+
+The order of the parameters does not matter. `?font=slant&text=hello` asks
+for the same thing.
+
+A font that the server does not have gives the status code `400`, *bad
+request*, and the text of the response says what was wrong:
+
+```python
+!curl 'https://figlet.apps.pipal.in/api/figlet?text=hello&font=fancy'
+```
+
+```text
+figlet: fancy: Unable to open font file
+```
+
+## Building the URL with params
+
+Joining the parameters into the URL by hand is easy to get wrong. Instead,
+pass them to `requests.get()` as a dictionary, with the keyword argument
+`params`:
+
+```python
+import requests
+
+url = "https://figlet.apps.pipal.in/api/figlet"
+params = {"text": "hello", "font": "slant"}
+response = requests.get(url, params=params)
+print(response.text)
+```
+
+```text
+    __         ____
+   / /_  ___  / / /___
+  / __ \/ _ \/ / / __ \
+ / / / /  __/ / / /_/ /
+/_/ /_/\___/_/_/\____/
+
+```
+
+The URL has no `?` now. `requests` adds it, writes each key and value as
+`name=value`, and joins them with `&`. The `url` attribute of the response
+shows the URL that was sent:
+
+```python
+response.url
+```
+
+```text
+'https://figlet.apps.pipal.in/api/figlet?text=hello&font=slant'
+```
+
+## Special characters
+
+Adding text to the end of a URL with `+` breaks when the text has a character
+that means something in a URL. Here, `&` ends the `text` parameter, so the
+server sees `text=fish ` and a second parameter named ` chips`:
+
+```python
+response = requests.get("https://figlet.apps.pipal.in/api/figlet?text=fish & chips")
+print(response.text)
+```
+
+```text
+  __ _     _
+ / _(_)___| |__
+| |_| / __| '_ \
+|  _| \__ \ | | |
+|_| |_|___/_| |_|
+
+```
+
+With `params=`, the same text arrives whole:
+
+```python
+url = "https://figlet.apps.pipal.in/api/figlet"
+response = requests.get(url, params={"text": "fish & chips"})
+print(response.text)
+```
+
+```text
+  __ _     _        ___          _     _
+ / _(_)___| |__    ( _ )     ___| |__ (_)_ __  ___
+| |_| / __| '_ \   / _ \/\  / __| '_ \| | '_ \/ __|
+|  _| \__ \ | | | | (_>  < | (__| | | | | |_) \__ \
+|_| |_|___/_| |_|  \___/\/  \___|_| |_|_| .__/|___/
+                                        |_|
+```
+
+`response.url` shows how:
+
+```python
+response.url
+```
+
+```text
+'https://figlet.apps.pipal.in/api/figlet?text=fish+%26+chips'
+```
+
+`requests` has **encoded** the value: each space became `+`, and `&` became
+`%26`, a `%` followed by the character's code. The server decodes them and
+gets `fish & chips` back. `#`, `+`, `=` and `?` are encoded the same way.
+
+The figlet function from the previous lesson can use `params=` too, so it
+works with any text:
+
+```python
+def figlet(text):
+    url = "https://figlet.apps.pipal.in/api/figlet"
+    response = requests.get(url, params={"text": text})
+    return response.text
+```
+
+## Numbers as parameters
+
+The numbers API at `https://numbers.apps.pipal.in` works out sequences of
+numbers. Its `/fibs` endpoint returns Fibonacci numbers, one per line, where
+each number is the sum of the two before it. The parameter `n` says how
+many:
+
+```python
+url = "https://numbers.apps.pipal.in/fibs"
+response = requests.get(url, params={"n": 5})
+print(response.text)
+```
+
+```text
+1
+1
+2
+3
+5
+```
+
+The value `5` is an integer, but a URL is text. `requests` converts each value
+to a string when it builds the URL:
+
+```python
+response.url
+```
+
+```text
+'https://numbers.apps.pipal.in/fibs?n=5'
+```
+
+`/fibs` takes two more parameters, `a` and `b`, the first two numbers of the
+sequence:
+
+```python
+params = {"a": 2, "b": 5, "n": 6}
+response = requests.get(url, params=params)
+print(response.text)
+```
+
+```text
+2
+5
+7
+12
+19
+31
+```
+
+When a parameter is left out, `/fibs` uses a default value: `a` and `b` are
+`1`, and `n` is `10`:
+
+```python
+response = requests.get(url)
+print(response.text)
+```
+
+```text
+1
+1
+2
+3
+5
+8
+13
+21
+34
+55
+```
+
+Not every API does this. Another may reject a request with a parameter
+missing. The documentation of an API lists its parameters, and which of them
+can be left out.
+
+## Practice
+
+### Problem 1
+
+The `/random` endpoint of the numbers API returns random whole numbers, one
+per line. It takes the parameters `min` and `max`, the smallest and largest
+number it may return, and `count`, how many numbers to return.
+
+Use it to roll a die ten times. Run your code twice and check that the rolls
+change. Print `response.url` to see the URL that was sent.
+
+### Problem 2
+
+Change the `figlet()` function to take a second argument, `font`, and send it
+as the `font` parameter. Use it to draw your name in the fonts `slant` and
+`small`.
+
+## Summary
+
+Query parameters carry the input of a request in the URL, after the `?`, and
+`requests.get(url, params=params)` builds them from a dictionary and encodes
+any special characters.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `url?name=value` | a URL with one query parameter |
+| `url?a=1&b=2` | parameters are joined with `&`; their order does not matter |
+| `requests.get(url, params={"name": value})` | sends a `GET` request with the keys and values of the dictionary as query parameters |
+| `response.url` | the URL that was sent, with the query string `requests` built |
+| `+`, `%26` in a URL | an encoded space and `&`; `requests` encodes values with `params=` and the server decodes them |
+| `400` | *bad request*: a parameter is missing or has a wrong value |

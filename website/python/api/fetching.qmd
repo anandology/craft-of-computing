@@ -1,0 +1,371 @@
+---
+title: "Fetching from the Web"
+unit: 2
+cluster: "Working with APIs"
+---
+
+Programs often need something that lives on another computer: a page, a file,
+or an answer worked out by a service. They get it by sending an HTTP request,
+from the terminal with `curl`, or from Python with the `requests` module.
+
+In this lesson, we'll learn how to:
+
+* fetch a URL with `curl`, and see the request and the response
+* fetch a URL from Python with `requests.get(url)`
+* read the text and the status code of a response
+* tell an API from a web page by its content type
+
+## Requests and responses
+
+A URL names something on another computer, which is called the **server**.
+When you type a URL into a browser:
+
+1. The browser connects to the server named in the URL, such as
+   `figlet.apps.pipal.in`.
+2. It sends a **request** to the server, asking for the rest of the URL.
+3. The server sends back a **response**: a few details about the answer,
+   then the answer itself.
+4. The browser displays the answer.
+
+The rules for requests and responses are called **HTTP**, which is why web
+URLs start with `http://` or `https://`. The `s` in `https` stands for
+secure: the connection is encrypted, so other computers on the way cannot
+read it.
+
+A browser is only one program that uses HTTP. Any program can send a request
+and read the response. A URL meant for programs rather than for people is an
+**API**, short for application programming interface.
+
+Figlet is a program that draws text in large letters. The figlet API runs it
+on the server. The text to draw goes at the end of the URL, after `?text=`:
+
+```text
+https://figlet.apps.pipal.in/api/figlet?text=hello
+```
+
+Open this URL in a browser, and it shows the word in large letters.
+
+## Fetching a URL with curl
+
+The `curl` command sends a request for a URL and prints the response. Like
+any other command, it runs in a notebook with `!` in front of it. The URL is
+in quotes, because `?` is a wildcard in the shell:
+
+```python
+!curl 'https://figlet.apps.pipal.in/api/figlet?text=hello'
+```
+
+The notebook displays:
+
+```text
+ _          _ _       
+| |__   ___| | | ___  
+| '_ \ / _ \ | |/ _ \ 
+| | | |  __/ | | (_) |
+|_| |_|\___|_|_|\___/ 
+                      
+```
+
+The figlet program ran on the server, and only its output came back. Your
+computer does not need figlet installed.
+
+## Seeing the request and the response
+
+The `-v` option, for *verbose*, makes `curl` print the request it sent and
+the whole response. It begins with many lines starting with `*`, about
+connecting to the server and making the connection secure. They are left out
+here, and shown as `...`:
+
+```python
+!curl -v 'https://figlet.apps.pipal.in/api/figlet?text=hello'
+```
+
+```text
+...
+> GET /api/figlet?text=hello HTTP/1.1
+> Host: figlet.apps.pipal.in
+> User-Agent: curl/8.17.0
+> Accept: */*
+> 
+...
+< HTTP/1.1 200 OK
+< Server: nginx/1.24.0 (Ubuntu)
+< Date: Tue, 27 Oct 2026 23:47:18 GMT
+< Content-Type: text/plain; charset=utf-8
+< Content-Length: 138
+< Connection: keep-alive
+< 
+ _          _ _       
+| |__   ___| | | ___  
+| '_ \ / _ \ | |/ _ \ 
+| | | |  __/ | | (_) |
+|_| |_|\___|_|_|\___/ 
+                      
+* Connection #0 to host figlet.apps.pipal.in:443 left intact
+```
+
+The lines starting with `>` are the request. Its first line has the
+**method**, `GET`, then the part of the URL after the server name, then the
+version of HTTP. `GET` asks the server to send something back. The lines
+after it are **headers**, extra details about the request, each written as a
+name, a colon and a value. `Host` names the server, and `User-Agent` names the
+program that sent the request. An empty line ends the request.
+
+The lines starting with `<` are the response. Its first line has the version
+of HTTP, then a **status code**, `200`, and its meaning, `OK`. The headers of
+the response follow. `Content-Type` says what kind of text the response
+carries, and `text/plain` means plain text. An empty line ends the headers,
+and the **body** comes after it. The body is what the plain `curl` printed.
+
+A browser has the same conversation with the server. It does not show the
+request or the headers. It displays only the body.
+
+## The requests module
+
+`requests` is not part of the standard library. It is a separate package,
+and the course setup has already installed it. It is imported like any other
+module:
+
+```python
+import requests
+```
+
+`requests.get(url)` sends a `GET` request for `url` from Python, and returns
+the response:
+
+```python
+url = "https://figlet.apps.pipal.in/api/figlet?text=hello"
+response = requests.get(url)
+response
+```
+
+```text
+<Response [200]>
+```
+
+The value is a response object. The number in the brackets is the status
+code, the same `200` that `curl -v` showed.
+
+## The text of a response
+
+The `text` attribute of the response is the body, as a string. An
+**attribute** is a name attached to a value, like a method, but it is used
+without parentheses:
+
+```python
+type(response.text)
+```
+
+```text
+<class 'str'>
+```
+
+The text has several lines, so print it to see them:
+
+```python
+print(response.text)
+```
+
+```text
+ _          _ _       
+| |__   ___| | | ___  
+| '_ \ / _ \ | |/ _ \ 
+| | | |  __/ | | (_) |
+|_| |_|\___|_|_|\___/ 
+                      
+```
+
+## Status codes
+
+The `status_code` attribute holds the status code of the response, as an
+integer:
+
+```python
+response.status_code
+```
+
+```text
+200
+```
+
+The code `200` means the request succeeded. A URL with a path that the
+server does not have gives a different code:
+
+```python
+response = requests.get("https://figlet.apps.pipal.in/bad-path")
+response.status_code
+```
+
+```text
+404
+```
+
+The code `404` means *not found*. A failed request does not raise an error in
+Python. `requests.get(url)` still returns a response, and its text is the
+server's error page:
+
+```python
+print(response.text)
+```
+
+```text
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+```
+
+::: {.callout-warning}
+A program that uses `response.text` without looking at the status code may
+treat an error page as the answer. Check `response.status_code` before using
+the text.
+:::
+
+The first digit of the status code tells what kind of result it is:
+
+| Code | Meaning |
+|------|---------|
+| `2xx`, such as `200` | the request succeeded |
+| `4xx`, such as `404` | the request was wrong |
+| `5xx`, such as `500` | the server failed |
+
+## A figlet function
+
+A function can wrap the request, so the rest of the program only deals with
+text. `figlet()` takes the text to draw, adds it to the end of the URL, and
+returns the body of the response:
+
+```python
+def figlet(text):
+    url = "https://figlet.apps.pipal.in/api/figlet?text=" + text
+    response = requests.get(url)
+    return response.text
+```
+
+Each call sends a new request to the server. A loop sends one request for
+each number:
+
+```python
+for n in range(5):
+    print(figlet(str(n)))
+```
+
+```text
+  ___  
+ / _ \ 
+| | | |
+| |_| |
+ \___/ 
+       
+
+ _ 
+/ |
+| |
+| |
+|_|
+   
+
+ ____  
+|___ \ 
+  __) |
+ / __/ 
+|_____|
+       
+
+ _____ 
+|___ / 
+  |_ \ 
+ ___) |
+|____/ 
+       
+
+ _  _   
+| || |  
+| || |_ 
+|__   _|
+   |_|  
+        
+
+```
+
+The URL is a string, so the number is converted with `str()` before it is
+added to the end of the URL.
+
+::: {.callout-warning}
+Adding the text to the end of the URL with `+` breaks when the text has a
+character that means something in a URL, such as `&`, `#` or `+`. For
+example, `figlet("fish & chips")` draws only `fish`, because `&` separates one
+part of the URL from the next. The next lesson shows how to send such text
+safely.
+:::
+
+## Web pages and APIs
+
+The figlet server also has a web page for people, at
+`https://figlet.apps.pipal.in/`. It takes the same `?text=`:
+
+```python
+page = requests.get("https://figlet.apps.pipal.in/?text=hello")
+page.status_code
+```
+
+```text
+200
+```
+
+The page draws the same letters, but its text is HTML, with a form, links and
+styles around the drawing. A browser shows it nicely; a program would have to
+dig the letters out.
+
+The `headers` attribute holds the headers of the response. Look up
+`Content-Type` in it to see what kind of text each response carries:
+
+```python
+page.headers["Content-Type"]
+```
+
+```text
+'text/html; charset=utf-8'
+```
+
+```python
+api = requests.get("https://figlet.apps.pipal.in/api/figlet?text=hello")
+api.headers["Content-Type"]
+```
+
+```text
+'text/plain; charset=utf-8'
+```
+
+The page is HTML, for a browser. The API sends plain text, which a program
+can use as it is.
+
+## Practice
+
+### Problem 1
+
+Run `curl -v` on the URL `https://figlet.apps.pipal.in/bad-path`. Find
+the status code, its meaning and the `Content-Type` of the response in the
+output.
+
+## Summary
+
+A request asks a server for a URL, and the response has a status code,
+headers and a body; `curl` prints the response, and `requests.get(url)`
+returns it to a Python program.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| an API | a URL meant for programs, not for people |
+| `!curl 'url'` | sends a request for `url` and prints the body of the response |
+| `!curl -v 'url'` | also prints the request, after `>`, and the status and headers of the response, after `<` |
+| `GET` | the method of a request that asks the server to send something back |
+| `import requests` | makes the `requests` module available; it is installed separately from Python |
+| `requests.get(url)` | sends a `GET` request for `url` and returns a response object |
+| `response.text` | the body of the response, as a string |
+| `response.status_code` | the status code of the response, as an integer |
+| `200` | the request succeeded |
+| `404` | the server has nothing at that URL |
+| `4xx` and `5xx` | the request was wrong, or the server failed |
+| a failed request | still returns a response; it does not raise an error |
+| `response.headers["Content-Type"]` | the kind of text in the body, such as `text/plain` or `text/html` |

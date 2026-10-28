@@ -1,0 +1,211 @@
+---
+title: "JSON APIs"
+unit: 2
+cluster: "Working with APIs"
+---
+
+Most APIs send data, not text to display: lists of numbers, records with
+several fields. They send it as JSON, and the `json()` method of a response
+converts it into Python values.
+
+In this lesson, we'll learn how to:
+
+* ask an API for JSON, and tell a JSON response by its content type
+* convert a JSON response into Python values with `response.json()`
+* read an error message that an API sends as JSON
+
+## Plain text and JSON
+
+The `/fibs` endpoint of the numbers API sends its numbers as plain text, one
+per line:
+
+```python
+!curl 'https://numbers.apps.pipal.in/fibs?n=5'
+```
+
+```text
+1
+1
+2
+3
+5
+```
+
+The text is easy to read, but a program has to take it apart. Splitting it
+gives a list of strings, not numbers:
+
+```python
+import requests
+
+url = "https://numbers.apps.pipal.in/fibs"
+response = requests.get(url, params={"n": 5})
+response.text.split()
+```
+
+```text
+['1', '1', '2', '3', '5']
+```
+
+Each string would still have to be converted with `int()`. The parameter
+`format=json` asks `/fibs` for JSON instead:
+
+```python
+!curl 'https://numbers.apps.pipal.in/fibs?n=5&format=json'
+```
+
+```text
+{"result":[1,1,2,3,5]}
+```
+
+The response is a JSON object with one key, `result`, and the numbers are in
+a JSON array. JSON keeps the numbers as numbers, and the keys say what each
+value is.
+
+## The json method
+
+Add `format` to the parameters, and call the `json()` method of the response:
+
+```python
+params = {"n": 5, "format": "json"}
+response = requests.get(url, params=params)
+data = response.json()
+data
+```
+
+```text
+{'result': [1, 1, 2, 3, 5]}
+```
+
+`json()` reads the text of the response as JSON and returns the matching
+Python values, the same as `json.loads(response.text)`. A JSON object became
+a dictionary:
+
+```python
+type(data)
+```
+
+```text
+<class 'dict'>
+```
+
+The numbers are in a list under the key `result`, and they are integers:
+
+```python
+data["result"]
+```
+
+```text
+[1, 1, 2, 3, 5]
+```
+
+```python
+sum(data["result"])
+```
+
+```text
+12
+```
+
+The `Content-Type` header says that the body is JSON:
+
+```python
+response.headers["Content-Type"]
+```
+
+```text
+'application/json'
+```
+
+## A fibs function
+
+A function can hide the request and return only the list:
+
+```python
+def fibs(n):
+    url = "https://numbers.apps.pipal.in/fibs"
+    response = requests.get(url, params={"n": n, "format": "json"})
+    return response.json()["result"]
+```
+
+The rest of the program does not need to know that the numbers came from a
+server:
+
+```python
+fibs(10)
+```
+
+```text
+[1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+```
+
+```python
+[n for n in fibs(20) if n % 2 == 0]
+```
+
+```text
+[2, 8, 34, 144, 610, 2584]
+```
+
+## Errors as JSON
+
+The numbers API sends its errors as JSON too. A value of `n` that is not a
+whole number gives the status code `400`:
+
+```python
+params = {"n": "five", "format": "json"}
+response = requests.get(url, params=params)
+response.status_code
+```
+
+```text
+400
+```
+
+The body is a JSON object with the key `error`, and its value says what was
+wrong:
+
+```python
+response.json()
+```
+
+```text
+{'error': 'n must be an integer'}
+```
+
+The object has no `result` key, so `fibs()` would fail here with
+`KeyError: 'result'`. Check `response.status_code` before you look for the
+answer.
+
+## Practice
+
+### Problem 1
+
+The `/random` endpoint of the numbers API also takes `format=json`, and then
+returns its numbers as a list under the key `result`.
+
+Roll a die 100 times with one request, and display how many times each of the
+numbers 1 to 6 came up.
+
+### Problem 2
+
+Write a function `random_numbers(count, low, high)` that returns a list of
+`count` random whole numbers between `low` and `high`, from the `/random`
+endpoint. For example, `random_numbers(3, 1, 10)` may return `[7, 2, 7]`.
+
+### Problem 3
+
+Call `/random` with `min` set to `10` and `max` set to `1`. Display the
+status code, then the error message from the body.
+
+## Summary
+
+A JSON API sends data as JSON text, and `response.json()` converts it into
+Python values, with objects as dictionaries and arrays as lists.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `?format=json` | asks the numbers API for JSON instead of plain text |
+| `response.json()` | reads the body as JSON and returns the matching Python values |
+| `response.json()["result"]` | looks up a key of the JSON object in the body |
+| `application/json` | the `Content-Type` of a JSON response |
+| `{"error": "n must be an integer"}` | an error from the numbers API, sent with a `4xx` status code |

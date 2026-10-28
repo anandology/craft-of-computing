@@ -1,0 +1,296 @@
+---
+title: "Authentication"
+unit: 2
+cluster: "Working with APIs"
+---
+
+Many APIs need to know who sent a request, so that each user sees and changes
+only their own data. The request proves it with a **token**, a secret string
+sent in the `Authorization` header.
+
+In this lesson, we'll learn how to:
+
+* send a token in the `Authorization` header
+* create, read, update and delete values with `POST`, `GET`, `PUT` and
+  `DELETE`
+
+## The store API
+
+This lesson uses the store endpoints of the numbers API, at
+`https://numbers.apps.pipal.in`. The store keeps numbers under names, such
+as `x` or `total`, and each user has a store of their own. Every request to
+these endpoints needs a token:
+
+| Method | Path | What it does |
+|--------|------|--------------|
+| `GET` | `/me` | returns the username of the token |
+| `GET` | `/store` | returns all your values |
+| `GET` | `/store/<name>` | returns the value stored under `<name>` |
+| `POST` | `/store/<name>` | creates a value |
+| `PUT` | `/store/<name>` | changes a value |
+| `DELETE` | `/store/<name>` | deletes a value |
+
+`<name>` stands for the name of a value, so the URL of `x` is `/store/x`. The
+[API reference](https://github.com/pipalacademy/numbers-api/blob/main/docs/api.md)
+describes each endpoint, with its errors and examples.
+
+## A request without a token
+
+The `/me` endpoint says who sent the request. Without a token, the server
+refuses:
+
+```python
+import requests
+
+url = "https://numbers.apps.pipal.in/me"
+response = requests.get(url)
+response.status_code
+```
+
+```text
+401
+```
+
+The code `401` means *unauthorized*: the server does not know who you are.
+The error message says what it expected:
+
+```python
+response.json()
+```
+
+```text
+{'error': "missing token, expected header 'Authorization: Bearer <username>-token-123'"}
+```
+
+## Sending a token
+
+On most APIs, you sign up and the service gives you a token. The numbers API
+skips that step. A token is a username followed by `-token-123`, so the
+token for the username `alice` is `alice-token-123`. Pick a username of
+lowercase letters and digits, and use it all through this lesson.
+
+The token goes in the `Authorization` header, after the word `Bearer`. The
+keyword argument `headers` of `requests.get()` takes a dictionary of headers
+to add to the request:
+
+```python
+headers = {"Authorization": "Bearer alice-token-123"}
+response = requests.get(url, headers=headers)
+response.json()
+```
+
+```text
+{'username': 'alice'}
+```
+
+The server read the username from the token. With `curl`, the header goes
+after `-H`, the same as `Content-Type` did:
+
+```python
+!curl -H 'Authorization: Bearer alice-token-123' https://numbers.apps.pipal.in/me
+```
+
+```text
+{"username":"alice"}
+```
+
+A token that does not have the expected form also gives `401`:
+
+```python
+headers = {"Authorization": "Bearer alice"}
+response = requests.get(url, headers=headers)
+response.json()
+```
+
+```text
+{'error': 'invalid token, expected <username>-token-123'}
+```
+
+## Your own store
+
+`/store` returns all your values, as a JSON object. It is empty to begin
+with:
+
+```python
+headers = {"Authorization": "Bearer alice-token-123"}
+url = "https://numbers.apps.pipal.in/store"
+response = requests.get(url, headers=headers)
+response.json()
+```
+
+```text
+{}
+```
+
+A `POST` request to the URL of a value, with the value in the body, creates
+it:
+
+```python
+response = requests.post(url + "/x", headers=headers, json={"value": 42})
+response.status_code
+```
+
+```text
+201
+```
+
+The code `201` means *created*. The store now has `x`:
+
+```python
+requests.get(url, headers=headers).json()
+```
+
+```text
+{'x': 42}
+```
+
+A `GET` request to the URL of the value returns just that value:
+
+```python
+requests.get(url + "/x", headers=headers).json()
+```
+
+```text
+{'value': 42}
+```
+
+## Updating and deleting
+
+A second `POST` to the same name is refused, because the value already
+exists:
+
+```python
+response = requests.post(url + "/x", headers=headers, json={"value": 43})
+response.status_code
+```
+
+```text
+409
+```
+
+```python
+response.json()
+```
+
+```text
+{'error': 'x already exists, use PUT to update it'}
+```
+
+The code `409` means *conflict*. To change a value, send a `PUT` request with
+`requests.put()`:
+
+```python
+response = requests.put(url + "/x", headers=headers, json={"value": 43})
+response.status_code
+```
+
+```text
+200
+```
+
+```python
+requests.get(url, headers=headers).json()
+```
+
+```text
+{'x': 43}
+```
+
+A `DELETE` request, sent with `requests.delete()`, removes the value. It has
+no body:
+
+```python
+response = requests.delete(url + "/x", headers=headers)
+response.json()
+```
+
+```text
+{'ok': True}
+```
+
+The value is gone, so its URL now gives `404`:
+
+```python
+response = requests.get(url + "/x", headers=headers)
+response.status_code
+```
+
+```text
+404
+```
+
+```python
+response.json()
+```
+
+```text
+{'error': 'x not found'}
+```
+
+The URL names *what* the request is about, the value `x`, and the method says
+*what to do* with it.
+
+## One URL, many users
+
+Every student sends requests to the same URLs. Each one gets their own store,
+because the server picks the store from the token. Here, Alice has stored `x`,
+and Bob sends a request with Bob's own token:
+
+```python
+bob_headers = {"Authorization": "Bearer bob-token-123"}
+requests.get(url, headers=bob_headers).json()
+```
+
+```text
+{}
+```
+
+Bob's store is empty. The `x` is in Alice's store, and Bob's token cannot reach it.
+
+## Practice
+
+### Problem 1
+
+Store the squares of the numbers from 0 to 4 under the names `a0` to `a4`,
+so that `a3` is `9`. Display your whole store, then check with a classmate
+that your stores are different.
+
+### Problem 2
+
+Write three functions that send your token:
+
+* `store_get(name)` returns the value stored under `name`
+* `store_create(name, value)` creates a value
+* `store_update(name, value)` changes a value
+
+Use them to add `1` to the value of `a2`.
+
+### Problem 3
+
+Write a function `store_clear()` that deletes every value in your store. Use
+`/store` to find their names.
+
+### Problem 4
+
+Predict the status code of each request below, then run them to check:
+
+1. A `GET` request to `/store`, without a token
+2. A `PUT` request to `/store/nothing`, a name you have not created
+3. A `POST` request to `/store/a0`, after Problem 1
+4. A `POST` request to `/store/z` with the body `{"value": "seven"}`
+
+## Summary
+
+A token in the `Authorization` header tells the API who sent the request, and
+the server uses it to refuse a request or to choose whose data to work on.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| a token | a secret string that proves who sent a request |
+| `requests.get(url, headers={"Authorization": "Bearer alice-token-123"})` | sends a request with the token `alice-token-123` |
+| `requests.put(url, json=data)` | sends a `PUT` request, which changes something that exists |
+| `requests.delete(url)` | sends a `DELETE` request, which removes something |
+| `201` | *created*: a `POST` request created something |
+| `401` | *unauthorized*: the token is missing or wrong |
+| `404` | the server has nothing at that URL, such as a value you have not stored |
+| `409` | *conflict*: the request clashes with what is there, such as creating a value that exists |
