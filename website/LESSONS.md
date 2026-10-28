@@ -236,6 +236,10 @@ understanding.
 - Run every command and code example. Do not invent or approximate output.
 - Check that prose describes the actual rendered result.
 - Introduce names and syntax before using them.
+- Make each section independent. Define every variable a section uses at the
+  start of that section, even if an earlier section defined it. Only imports
+  carry over. A student who jumps to a section, or forgets an earlier one,
+  should not meet a name defined somewhere above.
 - Use small values that make the operation visible.
 - Prefer examples that connect to later work.
 - When code changes state, show the relevant state before and after the change.

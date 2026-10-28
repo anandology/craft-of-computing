@@ -1,0 +1,180 @@
+---
+title: "Formatting Strings"
+unit: 2
+cluster: "Cookbook"
+---
+
+Programs often need to build a string from the values of variables, such as a
+message to print or the name of a file to open. Python's **f-strings** let us
+write the string as it should look and mark where each value goes.
+
+In this lesson, we'll learn how to:
+
+* put the value of a variable into a string with an f-string
+* build a filename from a value
+* put the value of any expression into a string
+* format each line of output in a loop
+
+## Joining strings with `+`
+
+The `+` operator joins strings, and `str()` converts a number to a string:
+
+```{python}
+name = "Rajdhani Express"
+distance = 1384
+print(name + " travels " + str(distance) + " km")
+```
+
+Every value that is not a string needs `str()`, and every space has to be
+placed inside the quotes. It is hard to see what the result will look like.
+
+## f-strings
+
+The same text as an f-string:
+
+```{python}
+name = "Rajdhani Express"
+distance = 1384
+print(f"{name} travels {distance} km")
+```
+
+The `f` before the opening quote makes the string an f-string. Python replaces
+each part in braces, `{` and `}`, with the value of the expression inside. The
+value is converted to text, so `str()` is not needed.
+
+Without the `f`, the string is an ordinary string, and the braces stay as they
+are:
+
+```{python}
+print("{name} travels {distance} km")
+```
+
+## Building a filename
+
+A program that keeps one file for each train can build the name of the file
+from the train number:
+
+```{python}
+train_number = "12951"
+path = f"data/schedules/{train_number}.json"
+path
+```
+
+The result is an ordinary string, so it can be passed to `open()`. A loop can
+build one filename for each train:
+
+```{python}
+for train_number in ["12028", "12627", "12951"]:
+    print(f"data/schedules/{train_number}.json")
+```
+
+## Expressions inside the braces
+
+The braces can hold any expression, not only a variable:
+
+```{python}
+price = 45
+quantity = 3
+print(f"{quantity} notebooks cost {price * quantity} rupees")
+```
+
+A function call is also an expression:
+
+```{python}
+def square(x):
+    return x * x
+
+print(f"The square of 12 is {square(12)}")
+```
+
+So is a dictionary lookup:
+
+```{python}
+prices = {"apple": 120, "banana": 40, "mango": 150}
+name = "apple"
+print(f"Price of {name} is {prices[name]}")
+```
+
+## Formatting output in a loop
+
+An f-string inside a loop builds one line of output in each iteration. This
+loop prints the multiplication table of 7:
+
+```{python}
+n = 7
+for i in range(1, 11):
+    print(f"{n} x {i} = {n * i}")
+```
+
+Each line has the same shape. Only the values in the braces change.
+
+## Practice
+
+### Problem 1
+
+Write down what each line prints. Then run the code and check your answers.
+
+```python
+name = "Alice"
+count = 4
+```
+
+1. `print(f"Hello, {name}!")`
+2. `print(f"{count + 1}")`
+3. `print(f"{count} + 1 = {count + 1}")`
+4. `print("{count} items")`
+5. `print(f"{name * 2}")`
+
+### Problem 2
+
+Suppose a program keeps one data file for each station in the `data/stations`
+directory, named after the station code. For example, the data file for the
+station `UBL` is `data/stations/UBL.json`. The loop below only prints the
+paths, so the files do not need to exist.
+
+Complete this loop so that it prints the path of the data file for each
+station code:
+
+```python
+codes = ["SBC", "MAS", "MYS"]
+
+for code in codes:
+    print(...)  # TODO: print the path of the data file for this code
+```
+
+The expected output is:
+
+```text
+data/stations/SBC.json
+data/stations/MAS.json
+data/stations/MYS.json
+```
+
+### Problem 3
+
+Write a function `cube(x)` that returns `x * x * x`. Then write a loop that
+uses it in an f-string to print the cubes of the numbers from 1 to 5.
+
+The expected output is:
+
+```text
+The cube of 1 is 1
+The cube of 2 is 8
+The cube of 3 is 27
+The cube of 4 is 64
+The cube of 5 is 125
+```
+
+## Summary
+
+An f-string is a string with an `f` before the opening quote, and Python
+replaces each expression in braces with its value, converted to text.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `f"{name} travels {distance} km"` | an f-string; each part in braces is replaced by the value of the expression |
+| `"{name}"`, without the `f` | an ordinary string; the braces stay as they are |
+| `f"data/schedules/{train_number}.json"` | builds a filename from a value |
+| `f"{price * quantity} rupees"` | any expression can go inside the braces |
+| `f"The square of 12 is {square(12)}"` | a function call can go inside the braces |
+| `print(f"{n} x {i} = {n * i}")` in a loop | prints one line of the same shape for each iteration |

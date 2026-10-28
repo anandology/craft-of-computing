@@ -1,0 +1,232 @@
+---
+title: "Dates and Times"
+unit: 2
+cluster: "Cookbook"
+---
+
+Programs often need to work with dates and times, such as when a train departs
+or how long a journey takes. Python's `datetime` module has types that
+represent a date and time, and the difference between two of them.
+
+In this lesson, we'll learn how to:
+
+* create a `datetime` value
+* read the parts of a `datetime` and compare two of them
+* find the time difference between two `datetime` values
+* print a date and time in the form we want
+
+## Creating a date and time
+
+The `datetime` module has a type that is also named `datetime`. A `datetime`
+value holds a date and a time of day.
+
+Calling the type with the year, month, day, hour and minute creates a
+`datetime`:
+
+```{python}
+import datetime
+
+datetime.datetime(2026, 10, 20, 17, 0)
+```
+
+The `now()` function creates a `datetime` with the current date and time:
+
+```{python}
+datetime.datetime.now()
+```
+
+Dates and times often arrive as strings, such as `"2026-10-20 17:00"`. The
+`fromisoformat()` function converts a string like this into a `datetime`:
+
+```{python}
+datetime.datetime.fromisoformat("2026-10-20 17:00")
+```
+
+The string has the year, month and day, then the hours and minutes. The
+seconds can be included too:
+
+```{python}
+datetime.datetime.fromisoformat("2026-10-20 17:00:30")
+```
+
+The parts must be in this order, with these separators. A string in another
+form raises an error:
+
+```python
+datetime.datetime.fromisoformat("20-10-2026")
+```
+
+```text
+ValueError: Invalid isoformat string: '20-10-2026'
+```
+
+## Operations on a datetime
+
+Each part of a `datetime` is available as an attribute: `year`, `month`,
+`day`, `hour` and `minute`.
+
+```{python}
+departure = datetime.datetime.fromisoformat("2026-10-20 17:00")
+departure.year
+```
+
+```{python}
+departure.hour
+```
+
+Two `datetime` values can be compared. An earlier time is less than a later
+one:
+
+```{python}
+arrival = datetime.datetime.fromisoformat("2026-10-21 08:32")
+departure < arrival
+```
+
+Two `datetime` values are equal when they hold the same date and time, however
+they were created:
+
+```{python}
+departure == datetime.datetime(2026, 10, 20, 17, 0)
+```
+
+## Time difference
+
+Subtracting one `datetime` from another gives the time difference between
+them:
+
+```{python}
+departure = datetime.datetime.fromisoformat("2026-10-20 17:00")
+arrival = datetime.datetime.fromisoformat("2026-10-21 08:32")
+duration = arrival - departure
+duration
+```
+
+The result is not a `datetime`, but a value of another type, `timedelta`.
+Python displays it in seconds. `print()` displays it in hours, minutes and
+seconds:
+
+```{python}
+print(duration)
+```
+
+The journey takes 15 hours and 32 minutes. A `timedelta` longer than a day is
+printed with the number of days first:
+
+```{python}
+departure = datetime.datetime.fromisoformat("2026-10-20 19:20")
+arrival = datetime.datetime.fromisoformat("2026-10-22 06:40")
+print(arrival - departure)
+```
+
+The `total_seconds()` method gives the whole duration in seconds, which can be
+converted into other units:
+
+```{python}
+duration = arrival - departure
+duration.total_seconds() / 60
+```
+
+The journey takes 2120 minutes.
+
+## Printing a date and time
+
+`print()` displays a `datetime` with the date first, then the time:
+
+```{python}
+departure = datetime.datetime.fromisoformat("2026-10-20 17:00")
+print(departure)
+```
+
+The `isoformat()` method converts a `datetime` into a string in the same form
+that `fromisoformat()` reads. A `T` separates the date from the time:
+
+```{python}
+departure.isoformat()
+```
+
+To have a space instead of the `T` between the date and the time, pass
+`sep=" "` as an argument:
+
+```{python}
+departure.isoformat(sep=" ")
+```
+
+The `strftime()` method converts a `datetime` into a string in the form we
+want. Its argument is a pattern. Each code that starts with `%` is replaced by
+a part of the date or time, and the other characters stay as they are:
+
+```{python}
+print(departure.strftime("%d %b %Y"))
+```
+
+```{python}
+print(departure.strftime("%a %d %b, %H:%M"))
+```
+
+These are the codes used most often:
+
+| Code | Meaning | Example |
+|------|---------|---------|
+| `%Y` | year | `2026` |
+| `%m` | month as a number | `10` |
+| `%b` | short month name | `Oct` |
+| `%d` | day of the month | `20` |
+| `%a` | short weekday name | `Tue` |
+| `%H` | hour, from `00` to `23` | `17` |
+| `%M` | minute | `00` |
+
+## Practice
+
+### Problem 1
+
+A train departs at `"2026-10-20 23:45"` and arrives at `"2026-10-22 05:15"`.
+Print the duration of the journey.
+
+The expected output is:
+
+```text
+1 day, 5:30:00
+```
+
+### Problem 2
+
+Complete this program so that it prints the number of hours from the
+departure to the arrival:
+
+```python
+import datetime
+
+departure = "2026-10-20 06:00"
+arrival = "2026-10-20 13:30"
+
+# TODO: convert the two strings and print the hours between them
+```
+
+The expected output is:
+
+```text
+7.5
+```
+
+## Summary
+
+A `datetime` holds a date and a time of day. Subtracting two of them gives a
+`timedelta`, and `strftime()` converts a `datetime` into a string in a chosen
+form.
+
+| Form or rule | Meaning |
+|--------------|---------|
+| `datetime.datetime(2026, 10, 20, 17, 0)` | creates a `datetime` from the year, month, day, hour and minute |
+| `datetime.datetime.now()` | creates a `datetime` with the current date and time |
+| `datetime.datetime.fromisoformat("2026-10-20 17:00")` | converts the string into a `datetime` |
+| `"2026-10-20 17:00"` or `"2026-10-20 17:00:30"` | the form `fromisoformat()` expects: year, month, day, then the time |
+| a string in another form | raises a `ValueError` |
+| `departure.year`, `departure.hour` | a part of a `datetime` |
+| `departure < arrival` | `True` if `departure` is earlier than `arrival` |
+| `arrival - departure` | the time between two `datetime` values, as a `timedelta` |
+| `print(departure)` | prints a `datetime` as `2026-10-20 17:00:00` |
+| `departure.isoformat()` | converts a `datetime` into a string such as `"2026-10-20T17:00:00"` |
+| `departure.isoformat(sep=" ")` | the same, with a space instead of the `T`, such as `"2026-10-20 17:00:00"` |
+| `print(duration)` | prints a `timedelta` as hours, minutes and seconds, with days first if any |
+| `duration.total_seconds()` | the whole duration in seconds |
+| `departure.strftime("%d %b %Y")` | converts a `datetime` into a string, such as `"20 Oct 2026"` |

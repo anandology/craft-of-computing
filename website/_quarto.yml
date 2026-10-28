@@ -199,6 +199,10 @@ website:
           contents:
             - href: python/writing-modules/own-modules.qmd
             - href: python/writing-modules/module-as-script.qmd
+        - section: "Cookbook"
+          contents:
+            - href: python/cookbook/formatting-strings.qmd
+            - href: python/cookbook/dates-and-times.qmd
 
 format:
   html:
