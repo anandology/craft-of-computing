@@ -12,39 +12,81 @@ body-classes: page-home
 ---
 
 ::: {.home-lede}
-Short lessons, one idea each. Read the lesson, try the practice at the end,
-and keep the summary for later.
+The Craft of Computing is the first course for Information Sciences major and
+minor students at Azim Premji University. It is a hands-on exploration of
+computing: getting comfortable with the command line, learning Python, and
+using sensors and microcontrollers to interact with the world outside the
+screen.
+
+[About this course](about.qmd){.home-lede-link}
 :::
 
-## Setup
+## The course, in order
 
-<div class="craft-cards">
-
-<a class="craft-card" href="setup/index.qmd">
-<span class="craft-card-label">Before you start</span>
-<span class="craft-card-title">Setup Instructions</span>
-<span class="craft-card-body">Get Ubuntu, an editor and the course tools onto your own laptop. Do this before the first class.</span>
-<span class="craft-card-foot"><span class="craft-card-meta">4 pages</span></span>
+<div class="home-track">
+<a class="home-step" href="setup/index.qmd">
+<span class="home-step-num">0</span>
+<span class="home-step-main">
+<span class="home-step-title">Set up your laptop</span>
+<span class="home-step-body">Get Ubuntu, an editor and the course tools onto your own machine. Everything after this assumes you have done it.</span>
+</span>
+<span class="home-step-meta">5 pages</span>
 </a>
-
+<a class="home-step unit-1" href="cmdline/index.qmd">
+<span class="home-step-num">1</span>
+<span class="home-step-main">
+<span class="home-step-title">Working with the command line</span>
+<span class="home-step-body">Talk to the computer by typing. Move around, join small tools together, and put a page on the web.</span>
+<span class="home-step-parts">Working with the command line &middot; Writing shell scripts &middot; Writing with Markdown</span>
+</span>
+<span class="home-step-meta">23 lessons</span>
+</a>
+<a class="home-step unit-2" href="python/index.qmd">
+<span class="home-step-num">2</span>
+<span class="home-step-main">
+<span class="home-step-title">Programming with Python</span>
+<span class="home-step-body">Write programs that do more than a single command can. Start in the interpreter, end with tools of your own.</span>
+<span class="home-step-parts">Getting started &middot; Collections and repetition &middot; Functions, methods and modules &middot; Writing programs</span>
+</span>
+<span class="home-step-meta">15 lessons</span>
+</a>
+<span class="home-step home-step-later">
+<span class="home-step-num">3</span>
+<span class="home-step-main">
+<span class="home-step-title">Interfacing with microcontrollers</span>
+<span class="home-step-body">Make a program touch the world. Read a sensor, light an LED, and build something on a board.</span>
+</span>
+<span class="home-step-meta"><span class="home-step-pill">Later this semester</span></span>
+</span>
 </div>
 
-## Units
+::: {.home-band}
+::: {.home-band-inner}
 
-<div class="craft-cards">
+::: {.home-band-points}
 
-<a class="craft-card unit-1" href="cmdline/index.qmd">
-<span class="craft-card-num">1</span>
-<span class="craft-card-title">Working with the command line</span>
-<span class="craft-card-body">Talk to the computer by typing. Move around, join small tools together, and put a page on the web.</span>
-<span class="craft-card-foot"><span class="craft-card-meta">21 lessons</span></span>
-</a>
+::: {.home-point}
+### Built for beginners
 
-<a class="craft-card unit-2" href="python/index.qmd">
-<span class="craft-card-num">2</span>
-<span class="craft-card-title">Programming with Python</span>
-<span class="craft-card-body">Write programs that do more than a single command can. Start in the interpreter, end with tools of your own.</span>
-<span class="craft-card-foot"><span class="craft-card-meta">2 lessons</span></span>
-</a>
+Designed for absolute beginners. No prior programming experience or
+familiarity with technical tools is required.
+:::
 
-</div>
+::: {.home-point}
+### Learn by doing
+
+Each lesson combines clear explanations with examples you can try and problems
+you can solve. You learn each idea by putting it to use.
+:::
+
+::: {.home-point}
+### A strong foundation
+
+Even if you have some experience, the course offers ideas and challenges that
+deepen your understanding. The skills and habits you develop will support a
+lifetime of learning in computing.
+:::
+
+:::
+:::
+:::

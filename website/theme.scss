@@ -63,6 +63,13 @@ $code-bg:    #EFEADF !default;
   --craft-term-out:     #A9A396;
   --craft-term-prompt:  #C3A87A;
 
+  --craft-band:         #F0EADC;
+  --craft-band-rule:    #E0D8C6;
+  --craft-footer-bg:    #1B1A17;
+  --craft-footer-fg:    #C9C3B4;
+  --craft-footer-rule:  #332F28;
+  --craft-term-chrome:  #26231E;
+
   --craft-accent:       #B4532A;
   --craft-accent-dark:  #8E3F1F;
   --craft-accent-wash:  #F2E3D8;
@@ -125,7 +132,7 @@ a {
 
 .sidebar-navigation {
   border-right: 1px solid var(--craft-rule);
-  font-size: 0.90625rem;
+  font-size: 1rem;
 }
 
 // Section names are labels for a cluster of lessons, not destinations, so
@@ -386,137 +393,306 @@ pre.session .out {
   }
 }
 
+// The column the home page and the footer line up on: 1168px of content at
+// 1280 and wider, gutters that shrink on a phone.
+$home-column: 1280px;
+$home-gutter: 3.5rem;
+
 // Home page ----------------------------------------------------------------
 
 // The home page is a directory, not a lesson: no sidebar, no table of
-// contents, and a row of cards per section.
+// contents, and the course laid out as a numbered list you read top to
+// bottom.
+//
+// Two of its sections run edge to edge, so the centred column is not put on
+// main.content -- it is put on each section that wants it, and the full-bleed
+// ones simply do not take it.
 body.page-home {
+  // Quarto insets main inside the page grid. The band and the footer want the
+  // full width of the window, so main takes the whole grid row and the
+  // sections that are not full bleed hold themselves to the column instead.
   main.content {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding-left: 2rem;
-    padding-right: 2rem;
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+  #title-block-header,
+  .home-lede,
+  h2,
+  .home-track {
+    max-width: $home-column;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: $home-gutter;
+    padding-right: $home-gutter;
   }
 
   #title-block-header .quarto-title h1.title {
-    font-size: 3.25rem;
+    font-size: 4.25rem;
   }
 
-  // Section headings here are labels over a row of cards, not headings in a
-  // piece of prose, so they are set like the sidebar's cluster labels.
+  // Section headings here are labels over the list below them, not headings
+  // in a piece of prose, so they are set like the sidebar's cluster labels.
   h2 {
     font-family: $font-family-sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--craft-label);
-    margin-top: 3.5rem;
+    margin-top: 4rem;
     margin-bottom: 1.25rem;
+  }
+
+  // The band is the last thing in main, and the dark footer follows it
+  // immediately. The row the page grid keeps under the content -- room for a
+  // lesson's prev/next -- would show as a strip of paper between the two.
+  #quarto-content {
+    padding-bottom: 0;
+    grid-template-rows: [content-top] auto [content-bottom] 0 [page-bottom];
   }
 }
 
 .home-lede {
-  font-size: 1.1875rem;
-  line-height: 1.55;
+  font-size: 1.25rem;
+  line-height: 1.65;
   color: var(--craft-muted);
-  max-width: 38rem;
+  max-width: 44rem;
 }
 
-.craft-cards {
+a.home-lede-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-size: 1rem;
+  text-decoration: none;
+
+  &::after {
+    content: "\2192";
+    font-size: 1.0625rem;
+    line-height: 1;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// The course, in order -----------------------------------------------------
+
+// Each step is a full-width row rather than a card: the course is a sequence,
+// and a row keeps the order plain while leaving room for the step's title,
+// its description and the clusters inside it.
+// The list closes itself off at the bottom; each row rules off from the one
+// above it.
+.home-track {
+  border-bottom: 1px solid var(--craft-rule);
+}
+
+.home-step {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
-}
-
-@media (max-width: 991.98px) {
-  .craft-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 575.98px) {
-  .craft-cards {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-// The whole card is the link. A button inside would be a second interactive
-// target inside the first, and an anchor cannot nest inside an anchor.
-a.craft-card {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1.75rem;
-  background: var(--craft-card);
-  border: 1px solid var(--craft-rule);
-  border-radius: 4px;
+  grid-template-columns: 88px minmax(0, 1fr) 190px;
+  gap: 1.75rem;
+  align-items: center;
+  padding: 2.125rem 0;
+  border-top: 1px solid var(--craft-rule);
   text-decoration: none;
   color: var(--craft-body);
 
-  // There is no button: the whole card is the link, so the card itself is
-  // what answers the pointer.
-  &:hover {
-    border-color: var(--craft-accent);
-    background: var(--craft-accent-wash, #F2E3D8);
-    color: var(--craft-body);
-  }
+  &.unit-1 { --craft-accent: #B4532A; --craft-accent-dark: #8E3F1F; }
+  &.unit-2 { --craft-accent: #2F6B5E; --craft-accent-dark: #24524A; }
+  &.unit-3 { --craft-accent: #3C5A8A; --craft-accent-dark: #2E466C; }
+}
 
-  &:hover .craft-card-title {
+// The whole row is the link, so the row itself is what answers the pointer.
+a.home-step:hover {
+  color: var(--craft-body);
+
+  .home-step-title {
     color: var(--craft-accent-dark);
   }
 
-  // Each card carries its own accent, so a unit's colour is recognisable
-  // here before you have opened it.
-  &.unit-1 { --craft-accent: #B4532A; --craft-accent-dark: #8E3F1F; --craft-accent-wash: #F7EDE6; }
-  &.unit-2 { --craft-accent: #2F6B5E; --craft-accent-dark: #24524A; --craft-accent-wash: #EBF3F0; }
-  &.unit-3 { --craft-accent: #3C5A8A; --craft-accent-dark: #2E466C; --craft-accent-wash: #EDF1F7; }
+  .home-step-meta::after {
+    transform: translateX(3px);
+  }
 }
 
-.craft-card-num {
+.home-step-num {
   font-family: $headings-font-family;
-  font-size: 2.5rem;
+  font-size: 3.25rem;
   font-weight: 600;
   line-height: 1;
-  color: var(--craft-accent);
+  // Step 0 is setup rather than a unit, and carries no unit colour: the
+  // accent is set per row above, and unset here it falls back to grey.
+  color: var(--craft-accent, var(--craft-label));
 }
 
-.craft-card-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--craft-faint);
+// Step 0 is setup rather than a unit, so it carries no unit colour.
+.home-step:not([class*="unit-"]) {
+  .home-step-num,
+  .home-step-meta::after {
+    color: var(--craft-label);
+  }
 }
 
-.craft-card-title {
+.home-step-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5625rem;
+}
+
+.home-step-title {
   font-family: $headings-font-family;
-  font-size: 1.5625rem;
+  font-size: 1.9375rem;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.15;
   color: var(--craft-ink);
 }
 
-.craft-card-body {
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--craft-muted);
+.home-step-body {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--craft-body);
+  max-width: 39rem;
 }
 
-// Pushed to the bottom so cards in a row line their footers up, however much
-// text sits above.
-.craft-card-foot {
-  margin-top: auto;
-  padding-top: 1rem;
+// The clusters the unit is made of, named so the row says what is inside it
+// without being opened.
+.home-step-parts {
+  font-size: 0.875rem;
+  color: var(--craft-label);
+}
+
+.home-step-meta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: flex-end;
+  gap: 0.875rem;
+  font-size: 0.9375rem;
+  color: var(--craft-muted);
+
+  &::after {
+    content: "\2192";
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--craft-accent, var(--craft-label));
+    transition: transform 0.12s ease-out;
+  }
 }
 
-.craft-card-meta {
-  font-size: 0.8125rem;
-  color: var(--craft-faint);
+// A step that has no page yet still shows, so the shape of the whole course
+// is visible from the first week. It is not a link, so it gets no arrow.
+.home-step.home-step-later {
+  .home-step-num {
+    color: #B8B1A0;
+  }
+
+  .home-step-title,
+  .home-step-body {
+    color: var(--craft-faint);
+  }
+
+  .home-step-meta::after {
+    content: none;
+  }
+}
+
+.home-step-pill {
+  font-size: 0.875rem;
+  color: var(--craft-label);
+  border: 1px solid var(--craft-rule-strong);
+  border-radius: 99px;
+  padding: 0.375rem 0.875rem;
+}
+
+@media (max-width: 767.98px) {
+  .home-step {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 1rem 1.25rem;
+    padding: 1.75rem 0;
+  }
+
+  .home-step-num {
+    font-size: 2.25rem;
+  }
+
+  .home-step-title {
+    font-size: 1.5rem;
+  }
+
+  // Dropped under the text rather than squeezed beside it.
+  .home-step-meta {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 767.98px) {
+  body.page-home {
+    #title-block-header,
+    .home-lede,
+    h2,
+    .home-track {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+  }
+
+  .home-band-inner,
+  footer.footer .nav-footer {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}
+
+// What the course is like --------------------------------------------------
+
+// Three plain claims about the course. Full bleed, to break the run of paper.
+.home-band {
+  background: var(--craft-band);
+  border-top: 1px solid var(--craft-band-rule);
+  margin-top: 4.5rem;
+  padding: 4.5rem 0;
+}
+
+.home-band-inner {
+  max-width: $home-column;
+  margin: 0 auto;
+  padding: 0 $home-gutter;
+}
+
+.home-band-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3rem;
+}
+
+.home-point {
+  h3 {
+    font-family: $headings-font-family;
+    font-size: 1.6875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--craft-ink);
+    margin: 0 0 0.75rem;
+  }
+
+  p {
+    font-size: 1.09375rem;
+    line-height: 1.65;
+    color: var(--craft-body);
+    margin: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .home-band-points {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 // A page with no sidebar and no prev/next is a dead end without this.
@@ -549,4 +725,90 @@ a.back-home {
 
 .alpha-list ol li::marker {
   content: counter(list-item, lower-alpha) ") ";
+}
+
+// Site footer --------------------------------------------------------------
+
+// Quarto lays the footer out as one row of left / center / right. The design
+// wants two: the course and its links, then the copyright under a rule. The
+// centre slot is therefore pushed onto a line of its own.
+.nav-footer {
+  // Quarto gives this one the page background; the dark ground belongs to the
+  // whole strip, not to the margins either side of it.
+  background: var(--craft-footer-bg);
+  max-width: $home-column;
+  margin: 0 auto;
+  padding-top: 2.75rem;
+  padding-bottom: 2.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.875rem 3rem;
+  border-top: none;
+  font-size: 0.90625rem;
+}
+
+footer.footer .nav-footer {
+  padding-left: $home-gutter;
+  padding-right: $home-gutter;
+}
+
+.footer {
+  background: var(--craft-footer-bg);
+  color: var(--craft-footer-fg);
+  border-top: none;
+}
+
+.nav-footer-left {
+  flex: 1 1 auto;
+  text-align: left;
+  font-family: $headings-font-family;
+  font-size: 1.1875rem;
+  font-weight: 600;
+
+  a {
+    color: var(--craft-paper);
+    text-decoration: none;
+  }
+}
+
+.nav-footer-right {
+  flex: 0 0 auto;
+  text-align: right;
+  display: flex;
+  gap: 1.375rem;
+}
+
+.nav-footer-center {
+  order: 3;
+  flex: 1 1 100%;
+  text-align: left;
+  border-top: 1px solid var(--craft-footer-rule);
+  padding-top: 1.375rem;
+  font-size: 0.9375rem;
+  color: var(--craft-label);
+}
+
+.nav-footer p {
+  margin: 0;
+}
+
+.nav-footer a {
+  color: var(--craft-footer-fg);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--craft-paper);
+    text-decoration: underline;
+  }
+}
+
+.nav-footer-center a {
+  color: #A9A396;
+}
+
+@media (max-width: 575.98px) {
+  .nav-footer-right {
+    flex-wrap: wrap;
+  }
 }

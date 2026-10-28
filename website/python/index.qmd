@@ -1,3 +1,20 @@
 ---
 title: "Programming with Python"
 ---
+
+Python is a general-purpose programming language. Programs written in Python
+are easy to read and understand. Python has simple, beginner-friendly syntax.
+People in many fields, including science, engineering, astronomy, and biology,
+use Python to automate tasks, analyse data, and solve problems.
+
+![*Python*, [xkcd #353](https://xkcd.com/353/) by Randall Munroe, used under [CC BY-NC 2.5](https://creativecommons.org/licenses/by-nc/2.5/)](/images/xkcd-353-python.png){fig-alt="One stick figure asks another how he is flying. The flying figure says that he learned Python and typed import antigravity."}
+
+We'll start by learning how to run Python on your computer. We'll then work
+through carefully crafted, bite-sized, hands-on lessons. Each lesson explains
+one topic simply and ends with practice problems for you to try.
+
+By the end of this unit, you'll be comfortable using Python to read and write
+files, fetch data from APIs, and build command-line applications that automate
+tedious tasks.
+
+[Ready to get started?](using-python.qmd)

@@ -1,0 +1,34 @@
+---
+title: "About this course"
+toc: false
+sidebar: false
+page-navigation: false
+---
+
+The Craft of Computing is the first course for Information Sciences major and
+minor students at Azim Premji University. It is a hands-on exploration of
+computing: getting comfortable with the command line, learning Python, and
+using sensors and microcontrollers to interact with the world outside the
+screen.
+
+## Who this course is for
+
+This course is designed for absolute beginners. No prior programming experience
+or familiarity with technical tools is required. If you already have some
+experience, the course offers ideas and challenges that will deepen your
+understanding.
+
+The skills and habits you develop here provide a strong foundation for a
+lifetime of learning in computing.
+
+## How you will learn
+
+Each lesson focuses on one idea and explains it through examples you can try.
+Practice problems at the end give you a chance to put that idea to use. A short
+summary helps you return to the lesson later.
+
+## Instructor
+
+This course is designed and taught by [Anand Chitipothu](https://anandology.com/).
+
+The [schedule](overview/schedule.qmd) lists what is covered each week.

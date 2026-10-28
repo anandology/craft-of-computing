@@ -160,7 +160,8 @@ Defer details that do not help the current idea:
   first lesson about text values.
 - Floating-point precision does not belong in the first lesson about numeric
   values.
-- List mutation is not needed at this level.
+- List mutation waits until Modifying Lists, in the Working with Lists cluster.
+  Earlier lessons only warn about it.
 - Comments should be introduced when a program genuinely benefits from one,
   not as an isolated syntax lesson.
 - Defining functions comes after students have used functions, methods,
@@ -170,25 +171,28 @@ Defer details that do not help the current idea:
 
 Use this order unless the content gives a strong reason not to:
 
-1. Open with a concrete situation or limitation.
-2. State what the lesson gives the student.
+1. Open with the need in one sentence: something programs often have to do,
+   stated generally.
+2. Name the Python feature that meets it in the next sentence.
 3. Add `In this lesson, we'll learn how to:` with one to four outcomes.
-4. State the central idea in bold.
-5. Explain the idea through small, cumulative examples.
-6. Add a Practice section.
-7. Add an optional Quiz section only when it checks a useful distinction.
-8. End with a Summary table.
-9. End the summary with one idea to carry forward.
+4. Explain the idea through small, cumulative examples.
+5. Add a Practice section.
+6. Add an optional Quiz section only when it checks a useful distinction.
+7. End with a Summary: one sentence that states the lesson's rule, then a
+   table.
 
-The opening should help a student decide whether the lesson is relevant. Do
-not begin with a definition that has no motivating context.
+The opening should help a student decide whether the lesson is relevant. Keep
+it to two sentences. Do not begin with a bare definition. Do not build up to
+the feature with a scenario or with a limitation of earlier lessons.
 
-The central idea should be a rule that explains the examples, not a slogan.
-For example:
+Decide the central idea before writing. It should be a rule that explains the
+examples, not a slogan. For example:
 
 > A variable is a name that refers to a value.
 
-Each section should advance that idea. If a section needs a second central
+Do not print the central idea as a bold line under the list. It is stated
+once, as the sentence that opens the summary. Each section should advance that
+idea. If a section needs a second central
 idea, it probably belongs in another lesson.
 
 ## Sequencing concepts
@@ -248,9 +252,8 @@ understanding.
   appear once, then explain what it demonstrates.
 - Keep names descriptive. Use singular names for one element and plural names
   for collections, such as `language` and `languages`.
-- Avoid script filenames that shadow standard-library modules. In particular,
-  do not use `pwd.py`; Python has a module named `pwd`. Use `where.py` or
-  `cwd.py` instead.
+- Avoid script filenames that shadow standard-library modules a lesson
+  imports, such as `os.py` or `time.py`.
 
 Use executable `{python}` blocks when the rendered result is part of the
 lesson. Use static `python` blocks for code that students must predict, code
@@ -371,7 +374,14 @@ This boundary keeps early practice simple and makes verification meaningful.
 
 ## Summaries
 
-Every lesson ends with one summary table and one idea to carry forward.
+Every lesson ends with a summary: one sentence that states the lesson's rule,
+followed by one table. Do not label the sentence ("the one idea to carry
+forward"), and do not add a closing line after the table.
+
+Lessons written before October 2026 still have the earlier shape: a bold idea
+under the list, and a labelled closing line after the table. Do not copy that
+shape into new lessons. Convert an older lesson only when asked, and by reading
+it: in some lessons the bold line is the only place a term is defined.
 
 The table should:
 
@@ -385,8 +395,8 @@ The table should:
 Do not introduce a term in the summary. For example, introduce Unicode in the
 body before using `Unicode string` in a summary row.
 
-The carry-forward sentence should state the lesson's central idea in a form
-that the next lesson can rely on.
+The summary sentence should state the lesson's central idea in a form that the
+next lesson can rely on.
 
 ## Titles and filenames
 

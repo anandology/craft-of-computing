@@ -29,10 +29,19 @@ These lessons exist and are linked in the Unit 2 sidebar:
 | Functions, Methods, and Modules | Calling Functions | `functions.qmd` |
 | Functions, Methods, and Modules | Using Methods | `methods.qmd` |
 | Functions, Methods, and Modules | Using Modules | `modules.qmd` |
+| Making Decisions | The If Statement | `making-decisions/if-statement.qmd` |
+| Making Decisions | Boolean Expressions | `making-decisions/boolean-expressions.qmd` |
+| Making Decisions | Combining Boolean Expressions | `making-decisions/combining-boolean-expressions.qmd` |
 | Writing Programs | Writing Scripts | `writing-scripts.qmd` |
 | Writing Programs | Reading Files | `reading-files.qmd` |
 | Writing Programs | Command-Line Arguments | `command-line-arguments.qmd` |
 | Writing Programs | Word Count | `word-count.qmd` |
+| Writing Programs | The argparse Module | `argparse.qmd` |
+| Working with Dictionaries | Dictionaries | `dictionaries/dictionaries.qmd` |
+| Working with Dictionaries | Iterating over a Dictionary | `dictionaries/iterating.qmd` |
+| Working with Lists | Sorting by a Rule | `lists/sorting-by-a-rule.qmd` |
+| Working with Dictionaries | Lists of Records | `dictionaries/records.qmd` |
+| Working with Dictionaries | Reading JSON | `dictionaries/reading-json.qmd` |
 
 `python-basics.qmd` has deliberately not been changed. It remains linked after
 the new lessons and now duplicates much of their content. Decide when to unlink
@@ -56,14 +65,196 @@ owns the detailed workflow.
 2. Reading Files - complete draft
 3. Command-Line Arguments - complete draft
 4. Word Count - complete draft
+5. The argparse Module - draft for review
+
+### Making Decisions
+
+This cluster sits after Functions, Methods, and Modules and before String Art,
+so every later cluster can use `if`. Files live in `making-decisions/`.
+
+1. The If Statement - draft for review
+2. Boolean Expressions - draft for review
+3. Combining Boolean Expressions - draft for review
+
+### Working with Dictionaries
+
+A new cluster after Working with Lists, in `dictionaries/`.
+
+1. Dictionaries - draft for review. Covers creating, lookup, replacing and
+   adding, the two uses (record and lookup table), and missing keys with `in`
+   and `get()`.
+2. Iterating over a Dictionary - draft for review
+3. Lists of Records (`records.qmd`) - draft for review. A list of dicts
+   with a nested list (trains), picking a field, filtering, totals, and
+   sorting records with a key function.
+4. Reading JSON (`reading-json.qmd`) - draft for review. JSON-to-Python
+   mapping, `json.loads()`, `json.load()`, `JSONDecodeError`, and
+   `json.dumps()` with `indent`. `json.dump()` is left out, because writing
+   files is not taught.
+5. Counting with a Dictionary - not started. Builds a dictionary in a loop,
+   with word frequency as the main example and a script as the last section.
+   Sorting by count can now use `key=`.
+
+Left out: `setdefault()`, `update()`, `dict()` and dictionary comprehensions.
+
+`key=` is taught in Sorting by a Rule (`lists/sorting-by-a-rule.qmd`), after
+Sorting Lists: `len`, a `my_len()` that prints its calls, `int`, then a
+`lowercase()` function. `my_len()` introduces `return` locally, because no
+earlier lesson teaches it. Both sorting lessons are at the end of Working with
+Lists, so Sorting by a Rule can use a list comprehension. List Comprehensions
+no longer uses `sorted()` in `total.py`.
+`str.lower` is deliberately not used as a key, to avoid confusion between a
+method and a module-like name.
+
+### Writing Modules
+
+A cluster after Working with Dictionaries, in `writing-modules/`. Adapted from
+<https://notes.pipal.in/2024/zeomega-python/writing-custom-modules.html>,
+without the type hints. Assumes `def` and `return` are already taught. Keep
+the reference's prose and examples; changes beyond the house lesson shape
+need approval.
+
+1. Writing Your Own Modules (`own-modules.qmd`) - draft for review. A file is
+   a module, an import runs it once, `importlib.reload()`.
+2. Running a Module as a Script (`module-as-script.qmd`) - draft for review. `__name__`,
+   `if __name__ == "__main__":` and `main()`.
+3. Docstrings - not started. `help()`, function and module docstrings. No
+   `>>>` examples, so doctest is not implied.
+
+### Testing Programs
+
+A one-lesson cluster after Writing Modules, in `testing/`. Adapted from
+<https://notes.pipal.in/2024/zeomega-python/testing.html>.
+
+1. Testing with pytest - not started. `assert`, `test_` functions, running
+   `pytest`, and a separate `test_*.py` file as the last section. Needs pytest
+   in the students' setup; not yet checked.
+
+### Working with APIs
+
+A cluster in `api/`, before students start Rajdhani. It needs only
+dictionaries, lists of records and Reading JSON, so it could also sit right
+after Working with Dictionaries. Adapted from
+<https://notes.pipal.in/2024/zeomega-sqlalchemy/working-with-apis.html>.
+
+Every example uses two of our own servers: figlet (`figlet.apps.pipal.in`) and
+the numbers API (`numbers.apps.pipal.in`, source in `~/numbers-api`). Changes
+needed on the numbers API are listed in `~/numbers-api/TASKS.md`. Rajdhani
+endpoints are not used, because Rajdhani is the exercise that comes after.
+`requests` is installed by the craft setup since v21.
+
+1. Fetching from the Web (`fetching.qmd`) - draft for review.
+   `requests.get()` on figlet with the text written into the URL by hand,
+   `.text` and `.status_code`, a 404 that returns an error page instead of
+   raising, and the figlet web page against the API by `Content-Type`.
+   The same request with `curl` and `curl -v`, reading the `>` request and
+   `<` response lines. curl was used in class but not in the notes, so the
+   lesson introduces it. The TLS lines of `curl -v` are elided with `...`.
+   Outputs for the figlet API are from the local `figlet`, and the 200
+   response headers in `curl -v` are modelled on its real 404, because the
+   API was down when the lesson was written. Re-run them once it is up.
+2. Query Parameters (`query-parameters.qmd`) - draft for review. Outputs are
+   from figlet-web and numbers-api run locally, since both servers were down.
+   `text` and `font`
+   on figlet, then `params=` so requests builds the URL and encodes `&`, `#` and `+`.
+   `response.url` shows the URL it built. `/fibs` with `a`, `b` and `n` as
+   plain text. Practice: `/random` with `min`, `max` and `count`; it returns
+   different numbers on each call.
+   Done when students can call an endpoint with several params from a dict
+   and explain the URL requests built.
+3. JSON APIs (`json-apis.qmd`) - draft for review. `/fibs?format=json` against the
+   plain text from the same endpoint, `response.json()`, and using the result
+   as a dict and a list. Builds on Reading JSON and does not reteach
+   `json.loads()` or `json.dumps()`.
+   Done when students can call a JSON API and use the result without
+   touching the raw text.
+4. Sending Data with POST (`post-requests.qmd`) - draft for review. Data is sent in
+   the body of a POST request.
+   `/product` with `json={"numbers": [...]}` is the main example, `/stats`
+   returns a dict, and `/range` takes several named fields. A missing field
+   gives a 400 with an error message; `requests.get()` on a POST-only
+   endpoint gives a 405. Practice: `/sum`, `/average` and `/sort`.
+   Done when students can send a POST with a JSON body and explain how a
+   body differs from query params.
+5. Authentication (`authentication.qmd`) - draft for review. `/me` without
+   a token gives a 401. The token is sent in an
+   `Authorization: Bearer <token>` header, written in the code; reading it
+   from an environment variable was dropped to keep the focus on APIs. `/me`
+   shows who the token belongs to.
+   Everyone uses the same `/store` URLs and gets their own values, because
+   the token says who they are. POST creates a value, PUT updates it and
+   DELETE removes it.
+   Done when students can create, update and delete values in their own
+   store and explain why a request without a token is refused.
+
+Left out: other auth schemes (basic auth, API keys in the URL, OAuth),
+sessions and cookies, `requests.Session`, and retries.
+
+Lessons 3-5 outputs are from numbers-api run locally, with the uncommitted
+token and store changes; re-run them once it is deployed.
 
 ### Later
 
-1. Conditionals
-2. Defining Functions
+1. Defining Functions
 
-Conditionals are motivated by handling missing command-line arguments.
 Defining Functions begins function problems and returned-value verification.
+
+## The If Statement
+
+Covers `if`, `else` and `elif`, the indented block, and an `if` inside a
+function and inside a loop.
+
+It depends on a lesson that teaches `def`, to be added before this cluster.
+Until then, `def` is first taught in String Art, which comes after it.
+
+## Boolean Expressions
+
+One idea: a boolean expression is an expression whose value is `True` or
+`False`. A condition is a boolean expression used in an `if` statement.
+Covers `bool`, then sections by what is asked about: numbers (a table of the
+six comparison operators), strings (`==`, `in`, `startswith()`,
+`endswith()`), lists (`in`), and files (`os.path.exists()`,
+`os.path.isfile()`).
+
+The `os.path` examples are static blocks from a real run, because their output
+depends on the directory. Truthiness, `is`, chained comparisons and `not in`
+are left out.
+
+## Combining Boolean Expressions
+
+`and`, `or` and `not`, including `not in`, the mistake
+`day == "Saturday" or "Sunday"`, and parentheses when `and` and `or` are mixed.
+
+## The argparse Module
+
+One idea: a script declares its arguments with `add_argument()`, and
+`parse_args()` reads the command line, converts and checks the values, and
+provides the help and the error messages. Covers a positional argument, an
+option with `type=int` and `default`, a flag with `action="store_true"`, and
+`description=` and `help=`.
+
+The running example is `hello.py`. Real tools were tried first, but each
+needed something taught later: slicing for `head.py`, a counter for `grep.py`.
+The real tools are in practice: `square.py`, `ls.py` with `-e`, and `grep.py`
+with `-i` and `-c`. Two of them carry a hint for something not taught yet: a
+default of `""` for the `ls.py` option, and `print(line, end="")` in
+`grep.py`.
+
+The lesson defines keyword arguments in one sentence, because `type=int`
+needs the term. Sorting Lists, which comes later in the sidebar, defines the
+term again. Decide which lesson owns the definition.
+
+`main()` and `if __name__ == "__main__":` are left out. They belong with a
+lesson on importing your own modules. `choices`, `nargs` and subcommands are
+left out too.
+
+Help output was checked on Python 3.10 and 3.12, which agree. Python 3.13
+prints an option with a value differently, as `-r, --repeat REPEAT`.
+
+This lesson replaces the follow-up once planned for
+`command-line-arguments.qmd`, a section that checks `len(sys.argv) < 2` and
+displays a usage message. The parser does that check. That lesson still says
+"A later lesson will introduce a way to check for this case".
 
 ## Calling Functions
 
@@ -104,24 +295,27 @@ This prepares students to count words without defining a function.
 
 ## Using Modules
 
-Introduce `import` and qualified names. Use the `math` module so every rendered
-result is deterministic:
+Introduce `import` and qualified names with the `os` and `time` modules:
 
 ```python
-import math
-math.sqrt(81)
+import os
+os.getcwd()
+os.listdir()
 ```
 
 ```python
-math.ceil(3.2)
+import time
+time.asctime()
 ```
 
-```python
-math.pi
-```
+Its practice is scripts: `pwd.py`, `date.py` and `ls.py`. It also shows that a
+script must import the modules it uses; an import in the notebook does not
+reach the script.
 
-Avoid naming a script `pwd.py`; Python has a standard-library module named
-`pwd`. Use `where.py` or `cwd.py` instead.
+These results depend on the machine and the time, so the examples are static
+`python` blocks with output from a real run, written for `/home/anand/python`.
+Avoid modules that need dictionaries, such as `os.environ`, until dictionaries
+are taught. Avoid `os.getlogin()`; it fails in most Linux terminals.
 
 ## Writing Scripts
 
@@ -214,5 +408,6 @@ environment before treating either failure as a lesson-source defect.
 
 ## Next step
 
-Add a Sigma-backed script problem, then draft **Conditionals** using a missing
-command-line argument as its motivating case.
+Review the three **Making Decisions** lessons and the two **Working with
+Dictionaries** drafts. A Sigma-backed script
+problem is still to be added.

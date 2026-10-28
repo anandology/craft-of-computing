@@ -4,16 +4,17 @@ unit: 2
 cluster: "Functions, Methods, and Modules"
 ---
 
-A circle calculation needs the value pi. Writing its decimal digits each time
-does not show what the value means. Python's standard library keeps pi and
-related functions in a module that a program can import when it needs them.
+A program may need to know which directory it is running in, which files are
+there, or what the time is. Python does not provide these as built-in
+functions. Python's standard library keeps them in modules that a program can
+import when it needs them.
 
 In this lesson, we'll learn how to:
 
 * import a module
 * use a qualified name
 * call a function from a module
-* use a value from a module
+* import a module in a script
 
 **An `import` statement makes a module available. A qualified name uses the
 module's name, a dot, and a name from that module.**
@@ -21,125 +22,148 @@ module's name, a dot, and a name from that module.**
 ## Importing a module
 
 The Python standard library is a collection of modules included with Python.
-The `math` module provides functions and values for mathematical work.
+The `os` module provides functions for working with the operating system, such
+as finding the current directory and the files in it.
 
 Use an `import` statement to make the module available:
 
-```{python}
-import math
+```python
+import os
 ```
 
-The statement does not display anything. It makes the name `math` refer to the
+The statement does not display anything. It makes the name `os` refer to the
 module so that later code can use the names inside it.
 
 ## Qualified names
 
-The `math` module contains a function named `sqrt()`. Use the qualified name
-`math.sqrt` to distinguish it from names in other modules or in the program:
+The `os` module contains a function named `getcwd()`, short for "get current
+working directory". Use the qualified name `os.getcwd` to call it:
 
-```{python}
-math.sqrt(81)
+```python
+os.getcwd()
 ```
 
-The dot in `math.sqrt` connects the module name to a name inside that module.
-The parentheses then call the function with `81` as its argument. The function
-returns the floating-point number `9.0`.
-
-The module name remains part of every qualified name:
-
-```{python}
-math.ceil(3.2)
+```text
+'/home/anand/python'
 ```
 
-The `ceil()` function returns the smallest integer greater than or equal to its
-argument. Here it returns `4`.
+The dot in `os.getcwd` connects the module name to a name inside that module.
+The parentheses then call the function. It takes no arguments and returns the
+directory as a string. A notebook runs in the directory that contains it, so
+your result shows where your notebook is.
 
-## Values in a module
+The module name remains part of every qualified name. The `listdir()` function
+returns the names of the files in the current directory:
 
-A module can contain values as well as functions. The `math.pi` name refers to
-an approximation of the number pi:
-
-```{python}
-math.pi
+```python
+os.listdir()
 ```
 
-There are no parentheses because `math.pi` is a value, not a function. It can
-be used in an expression:
-
-```{python}
-radius = 5
-circumference = 2 * math.pi * radius
-circumference
+```text
+['modules.ipynb', 'average.py', 'greeting.py', 'hello.py']
 ```
 
-The qualified name states where `pi` comes from. Anyone reading the expression
-can see that the value belongs to the `math` module.
+The result is a list of strings, in no particular order. Your list will show
+the files in your own directory.
+
+## Another module
+
+The `time` module works with dates and times. Its `asctime()` function returns
+the current date and time as a string:
+
+```python
+import time
+time.asctime()
+```
+
+```text
+'Mon Oct  5 10:30:00 2026'
+```
+
+Each module is imported separately. Importing `os` does not make `time`
+available.
+
+## Modules in a script
+
+A script runs as a separate program, so it does not share names with the
+notebook. A module imported in the notebook is not available to the script.
+This script uses `os` without importing it:
+
+```python
+%%file count.py
+print(len(os.listdir()))
+```
+
+```python
+!python count.py
+```
+
+```text
+Traceback (most recent call last):
+  File "/home/anand/python/count.py", line 1, in <module>
+    print(len(os.listdir()))
+NameError: name 'os' is not defined
+```
+
+The `NameError` reports that the name `os` has no value in the script. Put the
+`import` statement in the script, before the line that uses the module:
+
+```python
+%%file count.py
+import os
+print(len(os.listdir()))
+```
+
+```python
+!python count.py
+```
+
+```text
+5
+```
+
+The directory now holds five files, because `count.py` is one of them.
 
 ## Practice
 
 ### Problem 1
 
-What will be displayed when this code is run in a notebook cell? Write down
-your answer, then run the cell and check it.
+Use a `%%file` cell to create a script named `pwd.py` that displays the current
+working directory. Run it with `!python pwd.py`. It should display your
+directory, like this:
 
-```python
-import math
-math.sqrt(100)
+```text
+/home/anand/python
 ```
 
 ### Problem 2
 
-What will be displayed when this code is run in a notebook cell? Write down
-your answer, then run the cell and check it.
+Use a `%%file` cell to create a script named `date.py` that displays the
+current date and time. Run it with `!python date.py`. It should display a line
+like this:
 
-```python
-import math
-math.ceil(7.1)
+```text
+Mon Oct  5 10:30:00 2026
 ```
 
 ### Problem 3
 
-What will be displayed when this code is run in a notebook cell? Write down
-your answer, then run the cell and check it.
-
-```python
-import math
-math.pi * 2
-```
-
-### Problem 4
-
-In this code, which qualified names refer to functions? Which qualified name
-refers to a floating-point number?
-
-```python
-import math
-math.sqrt
-math.ceil
-math.pi
-```
-
-### Problem 5
-
-Add an expression that uses `radius` and `math.pi` to calculate the area of the
-circle. The area of a circle is pi times its radius squared.
-
-```python
-import math
-radius = 4
-```
+Use a `%%file` cell to create a script named `ls.py` that displays the name of
+each file in the current directory, one per line. Run it with `!python ls.py`
+and compare its output with the files shown in the JupyterLab file browser.
 
 ## Summary
 
 | Form or rule | Meaning |
 |--------------|---------|
-| `import math` | makes the `math` module available |
-| `math.sqrt` | a qualified name for the `sqrt` function in `math` |
-| `math.sqrt(81)` | calls the function and returns `9.0` |
-| `math.ceil(3.2)` | calls the function and returns `4` |
-| `math.pi` | refers to a value in the `math` module |
-| the dot in `math.sqrt` | connects a module name to a name inside that module |
-| parentheses after `math.sqrt` | call the function named by `math.sqrt` |
+| `import os` | makes the `os` module available |
+| `os.getcwd` | a qualified name for the `getcwd` function in `os` |
+| `os.getcwd()` | returns the current working directory as a string |
+| `os.listdir()` | returns a list of the file names in the current directory |
+| `time.asctime()` | returns the current date and time as a string |
+| the dot in `os.getcwd` | connects a module name to a name inside that module |
+| `import` in a script | the script must import every module it uses |
 
-And the one idea to carry forward: importing a module makes its names
-available. Qualified names show which module provides each function or value.
+And the one idea to carry forward: the standard library reaches beyond the
+built-in functions, but a program gets each module only by importing it in the
+same file that uses it.

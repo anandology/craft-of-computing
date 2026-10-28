@@ -16,19 +16,19 @@
 | Week 8 | Wed | Sep 23, 2026 | 8:30 am - 10:30 am | Class / Lab session | Functions & Modules |
 | Mid-term Break | Mon | Sep 28, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | [holiday]{.holiday} |  |
 | Mid-term Break | Wed | Sep 30, 2026 | 8:30 am - 10:30 am | [holiday]{.holiday} |  |
-| Week 9 | Mon | Oct 5, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Working with Files<br>Writing Command-line applications<br>Activity Report 3 (Due date: Wed Oct 7 21:00) |
-| Week 9 | Wed | Oct 7, 2026 | 8:30 am - 10:30 am | Class / Lab session |  |
-| Week 10 | Mon | Oct 12, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Dictionaries<br>Working with APIs<br>{'Group project 2 (Due date': 'Oct 17 22:00)'} |
-| Week 10 | Wed | Oct 14, 2026 | 8:30 am - 10:30 am | Class / Lab session | Group Project 2 |
-| Week 11 | Mon | Oct 19, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | In-class test (Units 1 and 2)<br>Group project (Unit 2) |
+| Week 9 | Mon | Oct 5, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Working with Files<br>Writing Command-line applications<br>[Class notes](../class-notes/working-with-files.ipynb)<br>Activity Report 3 (Due date: Wed Oct 7 21:00) |
+| Week 9 | Wed | Oct 7, 2026 | 8:30 am - 10:30 am | Class / Lab session | [Class notes](../class-notes/working-with-lists.ipynb) |
+| Week 10 | Mon | Oct 12, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Dictionaries<br>[Class notes](../class-notes/working-with-data.ipynb)<br>{'Group project 2 (Due date': 'Oct 17 22:00)'} |
+| Week 10 | Wed | Oct 14, 2026 | 8:30 am - 10:30 am | Class / Lab session | [Class notes](../class-notes/writing-cli.ipynb) |
+| Week 11 | Mon | Oct 19, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Writing Modules<br>[Class notes](../class-notes/writing-modules.ipynb)<br>Group project (Unit 2) |
 | Week 11 | Wed | Oct 21, 2026 |  | [Holiday - no class]{.holiday} |  |
-| Week 12 | Mon | Oct 26, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Basics of electronic circuits<br>Introduction to ESP32 & Micro Python (Session 1) |
-| Week 12 | Wed | Oct 28, 2026 | 8:30 am - 10:30 am | Class / Lab session | Introduction to ESP32 & Micro Python (Session 2) |
-| Week 13 | Mon | Nov 02, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Activity Report 5 |
-| Week 13 | Wed | Nov 04, 2026 | 8:30 am - 10:30 am | Class / Lab session | Working with Sensors (Session 1) |
-| Week 14 | Mon | Nov 09, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Working with Sensors (Session 2)<br>Activity Report 6 |
-| Week 14 | Wed | Nov 11, 2026 | 8:30 am - 10:30 am | Class / Lab session | In-class Reflection |
+| Week 12 | Mon | Oct 26, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Working with APIs<br>Group Project 2 |
+| Week 12 | Wed | Oct 28, 2026 | 8:30 am - 10:30 am | Class / Lab session | Group Project 2 |
+| Week 13 | Mon | Nov 02, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Basics of electronic circuits<br>Introduction to ESP32 & Micropython<br>Activity Report 4 |
+| Week 13 | Wed | Nov 04, 2026 | 8:30 am - 10:30 am | Class / Lab session | In-class test (Units 1 and 2) |
+| Week 14 | Mon | Nov 09, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Introduction to ESP32 & Micropython (Session 2)<br>Working with Sensors (Session 1)<br>Activity Report 5 |
+| Week 14 | Wed | Nov 11, 2026 | 8:30 am - 10:30 am | Class / Lab session | Working with Sensors (Session 2) |
 | Assessment Week 1 | Mon | Nov 16, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | [Class / Lab session]{.holiday} |  |
 | Assessment Week 1 | Wed | Nov 18, 2026 | 8:30 am - 10:30 am | [Class / Lab session]{.holiday} | [] |
-| Assessment Week 2 | Mon | Nov 23, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Group project (Unit 3) |
+| Assessment Week 2 | Mon | Nov 23, 2026 | 8:30 am - 10:30 am<br>10:40 am - 12:30 pm | Class / Lab session | Group project (Unit 3)<br>In-class Reflection |
 | Assessment Week 2 | Wed | Nov 25, 2026 | 8:30 am - 10:30 am | Class / Lab session | Group project (Unit 3) (contd.) |

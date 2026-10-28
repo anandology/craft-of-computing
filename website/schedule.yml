@@ -193,6 +193,7 @@
   topics:
     - Working with Files 
     - Writing Command-line applications
+    - "[Class notes](../class-notes/working-with-files.ipynb)"
     - "Activity Report 3 (Due date: Wed Oct 7 21:00)"
 
 - week: Week 9
@@ -202,6 +203,7 @@
     - "8:30 am - 10:30 am"
   session: Class / Lab session
   topics:
+    - "[Class notes](../class-notes/working-with-lists.ipynb)"
 
 - week: Week 10
   day: Mon
@@ -212,7 +214,7 @@
   session: Class / Lab session
   topics:
     - Dictionaries
-    - Working with APIs
+    - "[Class notes](../class-notes/working-with-data.ipynb)"
     - Group project 2 (Due date: Oct 17 22:00)
 
 - week: Week 10
@@ -222,7 +224,7 @@
     - "8:30 am - 10:30 am"
   session: Class / Lab session
   topics:
-    - Group Project 2
+    - "[Class notes](../class-notes/writing-cli.ipynb)"
 
 - week: Week 11
   day: Mon
@@ -232,7 +234,8 @@
     - "10:40 am - 12:30 pm"
   session: Class / Lab session
   topics:
-    - In-class test (Units 1 and 2)
+    - Writing Modules
+    - "[Class notes](../class-notes/writing-modules.ipynb)"
     - Group project (Unit 2)
 
 - week: Week 11
@@ -252,8 +255,8 @@
     - "10:40 am - 12:30 pm"
   session: Class / Lab session
   topics:
-    - Basics of electronic circuits
-    - Introduction to ESP32 & Micro Python (Session 1)
+    - Working with APIs
+    - Group Project 2
 
 - week: Week 12
   day: Wed
@@ -262,7 +265,7 @@
     - "8:30 am - 10:30 am"
   session: Class / Lab session
   topics:
-    - Introduction to ESP32 & Micro Python (Session 2)
+    - Group Project 2
 
 - week: Week 13
   day: Mon
@@ -272,7 +275,9 @@
     - "10:40 am - 12:30 pm"
   session: Class / Lab session
   topics:
-    - Activity Report 5
+    - Basics of electronic circuits
+    - Introduction to ESP32 & Micropython
+    - Activity Report 4
 
 - week: Week 13
   day: Wed
@@ -281,7 +286,7 @@
     - "8:30 am - 10:30 am"
   session: Class / Lab session
   topics:
-    - Working with Sensors (Session 1)
+    - In-class test (Units 1 and 2)
 
 - week: Week 14
   day: Mon
@@ -291,8 +296,9 @@
     - "10:40 am - 12:30 pm"
   session: Class / Lab session
   topics:
-    - Working with Sensors (Session 2)
-    - Activity Report 6
+    - Introduction to ESP32 & Micropython (Session 2)
+    - Working with Sensors (Session 1)
+    - Activity Report 5
 
 - week: Week 14
   day: Wed
@@ -301,7 +307,7 @@
     - "8:30 am - 10:30 am"
   session: Class / Lab session
   topics:
-    - In-class Reflection
+    - Working with Sensors (Session 2)
 
 - week: Assessment Week 1
   day: Mon
@@ -332,6 +338,7 @@
   session: Class / Lab session
   topics:
     - Group project (Unit 3)
+    - In-class Reflection
 
 - week: Assessment Week 2
   day: Wed

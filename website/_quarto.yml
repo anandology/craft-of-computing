@@ -199,6 +199,13 @@ website:
           contents:
             - href: python/writing-modules/own-modules.qmd
             - href: python/writing-modules/module-as-script.qmd
+        - section: "Working with APIs"
+          contents:
+            - href: python/api/fetching.qmd
+            - href: python/api/query-parameters.qmd
+            - href: python/api/json-apis.qmd
+            - href: python/api/post-requests.qmd
+            - href: python/api/authentication.qmd
         - section: "Cookbook"
           contents:
             - href: python/cookbook/formatting-strings.qmd
