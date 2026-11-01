@@ -15,8 +15,8 @@ names and numbers of each one.
 The diagram labels each pin with two numbers:
 
 - **The physical pin number**, in the circle. It is the pin's position on the
-  board. Pins 1 to 12 run down the left edge, and pins 13 to 28 run up the
-  right edge.
+  board. Pins 1 to 12 run up the right edge, and pins 13 to 28 run down the
+  left edge.
 - **The GPIO number**, in the blue label, such as GPIO14. We'll see what it
   means in a moment.
 
