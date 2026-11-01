@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="660" viewBox="0 0 460 660" role="img" aria-label="A resistor: a tan body with coloured bands, and a wire leg at each end. Either leg can go either way. Below, the circuit symbol for a resistor: a zigzag line." font-family="'IBM Plex Sans', system-ui, sans-serif">
+<rect x="0.5" y="0.5" width="459" height="659" rx="8" fill="#F5F1E8" stroke="#DFD8C8"/>
+<!-- legs -->
+<line x1="200" y1="60" x2="200" y2="170" stroke="#8C9096" stroke-width="5" stroke-linecap="round"/>
+<line x1="200" y1="350" x2="200" y2="470" stroke="#8C9096" stroke-width="5" stroke-linecap="round"/>
+<!-- body -->
+<path d="M176 180 Q176 160 200 160 Q224 160 224 180 V340 Q224 360 200 360 Q176 360 176 340 Z" fill="#D9B98A" stroke="#9C7F52" stroke-width="2"/>
+<!-- bands: red, red, brown, gold -->
+<rect x="176" y="188" width="48" height="14" fill="#C8342B"/>
+<rect x="176" y="216" width="48" height="14" fill="#C8342B"/>
+<rect x="176" y="244" width="48" height="14" fill="#7A4A25"/>
+<rect x="176" y="316" width="48" height="12" fill="#C9A13B"/>
+<!-- labels -->
+<line x1="230" y1="223" x2="262" y2="223" stroke="#3C5A8A" stroke-width="1.6"/>
+<text x="268" y="221" font-size="22" fill="#1A1916" font-weight="600">Colour bands</text>
+<text x="268" y="245" font-size="17" fill="#8A8270">show its value</text>
+<text x="215" y="440" font-size="22" fill="#1A1916" font-weight="600">No + or −</text>
+<text x="215" y="464" font-size="17" fill="#8A8270">either way round</text>
+<!-- symbol -->
+<line x1="24" y1="520" x2="436" y2="520" stroke="#DFD8C8" stroke-width="1.5"/>
+<text x="24" y="550" font-size="14" letter-spacing="1.5" fill="#8A8270">SYMBOL</text>
+<polyline points="150,600 180,600 188,586 204,614 220,586 236,614 252,586 268,614 276,600 310,600" stroke="#1A1916" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

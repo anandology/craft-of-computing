@@ -4,9 +4,105 @@ unit: 3
 cluster: "Prototyping on a Breadboard"
 ---
 
-::: {.callout-note}
-Draft outline. This lesson will cover:
+To light an LED, we need a complete path from a power supply through the LED
+and a resistor, and back to the supply. A battery or another low-voltage
+**power source** provides the positive and negative terminals for this circuit.
 
-- Using the board only as a power source: 3.3V → resistor → LED → GND
-- No program is involved: the 3.3V pin is on whenever the board has power
+In this chapter, we'll learn how to:
+
+- read a circuit diagram for an LED and resistor
+- build the circuit on a breadboard
+- connect a power source and light the LED
+
+## From a layout to a circuit diagram
+
+Here is the breadboard example we saw earlier. The red and black wires
+connect the power source to the rails. The blue and green jumper wires
+connect those rails to the LED and resistor.
+
+![An LED and resistor wired on a breadboard, with a 5 V source connected to the lower power rails.](../images/breadboard-led.png)
+
+This picture shows a **5 V** power source. Its positive terminal connects
+to the `+` rail, and its negative terminal connects to the `−` rail.
+
+A **circuit diagram**, also called a **schematic**, shows the electrical
+connections rather than the physical positions of the parts. Here is the
+same circuit without the breadboard:
+
+![Circuit diagram: positive supply to LED anode, LED cathode through a resistor to ground.](../images/led-circuit.svg)
+
+The straight lines represent electrical connections. A line can stand for a
+wire, a breadboard strip, or both. The LED symbol has a bar on its cathode
+side; the two arrows pointing away represent the light it emits. The
+zigzag represents the resistor. The ground symbol marks the connection
+back to the power source's negative terminal, not a separate component we
+need to add. Here, we use that terminal as **ground** (`GND`), the circuit's
+voltage reference.
+
+Follow the path from left to right: supply positive → LED anode → LED
+cathode → resistor → ground. There is only one path, so the LED and resistor
+are in series. In this circuit, the resistor comes after the LED, just as
+it does in the breadboard picture.
+
+## Wiring the breadboard
+
+Use a small red indicator LED, a **330 Ω resistor**, and jumper wires. This
+resistor value is suitable for a typical small red LED with the 5 V supply
+shown here.
+
+::: {.callout-warning}
+Disconnect the power source before adding or moving wires. Never connect
+its positive and negative terminals directly: that is a **short circuit**,
+a path that can draw too much current and heat the wires or damage the
+source. Keep the resistor in series with the LED.
 :::
+
+Use the labels in the breadboard picture to place the parts:
+
+1. Put the LED's **anode** (longer leg) in `e9` and its **cathode** (shorter
+   leg) in `e11`.
+2. Put one end of the resistor in `d11` and the other in `d14`. The strip
+   connecting `d11` to `e11` joins the resistor to the LED's cathode.
+3. Connect the lower `+` rail to `a9` with a jumper wire, shown in blue.
+   The strip connecting `a9` to `e9` joins the rail to the LED's anode.
+4. Connect `a14` to the lower `−` rail with a jumper wire, shown in green.
+   The strip connecting `d14` to `a14` joins the resistor to that rail.
+5. Prepare a wire from the lower `+` rail to the power source's positive
+   terminal and another from the lower `−` rail to its negative terminal.
+   Leave the power source disconnected while checking the wiring.
+
+Before connecting the power source, trace the whole path once:
+
+```text
+Source + → + rail → LED anode → LED cathode → resistor → − rail → source −
+```
+
+The LED's legs must be in separate groups of holes. The resistor's ends
+must also be in separate groups, so that no metal strip bypasses it.
+
+## Powering the LED
+
+Connect the power source's positive terminal to the `+` rail and its
+negative terminal to the `−` rail. The LED should light and stay on until
+we disconnect the source. No program is involved: the power source supplies
+the current through the LED and resistor.
+
+If the LED stays dark, disconnect the power source before checking the circuit. Check that
+the anode faces the `+` rail, that the resistor shares a strip with the
+cathode, and that both supply wires reach the rails used by the jumpers.
+On a board with split power rails, the supply wire and its jumper must use
+the same connected section, or the sections need a wire joining them.
+
+## Summary
+
+An LED lights when it has a complete path from the power source's positive
+terminal through the LED and a series resistor to its negative terminal.
+
+| Part or connection | Role in this circuit |
+|---|---|
+| Source positive → `+` rail | Connects the power source's positive terminal to the breadboard. |
+| `+` rail → LED anode | Connects the positive supply to the LED's longer leg. |
+| LED cathode → resistor | Connects the LED's shorter leg to the current-limiting resistor. |
+| Resistor → `−` rail → source negative | Completes the path back to the power source. |
+| Circuit diagram | Shows electrical connections; physical positions and wire colours can differ. |
+| Changing connections | Disconnect the source first; keep the resistor in series and never join the source's terminals directly. |

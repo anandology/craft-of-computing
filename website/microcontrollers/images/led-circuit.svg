@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="310" viewBox="0 0 900 310" role="img" aria-labelledby="title desc" font-family="'IBM Plex Sans', system-ui, sans-serif">
+  <title id="title">An LED and resistor in series</title>
+  <desc id="desc">The positive terminal of a 5 volt power source connects to the LED's anode. Its cathode connects through a resistor to the source's negative terminal, labelled ground. Two arrows pointing away from the LED represent light.</desc>
+  <rect x="1" y="1" width="898" height="308" rx="10" fill="#f5f1e8" stroke="#dfd8c8"/>
+  <g stroke="#1a1916" stroke-width="3" fill="none" stroke-linejoin="round">
+    <path d="M95 160 H300 M345 160 H525 M625 160 H790 V200"/>
+    <circle cx="95" cy="160" r="5" fill="#1a1916"/>
+    <path d="M300 138 L345 160 L300 182 Z"/>
+    <path d="M345 135 V185"/>
+    <path d="M525 160 L535 145 L551 175 L567 145 L583 175 L599 145 L615 175 L625 160"/>
+    <path d="M766 200 H814 M774 211 H806 M782 222 H798"/>
+  </g>
+  <g stroke="#9e3328" stroke-width="2.5" fill="none">
+    <path d="M326 122 L347 101"/>
+    <path d="M346 132 L367 111"/>
+  </g>
+  <g fill="#9e3328">
+    <path d="M353 95 L340 99 L349 108 Z"/>
+    <path d="M373 105 L360 109 L369 118 Z"/>
+  </g>
+  <g fill="#1a1916" text-anchor="middle" font-size="20">
+    <text x="95" y="123" font-weight="600">Supply +</text>
+    <text x="323" y="72" font-weight="600">LED</text>
+    <text x="280" y="215" font-size="17">Anode</text>
+    <text x="377" y="215" font-size="17">Cathode</text>
+    <text x="575" y="110" font-weight="600">Resistor</text>
+    <text x="790" y="259" font-weight="600">GND (source −)</text>
+    <text x="450" y="285" font-size="17">A 5 V power source supplies this circuit.</text>
+  </g>
+</svg>
