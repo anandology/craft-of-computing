@@ -4,9 +4,131 @@ unit: 3
 cluster: "Programming the Board"
 ---
 
-::: {.callout-note}
-Draft outline. This lesson will cover:
+To program a microcontroller, we need software on the laptop that can talk to
+the board. We use Thonny, an Integrated Development Environment (IDE) for
+Python.
 
-- Installing Thonny on Windows, Linux and Mac
-- Connecting Thonny to the board
+In this chapter, we'll learn how to:
+
+- install Thonny on Windows, Linux or macOS
+- check that Thonny runs Python
+
+## What Thonny does
+
+Thonny lets us:
+
+- write and edit Python programs
+- run Python commands one at a time, in its shell
+- install MicroPython on the board
+- copy programs to the board
+- run programs on the board
+
+Install it using the section for your laptop.
+
+## Windows
+
+::: {.callout-warning}
+If you use Ubuntu through WSL, install Thonny on Windows, not inside WSL.
+Windows can talk to a board plugged into the USB port, and WSL cannot. Thonny
+inside WSL installs and runs, but it never finds the board.
 :::
+
+Open Windows PowerShell and install Thonny with `winget`:
+
+```session
+$ winget install --id AivarAnnamaa.Thonny --exact
+```
+
+Follow the instructions it shows, then open Thonny from the Start menu.
+
+If `winget` does not work, install Thonny by hand:
+
+1. Go to <https://thonny.org/>.
+2. Download the Windows installer.
+3. Run it, and follow its instructions.
+4. Open Thonny from the Start menu.
+
+If you are not allowed to install software on the laptop, use the portable
+version instead. It runs without being installed:
+
+1. Go to <https://thonny.org/>.
+2. Download the Windows portable ZIP file.
+3. Extract it into a folder.
+4. Open the folder, and run `thonny.exe`.
+
+## Linux
+
+On Ubuntu, first update the list of packages that `apt` knows about:
+
+```session
+$ sudo apt update
+```
+
+Then install Thonny:
+
+```session
+$ sudo apt install thonny python3-tk
+```
+
+To start it, run:
+
+```session
+$ thonny
+```
+
+The version of Thonny in `apt` may be older than the latest one. To get the
+latest, run Thonny's own installer instead:
+
+```session
+$ bash <(curl -s https://thonny.org/installer-for-linux)
+```
+
+This downloads a script from the internet and runs it. Only do this with a
+script from a source you trust, such as the makers of Thonny.
+
+## macOS
+
+If you have Homebrew, install Thonny with it:
+
+```session
+$ brew install --cask thonny
+```
+
+Otherwise, install it by hand:
+
+1. Go to <https://thonny.org/>.
+2. Download the macOS installer for your Mac: arm64 for Apple Silicon (M1, M2,
+   M3 and later), or x64 for older Intel Macs.
+3. Open the downloaded `.pkg` file, and follow its instructions.
+
+Then open Thonny from the Applications folder.
+
+## Checking the installation
+
+Open Thonny. Its window has:
+
+- an editor at the top, for writing programs
+- a shell at the bottom, for typing Python commands
+- a Run button in the toolbar, to run the program in the editor
+
+Type this in the shell, and press Enter:
+
+```session
+>>> print("Hello from Thonny!")
+Hello from Thonny!
+```
+
+Thonny printed the message, so it can run Python. For now, it runs Python on
+the laptop.
+
+## Summary
+
+Thonny is the IDE we use to write Python programs and run them on the board,
+and on Windows it must be installed on Windows itself, not inside WSL.
+
+| Laptop  | Install with |
+|---------|--------------|
+| Windows | `winget install --id AivarAnnamaa.Thonny --exact` in PowerShell, or the installer from thonny.org |
+| Linux   | `sudo apt install thonny python3-tk`, or Thonny's installer from thonny.org |
+| macOS   | `brew install --cask thonny`, or the `.pkg` installer from thonny.org |
+| Check   | type `print("Hello from Thonny!")` in Thonny's shell |

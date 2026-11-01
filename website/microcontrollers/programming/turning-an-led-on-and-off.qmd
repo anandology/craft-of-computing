@@ -4,9 +4,81 @@ unit: 3
 cluster: "Programming the Board"
 ---
 
-::: {.callout-note}
-Draft outline. This lesson will cover:
+The simplest thing a program can do with a GPIO pin is switch it on and off.
+MicroPython does this with a `Pin` object, and our board has an LED of its own
+that we can switch with it.
 
-- Moving the LED wire from 3.3V to a GPIO pin
-- Controlling the pin from the REPL
+In this chapter, we'll learn how to:
+
+- set up a GPIO pin as an output
+- turn the board's LED on and off from the REPL
+
+## The board's own LED
+
+The Glyph C6 has a small LED on the board, connected to GPIO14. GPIO14 is also
+the pin labelled D14, so a program that switches D14 switches this LED too. We
+need no wires and no breadboard: the board, the USB cable and Thonny are
+enough.
+
+Connect Thonny to the board, so that the shell shows MicroPython's `>>>`
+prompt.
+
+## Setting up the pin
+
+MicroPython keeps the code that works with the board's hardware in a module
+called `machine`. `Pin` is in it:
+
+```session
+>>> from machine import Pin
+```
+
+This makes `Pin` available, the way `import sys` made `sys` available. Now
+create a `Pin` for GPIO14, as an output:
+
+```session
+>>> led = Pin(14, Pin.OUT)
+```
+
+`14` is the GPIO number, and `Pin.OUT` makes the pin an output: the program
+sets its voltage. We name the object `led`, because that is what is connected
+to it.
+
+## Turning the LED on and off
+
+Set the pin's value to `1`:
+
+```session
+>>> led.value(1)
+```
+
+The LED turns on. Value `1` puts 3.3 volts on the pin, and current flows
+through the LED. Set it to `0`:
+
+```session
+>>> led.value(0)
+```
+
+The LED turns off. Value `0` puts the pin at 0 volts, the same as GND, and no
+current flows.
+
+Neither command prints anything in the shell. The result is on the board, not
+on the screen.
+
+::: {.callout-warning}
+If the LED does not change, check the number in `Pin(14, Pin.OUT)`. Python
+accepts any GPIO number without an error, so with the wrong number the program
+switches a pin that nothing is connected to.
 :::
+
+## Summary
+
+A program turns an LED on and off by setting the value of the GPIO pin it is
+connected to: `1` for 3.3 volts, and `0` for 0 volts.
+
+| Code                         | What it does |
+|------------------------------|--------------|
+| `from machine import Pin`    | makes `Pin` available |
+| `led = Pin(14, Pin.OUT)`     | sets up GPIO14 as an output, named `led` |
+| `led.value(1)`               | puts 3.3 volts on the pin: the LED turns on |
+| `led.value(0)`               | puts 0 volts on the pin: the LED turns off |
+| GPIO14                       | the pin of the Glyph C6's own LED, labelled D14 |
