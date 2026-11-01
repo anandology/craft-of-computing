@@ -2,8 +2,21 @@
 title: "Interfacing with Microcontrollers"
 ---
 
-::: {.callout-note}
-Draft outline. This page will introduce physical computing and the unit.
-:::
+In the first two units of this course, we wrote programs that performed
+calculations and made decisions. But everything our programs did stayed inside
+the computer.
+
+What if we wanted to turn on a light automatically when it gets dark? Or switch
+off the AC when no one is in the room? Or start a water pump when a tank runs
+low, and stop it when the tank is full?
+
+Jobs like these are usually done by a small computer called a microcontroller.
+In this unit, we'll use an ESP32 microcontroller and program it in MicroPython,
+a version of Python designed for microcontrollers.
+
+We'll learn how to:
+
+- build simple electronic circuits and connect them to a microcontroller
+- write programs that read sensors and control lights, displays and other devices
 
 [Ready to get started?](introduction/what-is-a-microcontroller.qmd)
