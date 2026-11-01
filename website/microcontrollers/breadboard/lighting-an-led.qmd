@@ -1,0 +1,12 @@
+---
+title: "Lighting an LED"
+unit: 3
+cluster: "Prototyping on a Breadboard"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- Using the board only as a power source: 3.3V → resistor → LED → GND
+- No program is involved: the 3.3V pin is on whenever the board has power
+:::

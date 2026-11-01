@@ -1,0 +1,12 @@
+---
+title: "The MicroPython REPL"
+unit: 3
+cluster: "Programming the Board"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- MicroPython: a version of Python for microcontrollers
+- Doing calculations on the board, not the laptop
+:::

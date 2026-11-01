@@ -1,0 +1,12 @@
+---
+title: "Development Boards"
+unit: 3
+cluster: "Introduction to Microcontrollers"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- What a development board adds around the chip
+- Our board: the Glyph C6 (ESP32-C6)
+:::

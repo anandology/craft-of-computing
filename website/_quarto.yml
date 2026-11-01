@@ -33,14 +33,16 @@ website:
 
   # The units live in the navbar, not inside a sidebar: each sidebar below
   # shows one unit only, so the navbar is what moves you between them. One
-  # link per unit rather than a dropdown -- there are only two, and a menu
-  # that has to be opened to see two items hides more than it saves.
+  # link per unit rather than a dropdown -- there are only three, and a menu
+  # that has to be opened to see three items hides more than it saves.
   navbar:
     left:
       - href: cmdline/index.qmd
         text: "Command Line"
       - href: python/index.qmd
         text: "Python"
+      - href: microcontrollers/index.qmd
+        text: "Microcontrollers"
     right:
       - href: setup/index.qmd
         text: "Setup"
@@ -210,6 +212,28 @@ website:
           contents:
             - href: python/cookbook/formatting-strings.qmd
             - href: python/cookbook/dates-and-times.qmd
+
+    - id: unit3
+      title: "Interfacing with Microcontrollers"
+      style: docked
+      contents:
+        - href: microcontrollers/index.qmd
+        - section: "Introduction to Microcontrollers"
+          contents:
+            - href: microcontrollers/introduction/what-is-a-microcontroller.qmd
+            - href: microcontrollers/introduction/development-boards.qmd
+            - href: microcontrollers/introduction/reading-a-pinout.qmd
+        - section: "Prototyping on a Breadboard"
+          contents:
+            - href: microcontrollers/breadboard/how-a-breadboard-works.qmd
+            - href: microcontrollers/breadboard/leds-and-resistors.qmd
+            - href: microcontrollers/breadboard/lighting-an-led.qmd
+        - section: "Programming the Board"
+          contents:
+            - href: microcontrollers/programming/installing-thonny.qmd
+            - href: microcontrollers/programming/micropython-repl.qmd
+            - href: microcontrollers/programming/turning-an-led-on-and-off.qmd
+            - href: microcontrollers/programming/blinking-an-led.qmd
 
 format:
   html:

@@ -1,0 +1,12 @@
+---
+title: "LEDs and Resistors"
+unit: 3
+cluster: "Prototyping on a Breadboard"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- The LED, and which leg is which
+- The resistor, and why the LED needs one
+:::

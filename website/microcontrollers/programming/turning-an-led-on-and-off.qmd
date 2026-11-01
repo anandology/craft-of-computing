@@ -1,0 +1,12 @@
+---
+title: "Turning an LED On and Off"
+unit: 3
+cluster: "Programming the Board"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- Moving the LED wire from 3.3V to a GPIO pin
+- Controlling the pin from the REPL
+:::

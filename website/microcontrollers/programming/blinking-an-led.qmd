@@ -1,0 +1,12 @@
+---
+title: "Blinking an LED"
+unit: 3
+cluster: "Programming the Board"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- A loop that turns the LED on and off
+- Saving the program as main.py so it runs without the laptop
+:::

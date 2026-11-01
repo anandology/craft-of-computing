@@ -46,18 +46,19 @@ screen.
 <span class="home-step-main">
 <span class="home-step-title">Programming with Python</span>
 <span class="home-step-body">Write programs that do more than a single command can. Start in the interpreter, end with tools of your own.</span>
-<span class="home-step-parts">Getting started &middot; Collections and repetition &middot; Functions, methods and modules &middot; Writing programs</span>
+<span class="home-step-parts">Getting started &middot; Making decisions &middot; Writing programs &middot; Working with dictionaries &middot; Working with APIs &middot; and more</span>
 </span>
-<span class="home-step-meta">15 lessons</span>
+<span class="home-step-meta">41 lessons</span>
 </a>
-<span class="home-step home-step-later">
+<a class="home-step unit-3" href="microcontrollers/index.qmd">
 <span class="home-step-num">3</span>
 <span class="home-step-main">
 <span class="home-step-title">Interfacing with microcontrollers</span>
 <span class="home-step-body">Make a program touch the world. Read a sensor, light an LED, and build something on a board.</span>
+<span class="home-step-parts">Introduction to microcontrollers &middot; Prototyping on a breadboard &middot; Programming the board</span>
 </span>
-<span class="home-step-meta"><span class="home-step-pill">Later this semester</span></span>
-</span>
+<span class="home-step-meta">10 lessons</span>
+</a>
 </div>
 
 ::: {.home-band}

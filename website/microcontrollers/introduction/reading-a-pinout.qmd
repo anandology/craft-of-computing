@@ -1,0 +1,13 @@
+---
+title: "Reading a Pinout Diagram"
+unit: 3
+cluster: "Introduction to Microcontrollers"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- Physical pin numbers versus GPIO numbers
+- Power and ground pins
+- Why one pin carries many labels
+:::

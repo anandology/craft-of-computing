@@ -1,0 +1,12 @@
+---
+title: "How a Breadboard Works"
+unit: 3
+cluster: "Prototyping on a Breadboard"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- Rows, power rails and the centre gap
+- Connecting things with jumper wires
+:::

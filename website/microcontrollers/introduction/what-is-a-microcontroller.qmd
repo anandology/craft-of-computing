@@ -1,0 +1,12 @@
+---
+title: "What is a Microcontroller"
+unit: 3
+cluster: "Introduction to Microcontrollers"
+---
+
+::: {.callout-note}
+Draft outline. This lesson will cover:
+
+- What a microcontroller is, and how it differs from a laptop
+- Sensors → microcontroller → actuators
+:::

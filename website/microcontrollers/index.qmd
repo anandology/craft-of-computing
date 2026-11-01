@@ -1,0 +1,9 @@
+---
+title: "Interfacing with Microcontrollers"
+---
+
+::: {.callout-note}
+Draft outline. This page will introduce physical computing and the unit.
+:::
+
+[Ready to get started?](introduction/what-is-a-microcontroller.qmd)
