@@ -1,0 +1,71 @@
+---
+title: "Blinking an LED on the Breadboard"
+unit: 3
+cluster: "Programming the Board"
+---
+
+A program can switch any component we wire to a GPIO pin, not only the
+board's own LED. To blink an LED on the breadboard, we connect it to a GPIO
+pin instead of the `+` rail.
+
+In this chapter, we'll learn how to:
+
+- connect an LED on the breadboard to a GPIO pin
+- blink it with a program
+
+## Connecting the LED to D15
+
+Start with the LED circuit we built on the breadboard, with the board as the
+power source. Unplug the USB cable. Then:
+
+1. Remove the blue jumper wire between the `+` rail and `a23`.
+2. Connect `a7`, below D15, to `a23` with a new jumper wire, shown in yellow.
+
+![The LED circuit, with its anode connected to D15 by a yellow jumper wire, instead of to the `+` rail. Board photo: PCBCupid.](../images/glyph-c6-breadboard-d15.svg)
+
+The `+` and `−` rails stay connected to 3V3 and GND. The LED's anode now gets
+its voltage from GPIO15, through the yellow wire, and its cathode still
+returns to GND through the resistor and the `−` rail.
+
+::: {.callout-warning}
+Keep the resistor in series with the LED. A GPIO pin can supply much less
+current than 3V3, and without the resistor, the LED can draw more than the
+pin can safely give. The pin can be damaged without any sign.
+:::
+
+## Running the program
+
+Plug the USB cable back in, connect Thonny to the board, and type the blink
+program in the editor, with GPIO15 instead of GPIO14:
+
+```python
+from machine import Pin
+import time
+
+led = Pin(15, Pin.OUT)
+
+delay = 0.5
+
+while True:
+    led.on()
+    time.sleep(delay)
+    led.off()
+    time.sleep(delay)
+```
+
+Click Run. The LED on the breadboard blinks, and the board's own LED stays as
+it is, because the program no longer switches GPIO14. A program switches the
+pin we give it, and only what is connected to that pin.
+
+## Summary
+
+A program blinks an LED on the breadboard through the GPIO pin it is wired
+to, while the rails keep supplying power to the rest of the circuit.
+
+| Connection or code       | What it does |
+|--------------------------|--------------|
+| 3V3 → `+` rail, GND → `−` rail | supply power whenever the board is plugged in |
+| D15 → LED anode          | lets the program switch the LED |
+| `led = Pin(15, Pin.OUT)` | sets up GPIO15 as an output |
+| `led.on()`, `led.off()`  | switch GPIO15, and the LED connected to it |
+| Resistor in series       | limits the current the GPIO pin has to supply |

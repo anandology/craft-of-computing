@@ -234,6 +234,7 @@ website:
             - href: microcontrollers/programming/micropython-repl.qmd
             - href: microcontrollers/programming/turning-an-led-on-and-off.qmd
             - href: microcontrollers/programming/blinking-an-led.qmd
+            - href: microcontrollers/programming/blinking-an-led-on-the-breadboard.qmd
 
 format:
   html:

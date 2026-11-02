@@ -93,6 +93,54 @@ cathode, and that both supply wires reach the rails used by the jumpers.
 On a board with split power rails, the supply wire and its jumper must use
 the same connected section, or the sections need a wire joining them.
 
+## Using the board as the power source
+
+We don't have a battery, so we use our Glyph C6 board as the power source
+instead. Its 3V3 pin connects to the `+` rail, and a GND pin connects to the
+`−` rail:
+
+![The Glyph C6 on a breadboard. A red jumper connects 3V3 to the lower `+` rail, and a black jumper connects GND to the lower `−` rail. Board photo: PCBCupid.](../images/glyph-c6-breadboard.svg)
+
+The board sits at the left end, across the centre gap, with its pins in rows
+`c` and `i`. Its first pin is in column 1, so no columns are left empty. Each
+pin is in its own group of five, so a jumper wire in row `a` connects to the
+pin above it:
+
+1. Connect `a2`, below the first 3V3 pin, to the lower `+` rail with a red
+   jumper wire.
+2. Connect `a16`, below the last GND pin, to the lower `−` rail with a black
+   jumper wire.
+
+The board gets its power from the USB cable, so unplug the cable before
+adding or moving wires.
+
+3V3 supplies 3.3 volts whenever the board has power, so the `+` rail has
+3.3 volts as soon as the USB cable is plugged in. No program is involved.
+
+## Adding the LED and resistor
+
+The board covers columns 1 to 18, so the LED and resistor go in the free
+columns to its right. They are wired the same way as before, moved along the
+board:
+
+![The Glyph C6 powering an LED and a 330 Ω resistor in columns 23 to 28, with the LED lit. Board photo: PCBCupid.](../images/glyph-c6-breadboard-led.svg)
+
+1. Put the LED's anode (longer leg) in `e23` and its cathode (shorter leg) in
+   `e25`.
+2. Put one end of the resistor in `d25` and the other in `d28`.
+3. Connect the lower `+` rail to `a23` with a jumper wire, shown in blue.
+4. Connect `a28` to the lower `−` rail with a jumper wire, shown in green.
+
+Trace the path before plugging in the USB cable:
+
+```text
+3V3 → + rail → LED anode → LED cathode → resistor → − rail → GND
+```
+
+Plug in the cable, and the LED lights. The 330 Ω resistor works here too;
+with 3.3 volts instead of 5, less current flows, and the LED is dimmer than
+with the 5 V source.
+
 ## Summary
 
 An LED lights when it has a complete path from the power source's positive
@@ -104,5 +152,6 @@ terminal through the LED and a series resistor to its negative terminal.
 | `+` rail → LED anode | Connects the positive supply to the LED's longer leg. |
 | LED cathode → resistor | Connects the LED's shorter leg to the current-limiting resistor. |
 | Resistor → `−` rail → source negative | Completes the path back to the power source. |
+| Board as the power source | 3V3 → `+` rail and GND → `−` rail; the rail has 3.3 V whenever the board is plugged in. |
 | Circuit diagram | Shows electrical connections; physical positions and wire colours can differ. |
 | Changing connections | Disconnect the source first; keep the resistor in series and never join the source's terminals directly. |

@@ -45,20 +45,20 @@ to it.
 
 ## Turning the LED on and off
 
-Set the pin's value to `1`:
+Turn the pin on:
 
 ```session
->>> led.value(1)
+>>> led.on()
 ```
 
-The LED turns on. Value `1` puts 3.3 volts on the pin, and current flows
-through the LED. Set it to `0`:
+The LED turns on. `on()` puts 3.3 volts on the pin, and current flows through
+the LED. Now turn the pin off:
 
 ```session
->>> led.value(0)
+>>> led.off()
 ```
 
-The LED turns off. Value `0` puts the pin at 0 volts, the same as GND, and no
+The LED turns off. `off()` puts the pin at 0 volts, the same as GND, and no
 current flows.
 
 Neither command prints anything in the shell. The result is on the board, not
@@ -72,13 +72,13 @@ switches a pin that nothing is connected to.
 
 ## Summary
 
-A program turns an LED on and off by setting the value of the GPIO pin it is
-connected to: `1` for 3.3 volts, and `0` for 0 volts.
+A program turns an LED on and off by turning on and off the GPIO pin it is
+connected to: on puts 3.3 volts on the pin, and off puts 0 volts.
 
 | Code                         | What it does |
 |------------------------------|--------------|
 | `from machine import Pin`    | makes `Pin` available |
 | `led = Pin(14, Pin.OUT)`     | sets up GPIO14 as an output, named `led` |
-| `led.value(1)`               | puts 3.3 volts on the pin: the LED turns on |
-| `led.value(0)`               | puts 0 volts on the pin: the LED turns off |
+| `led.on()`                   | puts 3.3 volts on the pin: the LED turns on |
+| `led.off()`                  | puts 0 volts on the pin: the LED turns off |
 | GPIO14                       | the pin of the Glyph C6's own LED, labelled D14 |

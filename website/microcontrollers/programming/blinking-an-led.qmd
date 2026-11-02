@@ -1,5 +1,5 @@
 ---
-title: "Blinking an LED"
+title: "Blinking the Board's LED"
 unit: 3
 cluster: "Programming the Board"
 ---
