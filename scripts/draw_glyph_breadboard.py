@@ -23,6 +23,15 @@ With --sonar as well (instead of --pot), the breadboard is full length, 60 colum
 and an HC-SR04 stands in e44-e47 (Vcc, Trig, Echo, Gnd), facing the reader:
 a44 -> + rail, a47 -> - rail, D19 (a9) -> c45 (Trig), D18 (a8) -> c46 (Echo):
     ... glyph-c6-breadboard-sonar.svg PINOUT.png --led --d15 --sonar
+With --button as well (instead of --pot or --sonar), the breadboard is full length,
+a 12 mm push button straddles the centre gap with its pins in d34, d36, g34, g36,
+and the LED is drawn off. Without --d15, the button switches the LED by itself:
++ rail -> a36 and a34 -> a23 (the LED's anode), with no wire from the board to the LED.
+The pins across the gap are joined inside the button, so 34 and 36 are its two sides:
+    ... glyph-c6-breadboard-button.svg PINOUT.png --led --button
+With --d15, the board reads the button: D7 (j9) -> j34, over the top of the board,
+and a36 -> - rail:
+    ... glyph-c6-breadboard-button-d7.svg PINOUT.png --led --d15 --button
 
 PINOUT.png is PCBCupid's Glyph C6 pinout image at its full 5168x3669 size;
 the crop coordinates below are in its pixels. Download it from:
@@ -56,7 +65,8 @@ def text(x, y, s, size=13, fill=LABEL, anchor="middle", weight=400):
 
 # --- breadboard ---------------------------------------------------------------
 SONAR = "--sonar" in sys.argv
-NCOL = 60 if SONAR else 30            # the sensor needs a full-length breadboard
+BUTTON = "--button" in sys.argv
+NCOL = 60 if SONAR or BUTTON else 30  # the sensor and the button need a full-length breadboard
 EXT = (NCOL - 30) * P
 W, H = 1160 + EXT, 800
 VX = -80                              # room on the left for the USB cable
@@ -134,9 +144,10 @@ if "--led" in sys.argv:
     add('<defs><radialGradient id="glow"><stop offset="0" stop-color="#FFF6E8" stop-opacity="0.95"/>'
         '<stop offset="0.3" stop-color="#FFD6C8" stop-opacity="0.55"/>'
         '<stop offset="1" stop-color="#FFB09A" stop-opacity="0"/></radialGradient></defs>')
-    add(f'<circle cx="{lx}" cy="{ly}" r="140" fill="url(#glow)"/>')
+    if not BUTTON:                      # with the button, the LED is drawn off
+        add(f'<circle cx="{lx}" cy="{ly}" r="140" fill="url(#glow)"/>')
     D15 = "--d15" in sys.argv
-    if not D15:
+    if not D15 and not BUTTON:
         wire(A, ROW["a"], RAIL["bot+"], "#3D7BE0", "#2856A8")    # + rail -> a23, row 23 -> anode
     wire(R2, ROW["a"], RAIL["bot-"], "#3FA34D", "#2A7535")   # a28 -> - rail
     # resistor, 330 ohm: orange orange brown, gold tolerance
@@ -165,9 +176,9 @@ if "--led" in sys.argv:
             add(f'<circle cx="{x}" cy="{y}" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>')
         text(x1 - 10, 612, "D15", 12, "#9A6B00", "end", 700)
     aria += ((" A yellow jumper wire connects a7, below the D15 pin, to a23." if D15 else
-              " A blue jumper wire connects the plus rail to a23.") + " A red LED has its anode in e23 and its cathode "
+              "" if BUTTON else " A blue jumper wire connects the plus rail to a23.") + " A red LED has its anode in e23 and its cathode "
              "in e25. A 330 ohm resistor runs from d25 to d28, and a green jumper wire connects a28 to the "
-             "minus rail. The LED is lit.")
+             "minus rail." + ("" if BUTTON else " The LED is lit."))
 # --- with --pot: a potentiometer above the board, wiper to A0 ----------------------
 def lead(x1, y1, x2, y2, colour, dark, knee=None):
     if knee:                            # straight down to the knee, then bend across
@@ -261,6 +272,52 @@ if SONAR:
              "of the breadboard. A red jumper wire connects a44 to the plus rail, and a black one connects a47 "
              "to the minus rail. An orange jumper wire connects a9, below the D19 pin, to c45, the Trig "
              "column, and a blue one connects a8, below the D18 pin, to c46, the Echo column.")
+
+# --- with --button: a 12 mm push button across the centre gap, D7 to one side, GND to the other --
+if BUTTON:
+    A, B = 34, 36                                  # its pins: d34, g34 and d36, g36
+    METAL, METAL_DARK = "#C9CCD0", "#8C9096"
+    X, Y = cx(35), 410                             # middle of the centre gap
+    if "--d15" in sys.argv:                        # the board reads the button
+        wire(B, ROW["a"], RAIL["bot-"], "#3A3A3A", "#1A1A1A")      # a36 -> - rail
+        # D7 (pin 8, column 9, row i) -> j34, up over the column numbers and along
+        x1, x2, y, top = cx(9), cx(A), ROW["j"], 172
+        d = (f"M{x1},{y} L{x1},{top+28} Q{x1},{top} {x1+28},{top} L{x2-28},{top} "
+             f"Q{x2},{top} {x2},{top+28} L{x2},{y}")
+        add(f'<path d="{d}" stroke="#2E9C9A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+            f'<path d="{d}" stroke="#49C2BF" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>')
+        for x in (x1, x2):
+            add(f'<circle cx="{x}" cy="{y}" r="5" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>')
+        text(x1 - 10, 200, "D7", 12, "#237A78", "end", 700)
+        aria += (" The breadboard is twice as long. Further along, a square push button straddles the centre "
+                 "gap, with its four pins in d34, d36, g34 and g36. A teal jumper wire runs from j9, above the "
+                 "D7 pin, over the column numbers to j34. A black jumper wire connects a36 to the minus rail. "
+                 "The LED is off.")
+    else:                                          # 3.3 V through the button to the LED
+        wire(B, ROW["a"], RAIL["bot+"], "#E04A44", "#A8302B")         # a36 -> + rail
+        x1, x2, y = cx(A), cx(23), ROW["a"]                           # a34 -> a23, below row a
+        d = f"M{x1},{y} C{x1},{y+52} {x2},{y+52} {x2},{y}"
+        add(f'<path d="{d}" stroke="#2856A8" stroke-width="8" fill="none" stroke-linecap="round"/>'
+            f'<path d="{d}" stroke="#3D7BE0" stroke-width="5" fill="none" stroke-linecap="round"/>')
+        for x in (x1, x2):
+            add(f'<circle cx="{x}" cy="{y}" r="5" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>')
+        aria += (" The breadboard is twice as long. Further along, a square push button straddles the centre "
+                 "gap, with its four pins in d34, d36, g34 and g36. A red jumper wire connects a36 to the plus "
+                 "rail. A blue jumper wire connects a34 to a23, the LED's anode. The LED is off.")
+    # legs, 5 mm apart along the breadboard and 12.5 mm across the gap
+    for col in (A, B):
+        for r, dy in (("g", 1), ("d", -1)):
+            add(f'<rect x="{cx(col)-5}" y="{min(ROW[r], Y + dy * -60)}" width="10" '
+                f'height="{abs(ROW[r] - (Y + dy * -60))}" fill="{METAL}" stroke="{METAL_DARK}"/>'
+                f'<circle cx="{cx(col)}" cy="{ROW[r]}" r="4" fill="{METAL}" stroke="{METAL_DARK}"/>')
+    # body, 12 mm square: black base, metal plate with four rivets, round cap
+    add(f'<rect x="{X-75}" y="{Y-75}" width="150" height="150" rx="8" fill="#232323" stroke="#111111" stroke-width="2"/>')
+    add(f'<rect x="{X-64}" y="{Y-64}" width="128" height="128" rx="4" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>')
+    for dx in (-50, 50):
+        for dy in (-50, 50):
+            add(f'<circle cx="{X+dx}" cy="{Y+dy}" r="6" fill="#6E7278"/>')
+    add(f'<circle cx="{X}" cy="{Y}" r="44" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>'
+        f'<circle cx="{X-10}" cy="{Y-12}" r="20" fill="#2C2C2C"/>')
 
 open(sys.argv[1], "w").write(
     f'<svg xmlns="http://www.w3.org/2000/svg" width="{W-VX}" height="{H-VY}" viewBox="{VX} {VY} {W-VX} {H-VY}" role="img" '

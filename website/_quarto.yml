@@ -237,6 +237,8 @@ website:
             - href: microcontrollers/programming/blinking-an-led-on-the-breadboard.qmd
         - section: "Reading Sensors"
           contents:
+            - href: microcontrollers/sensors/switching-an-led-with-a-button.qmd
+            - href: microcontrollers/sensors/reading-a-push-button.qmd
             - href: microcontrollers/sensors/setting-the-blink-speed-with-a-knob.qmd
             - href: microcontrollers/sensors/measuring-distance.qmd
         - section: "Using a Display"

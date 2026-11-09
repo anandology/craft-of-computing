@@ -1,0 +1,90 @@
+---
+title: "Switching an LED with a Push Button"
+unit: 3
+cluster: "Reading Sensors"
+---
+
+Many circuits need a way for a person to turn something on, just for as
+long as they want it on. A **push button** does this: it completes a circuit
+while we hold it down, and breaks it again when we let go.
+
+In this chapter, we'll learn how to:
+
+- put a push button on the breadboard
+- tell which of its pins are the two sides of the switch
+- switch the LED with it, without any code
+
+## The push button
+
+Our button is a square, 12 mm across, with a round cap and four pins. The
+button is wide: on the breadboard, it straddles the centre gap, with two
+pins in row `d` and two in row `g`, two holes apart.
+
+Inside, each pin is joined to the pin opposite it, across the gap. So the
+four pins make two pairs, and the two pairs are the two sides of the switch.
+While the cap is up, the two sides are not connected. Pressing the cap
+connects them.
+
+On the breadboard, this means the two pins on the same side of the gap are
+the two sides of the switch. With the button in columns 34 and 36, pressing
+it connects column 34 to column 36.
+
+## Connecting the button
+
+The button goes in place of the wire that gave the LED its power. Current
+then flows from the `+` rail, through the button, through the LED and the
+resistor, to the `−` rail, and only while the button is pressed.
+
+The button needs more room than the breadboards we have used so far, so we
+use a full-length breadboard, with 60 columns instead of 30. Build the
+circuit that blinks an LED from D15 on it, in the same holes. Unplug the USB
+cable. Then:
+
+1. Take out the yellow jumper wire from `a7` to `a23`. The board no longer
+   controls the LED.
+2. Push the button's pins into `d34`, `d36`, `g34` and `g36`, straddling the
+   centre gap. Press firmly: the pins are stiff.
+3. Connect `a36` to the `+` rail with a red jumper wire. This gives one side
+   of the button 3.3 volts.
+4. Connect `a34` to `a23` with a blue jumper wire. This connects the other
+   side to the LED's anode.
+
+![The LED circuit on a full-length breadboard, with no wire from D15. A push button straddles the centre gap in `d34`, `d36`, `g34` and `g36`. A red jumper wire connects `a36` to the `+` rail, and a blue jumper wire connects `a34` to `a23`, the LED's anode. Board photo: PCBCupid.](../images/glyph-c6-breadboard-button.svg)
+
+::: {.callout-note}
+The other side of the gap works too. Since each pin is joined to the one
+opposite it, the holes `f34` to `j34` are the same as `a34` to `c34`, and
+`f36` to `j36` the same as `a36` to `c36`. A wire can go to whichever side
+is closer.
+:::
+
+## Pressing the button
+
+Plug in the USB cable. The LED stays off: the circuit is broken at the
+button. Hold the button down, and the LED lights. Let go, and it goes off.
+
+No program runs here. The board only gives the circuit its 3.3 volts, the
+same as a battery would. The button does the switching itself, by
+completing the circuit.
+
+::: {.callout-note}
+If the LED stays on without the button being pressed, the two wires are on
+pins that are joined inside the button: some buttons join the pins on the
+same side instead. Move the red wire from `a36` to `j36`. Two pins that are
+diagonally opposite are on different sides of the switch in any button. If
+the LED never lights, check that all four pins of the button went into the
+holes.
+:::
+
+## Summary
+
+A push button completes a circuit while it is held down, and breaks it when
+it is released.
+
+| Part or connection | What it does |
+|--------------------|--------------|
+| Push button | connects its two sides while the cap is pressed |
+| Button across the centre gap, in rows `d` and `g` | the pins sit two holes apart, two on each side of the gap |
+| Pins opposite each other, across the gap | joined inside the button; either can be used |
+| Two pins on the same side of the gap | the two sides of the switch |
+| `+` rail → button → LED → resistor → `−` rail | the LED is on only while the button is pressed |
