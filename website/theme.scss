@@ -260,6 +260,10 @@ pre.session .cmd::before {
   user-select: none;
 }
 
+pre.session .cmd.py::before {
+  content: ">>> ";
+}
+
 // Continuation lines of a command broken with "\", indented to sit under the
 // command in place of the prompt they do not get.
 pre.session .cmd-cont::before {

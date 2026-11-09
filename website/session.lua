@@ -8,15 +8,19 @@
 --     Version: ImageMagick 7.1.2-18
 --     ```
 --
--- A line starting with "$ " is a command; everything else is output. The "$"
--- is stripped here and drawn back by CSS (see styles.css), so it is not part
--- of the page text: a student who selects a command line and copies it gets
--- the command, without the prompt. There is no copy button on these blocks --
--- a transcript has no single right thing to copy, so selecting the wanted line
--- is left to the reader.
+-- A line starting with "$ " is a shell command, and one starting with ">>> "
+-- is a Python command, typed at the Python or MicroPython REPL; everything
+-- else is output. The prompt is stripped here and drawn back by CSS (see
+-- theme.scss), so it is not part of the page text: a student who selects a
+-- command line and copies it gets the command, without the prompt.
 --
--- A command ending in "\" continues on the next line, which is treated as part
--- of the command rather than as output.
+-- A block of Python commands with no output gets a copy button, which copies
+-- the commands alone. Other blocks get none: a transcript with output has no
+-- single right thing to copy, so selecting the wanted line is left to the
+-- reader.
+--
+-- A shell command ending in "\" continues on the next line, which is treated
+-- as part of the command rather than as output.
 
 local function esc(s)
   s = s:gsub("&", "&amp;")
@@ -30,8 +34,9 @@ function CodeBlock(el)
     return nil
   end
 
-  local html = { '<pre class="session"><code>' }
+  local lines = {}
   local continuing = false
+  local has_output, has_python = false, false
 
   for line in (el.text .. "\n"):gmatch("([^\n]*)\n") do
     local class, text
@@ -40,19 +45,35 @@ function CodeBlock(el)
       class, text = "cmd-cont", line
     else
       local command = line:match("^%$ ?(.*)$")
+      local python = line:match("^>>> ?(.*)$")
       if command then
         class, text = "cmd", command
+      elseif python then
+        class, text = "cmd py", python
+        has_python = true
       else
         class, text = "out", line
+        has_output = true
       end
     end
 
-    -- Only a command can continue; an output line ending in "\" is just output.
-    continuing = (class ~= "out") and text:match("\\%s*$") ~= nil
+    -- Only a shell command can continue; a line ending in "\" is otherwise
+    -- just what it is.
+    continuing = (class == "cmd" or class == "cmd-cont")
+      and text:match("\\%s*$") ~= nil
 
-    table.insert(html, '<span class="' .. class .. '">' .. esc(text) .. "</span>\n")
+    table.insert(lines, '<span class="' .. class .. '">' .. esc(text) .. "</span>")
   end
 
-  table.insert(html, "</code></pre>")
-  return pandoc.RawBlock("html", table.concat(html))
+  local pre = '<pre class="session"><code>' .. table.concat(lines, "\n") .. "</code></pre>"
+
+  -- Quarto's copy script copies the text of the <code> beside the button, so
+  -- reusing its scaffold and button gives the same button, icon and
+  -- "Copied!" as every other code block.
+  if has_python and not has_output then
+    pre = '<div class="code-copy-outer-scaffold">' .. pre
+      .. '<button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>'
+  end
+
+  return pandoc.RawBlock("html", pre)
 end
