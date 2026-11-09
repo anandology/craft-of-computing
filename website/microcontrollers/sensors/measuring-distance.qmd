@@ -60,10 +60,9 @@ that your sensor works at 3.3 volts before you connect it this way.
 
 ## Connecting the sensor
 
-The sensor needs more room than the breadboards we have used so far, so we
-use a full-length breadboard, with 60 columns instead of 30. Build the
-circuit that blinks an LED from D15 on it, in the same holes. Unplug the USB
-cable. Then:
+Start with the circuit that blinks an LED from D15, on the full-length
+breadboard. If the push button is still on it, take it off, with its wires.
+Unplug the USB cable. Then:
 
 1. Push the sensor's pins into `e44` to `e47`, with Vcc in `e44` and Gnd in
    `e47`. The transducers face the near edge of the breadboard, the one with
@@ -111,7 +110,6 @@ while True:
     time.sleep(0.5)
 ```
 
-`Pin(18, Pin.IN)` sets up GPIO18 as an input, so the program can read it.
 `time.sleep_us(10)` waits for 10 microseconds, which gives the 10 µs pulse
 on Trig.
 
