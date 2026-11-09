@@ -1,7 +1,7 @@
 ---
 title: "Showing Text on an LCD"
 unit: 3
-cluster: "Using a Display"
+cluster: "Building a Distance Meter"
 ---
 
 A board often has to show us something without a computer attached: a
@@ -13,6 +13,9 @@ In this chapter, we'll learn how to:
 - connect the display to the board with four wires
 - find its address
 - show text on it from the REPL
+- show text from a program
+- blink text, and scroll a message that is too long for the display
+- show icons that we draw ourselves
 
 ## The display module
 
@@ -34,28 +37,34 @@ how dark the characters are against the background.
 ## Connecting the display
 
 The display is too big for the breadboard, so it sits beside it, connected
-with **female-to-male jumper wires**: the female end pushes onto a pin of the
-display, and the male end goes into the breadboard.
+with **socket-to-plug jumper wires**: the socket end pushes onto a pin of the
+display, and the plug end goes into the breadboard.
+
+The display needs 5 volts, not the 3.3 volts the rest of our circuits use.
+The board's 5V pin, labelled USB, gives 5 volts straight from the USB cable.
+So we use the two `+` rails for different voltages: the top `+` rail for
+5 volts, and the bottom `+` rail for 3.3 volts, as before.
 
 On the Glyph C6, the pins labelled SDA and SCL are GPIO4 and GPIO5. Start
-with the board on the breadboard, with 3V3 connected to the bottom `+` rail
+with the board on the full-length breadboard, with 3V3 connected to the bottom `+` rail
 and GND to the bottom `−` rail. Unplug the USB cable. Then:
 
-1. Join the top rails to the bottom rails, so the top rails have power too.
-   Connect the bottom `+` rail to the top `+` rail in column 29 with a red
-   jumper wire, and the bottom `−` rail to the top `−` rail in column 30 with
-   a black one.
-2. Connect the display's GND to the top `−` rail, with a black wire.
-3. Connect VCC to the top `+` rail, with a red wire.
-4. Connect SDA to `j15`, below the board's SDA pin, with a blue wire.
-5. Connect SCL to `j16`, below the board's SCL pin, with a green wire.
+1. Connect `j7`, above the 5V pin, to the top `+` rail with a red jumper
+   wire. Column 7 is a gap in the rail, so put the other end in column 6.
+2. Connect the bottom `−` rail to the top `−` rail in column 30 with a black
+   jumper wire, so both `−` rails are GND.
+3. Connect the display's GND to the top `−` rail, with a black wire.
+4. Connect VCC to the top `+` rail, with a red wire.
+5. Connect SDA to `j15`, below the board's SDA pin, with a blue wire.
+6. Connect SCL to `j16`, below the board's SCL pin, with a green wire.
 
-![The Glyph C6 on a breadboard, with a 16x2 LCD module above it. Its GND and VCC connect to the top rails, which are joined to the bottom rails in columns 29 and 30. Its SDA and SCL connect to `j15` and `j16`, below the board's SDA and SCL pins. Board photo: PCBCupid.](../images/glyph-c6-breadboard-lcd.svg)
+![The Glyph C6 on a full-length breadboard, with a 16x2 LCD module above it. A red jumper wire connects `j7`, above the 5V pin, to the top `+` rail, and a black one joins the two `−` rails in column 30. The display's GND and VCC connect to the top rails. Its SDA and SCL connect to `j15` and `j16`, below the board's SDA and SCL pins. Board photo: PCBCupid.](../images/glyph-c6-breadboard-lcd.svg)
 
 ::: {.callout-warning}
-Connect VCC to 3V3, not to the board's 5V pin. The backpack connects SDA and
-SCL to VCC through resistors, so with VCC at 5 volts, the board's SDA and
-SCL pins get 5 volts too: more than the ESP32's pins are made for.
+Never join the top `+` rail to the bottom `+` rail now. One has 5 volts and
+the other 3.3 volts, and a wire between them connects the board's 5V pin
+straight to its 3V3 pin. Check that only the display's VCC goes to the top
+`+` rail.
 :::
 
 Plug in the USB cable. The display lights up, with no text yet.
@@ -133,11 +142,188 @@ To clear the display, and move the cursor back to the start:
 >>> lcd.clear()
 ```
 
-::: {.callout-note}
-If the display lights up but shows no text, or shows a row of solid blocks,
-turn the contrast potentiometer on the back with a small screwdriver until
-the characters appear.
-:::
+## Putting it in a program
+
+The REPL is good for trying out one line at a time, but the lines are gone
+once we have typed them. A program keeps them together, so we can read them
+all at once and run them again. Type this program in the editor:
+
+```python
+from machine import I2C, Pin
+from machine_i2c_lcd import I2cLcd
+
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+lcd = I2cLcd(i2c, 39, 2, 16)
+
+lcd.clear()
+lcd.putstr("Hello, world!")
+lcd.move_to(0, 1)
+lcd.putstr("Glyph C6")
+```
+
+These are the lines we typed in the REPL, without `i2c.scan()`: we found the
+address once, and now write it in the program. Use your own address if it
+is not 39. The program clears the display first, so it starts from an empty
+display and from the first line, whatever was on it before.
+
+Click Run. The display shows `Hello, world!` on the first line and
+`Glyph C6` on the second. Change the text in the program, and run it again.
+
+## Blinking text
+
+To blink text, the program turns the display off and on again, over and
+over, as it did with the LED. Type this program in the editor:
+
+```python
+from machine import I2C, Pin
+from machine_i2c_lcd import I2cLcd
+import time
+
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+lcd = I2cLcd(i2c, 39, 2, 16)
+
+lcd.clear()
+lcd.putstr("Too close!")
+
+while True:
+    lcd.display_off()
+    time.sleep(0.5)
+    lcd.display_on()
+    time.sleep(0.5)
+```
+
+`display_off()` hides the characters, and `display_on()` shows them again.
+The display keeps the text while it is off, so the program writes it only
+once, before the loop. The backlight stays on.
+
+Click Run. `Too close!` blinks once a second. Click Stop to end the program.
+
+`display_off()` hides the whole display. To blink only part of it, the
+program writes the text, and then writes spaces over it. Change the end of
+the program to:
+
+```python
+lcd.clear()
+lcd.putstr("Distance: 8 cm")
+
+while True:
+    lcd.move_to(0, 1)
+    lcd.putstr("Too close!")
+    time.sleep(0.5)
+    lcd.move_to(0, 1)
+    lcd.putstr("          ")
+    time.sleep(0.5)
+```
+
+The second `putstr()` writes ten spaces, one for each character of
+`Too close!`. Click Run. The first line stays, and `Too close!` blinks on
+the second.
+
+## Scrolling text
+
+The display shows 16 characters on a line. To show a longer message, the
+program shows 16 characters of it at a time, and moves along by one
+character each time, so the message slides across the display from right to
+left. Type this program in the editor:
+
+```python
+from machine import I2C, Pin
+from machine_i2c_lcd import I2cLcd
+import time
+
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+lcd = I2cLcd(i2c, 39, 2, 16)
+
+message = "Hello from the Glyph C6 board!"
+text = " " * 16 + message + " " * 16
+
+lcd.clear()
+lcd.putstr("Glyph C6")
+
+while True:
+    for start in range(len(text) - 15):
+        lcd.move_to(0, 1)
+        lcd.putstr(text[start:start + 16])
+        time.sleep(0.3)
+```
+
+A string can be sliced in the same way as a list. `text[start:start + 16]`
+is the 16 characters of `text` from index `start`: the part that fits on
+the line. Each time round the `for` loop, `start` goes up by 1, so the slice
+moves one character to the right, and the message moves one character to
+the left on the display.
+
+`text` is the message with 16 spaces before it and 16 after it. The spaces
+before it make the message come in from the right edge of an empty line,
+and the spaces after it make it go out at the left. The last slice, from
+index `len(text) - 16`, is the 16 spaces at the end, so `range` stops at
+`len(text) - 15`.
+
+Click Run. The message slides across the second line, one character every
+0.3 seconds, and starts again once it has gone. Change `0.3` to scroll it
+faster or more slowly.
+
+## Showing icons
+
+Each character on the display is a grid of dots, 5 wide and 8 tall. Besides
+letters and digits, the display can show up to 8 characters that we draw
+ourselves, such as small icons. Type this program in the editor:
+
+```python
+from machine import I2C, Pin
+from machine_i2c_lcd import I2cLcd
+
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+lcd = I2cLcd(i2c, 39, 2, 16)
+
+heart = bytearray([
+    0b00000,
+    0b01010,
+    0b11111,
+    0b11111,
+    0b01110,
+    0b00100,
+    0b00000,
+    0b00000,
+])
+warning = bytearray([
+    0b00100,
+    0b01110,
+    0b01010,
+    0b11011,
+    0b11111,
+    0b11011,
+    0b11111,
+    0b00000,
+])
+
+lcd.custom_char(0, heart)
+lcd.custom_char(1, warning)
+
+lcd.clear()
+lcd.putstr("I " + chr(0) + " MicroPython")
+lcd.move_to(0, 1)
+lcd.putstr(chr(1) + " Too close!")
+```
+
+Each icon is a list of 8 numbers, one for each row of dots, from the top.
+A number that starts with `0b` is written in **binary**, with only 1s and
+0s: Python reads `0b01010` as the number 10. We write the rows this way
+because the digits draw the picture: each 1 is a dot that is lit, and each
+0 a dot that is not. In `warning`, the 0s inside the triangle draw an
+exclamation mark.
+
+`bytearray()` turns the list into the form `custom_char()` expects.
+`lcd.custom_char(0, heart)` stores the heart in the display as character
+number 0, and `warning` goes in as number 1. There is room for numbers 0
+to 7.
+
+`chr()` gives the character with a given number, so `chr(0)` is the heart.
+It is a string of one character, so it joins onto other strings with `+`,
+and `putstr()` writes it like any other character.
+
+Click Run. The first line shows `I`, a heart, and `MicroPython`. The second
+shows the warning sign, and `Too close!`.
 
 ## Summary
 
@@ -146,7 +332,8 @@ the display's I2C address over the SDA and SCL wires.
 
 | Connection or code | What it does |
 |--------------------|--------------|
-| GND → `−` rail, VCC → `+` rail (3V3) | powers the display; VCC goes to 3V3, never 5V |
+| 5V pin → top `+` rail, 3V3 → bottom `+` rail | gives the breadboard 5 volts on one `+` rail and 3.3 volts on the other; never join them |
+| GND → `−` rail, VCC → top `+` rail (5V) | powers the display, which needs 5 volts |
 | SDA → GPIO4, SCL → GPIO5 | the two I2C wires on the Glyph C6 |
 | `i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)` | sets up an I2C connection on GPIO4 and GPIO5 |
 | `i2c.scan()` | returns the addresses of the devices that answer; `[]` means none |
@@ -154,4 +341,10 @@ the display's I2C address over the SDA and SCL wires.
 | `lcd.putstr("text")` | writes the text from the cursor |
 | `lcd.move_to(column, line)` | moves the cursor; both count from 0 |
 | `lcd.clear()` | clears the display and moves the cursor to the start |
-| Contrast potentiometer | on the back; turn it if the text is missing or shows as blocks |
+| `lcd.display_off()`, `lcd.display_on()` | hides the characters and shows them again; the text stays on the display |
+| `lcd.putstr("   ")` after `move_to()` | writes spaces over text, to hide only that part |
+| `text[start:start + 16]` | the 16 characters from index `start`: as much of a string as fits on a line |
+| Slice moved along by 1 each time round a loop | scrolls the text one character to the left |
+| `bytearray([0b00000, ...])` | an icon: 8 rows of 5 dots, from the top; each 1 is a lit dot |
+| `lcd.custom_char(number, icon)` | stores the icon in the display as character `number`, 0 to 7 |
+| `chr(number)` | the character with that number; `putstr()` writes it like any other |

@@ -240,11 +240,12 @@ website:
             - href: microcontrollers/sensors/switching-an-led-with-a-button.qmd
             - href: microcontrollers/sensors/reading-a-push-button.qmd
             - href: microcontrollers/sensors/setting-the-blink-speed-with-a-knob.qmd
-            - href: microcontrollers/sensors/measuring-distance.qmd
-        - section: "Using a Display"
+        - section: "Building a Distance Meter"
           contents:
             - href: microcontrollers/display/saving-a-module-on-the-board.qmd
             - href: microcontrollers/display/showing-text-on-an-lcd.qmd
+            - href: microcontrollers/display/measuring-distance.qmd
+            - href: microcontrollers/display/showing-the-distance-on-the-display.qmd
 
 format:
   html:

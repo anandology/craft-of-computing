@@ -1,0 +1,156 @@
+---
+title: "Showing the Distance on the Display"
+unit: 3
+cluster: "Building a Distance Meter"
+---
+
+A reading is most useful where we can see it, without a computer attached.
+With the sensor and the display on the same board, a program can measure
+the distance and show it on the display, making a **distance meter**.
+
+In this chapter, we'll learn how to:
+
+- show the distance on the display, as it changes
+- write a new reading over the old one, so no old characters are left
+- warn with a blinking sign when something comes too close
+
+## Showing the distance
+
+There is no new wiring: we use the circuit with both the display and the
+sensor. Plug in the USB cable, connect Thonny to the board, and type this
+program in the editor:
+
+```python
+from machine import I2C, Pin, time_pulse_us
+from machine_i2c_lcd import I2cLcd
+import time
+
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+lcd = I2cLcd(i2c, 39, 2, 16)
+trig = Pin(19, Pin.OUT)
+echo = Pin(18, Pin.IN)
+
+lcd.clear()
+
+while True:
+    trig.on()
+    time.sleep_us(10)
+    trig.off()
+    duration = time_pulse_us(echo, 1, 30000)
+    if duration < 0:
+        line = "Out of range"
+    else:
+        line = "Distance: " + str(round(duration / 58)) + " cm"
+    lcd.move_to(0, 0)
+    lcd.putstr(line + " " * (16 - len(line)))
+    time.sleep(0.5)
+```
+
+The measurement is the one that printed the distance in the Shell. Instead
+of printing, the program now makes a line of text, and writes it on the
+first line of the display.
+
+The display keeps every character until something is written over it. Say
+the first reading is `Distance: 120 cm`, which fills all 16 places, and the
+next is `Distance: 9 cm`, two characters shorter. Written on its own, the
+new line covers only the first 14 places, and the display shows
+`Distance: 9 cmcm`. So the program adds spaces to the end of each line:
+`16 - len(line)` is the number of places the line leaves empty, and
+`" " * (16 - len(line))` is that many spaces. Each line then covers all 16
+places, and nothing of the old one is left.
+
+The program could call `lcd.clear()` each time round the loop instead, but
+that blanks the display for a moment before each new reading, and the
+display flickers.
+
+Click Run, and hold a hand in front of the sensor. The display shows the
+distance to it, and changes twice a second as the hand moves. Take the hand
+away, and point the sensor at an open space, and it shows `Out of range`.
+
+## Warning when too close
+
+The second line is free for a warning. The program blinks the warning sign we
+drew earlier, and `Too close!`, while something is
+closer than a limit. Change the program to:
+
+```python
+from machine import I2C, Pin, time_pulse_us
+from machine_i2c_lcd import I2cLcd
+import time
+
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+lcd = I2cLcd(i2c, 39, 2, 16)
+trig = Pin(19, Pin.OUT)
+echo = Pin(18, Pin.IN)
+
+warning = bytearray([
+    0b00100,
+    0b01110,
+    0b01010,
+    0b11011,
+    0b11111,
+    0b11011,
+    0b11111,
+    0b00000,
+])
+lcd.custom_char(0, warning)
+lcd.clear()
+
+limit = 10
+
+while True:
+    trig.on()
+    time.sleep_us(10)
+    trig.off()
+    duration = time_pulse_us(echo, 1, 30000)
+    distance = round(duration / 58)
+    if duration < 0:
+        line = "Out of range"
+    else:
+        line = "Distance: " + str(distance) + " cm"
+    lcd.move_to(0, 0)
+    lcd.putstr(line + " " * (16 - len(line)))
+
+    lcd.move_to(0, 1)
+    if duration > 0 and distance < limit:
+        lcd.putstr(chr(0) + " Too close!")
+        time.sleep(0.25)
+        lcd.move_to(0, 1)
+        lcd.putstr(" " * 12)
+        time.sleep(0.25)
+    else:
+        lcd.putstr(" " * 12)
+        time.sleep(0.5)
+```
+
+`limit` is the distance in centimetres below which the warning blinks.
+When something is closer, the program writes the sign and `Too close!`,
+12 characters in all, waits a quarter of a second, writes 12 spaces over
+them, and waits again: one blink. Otherwise, it writes the 12 spaces, so a
+warning from an earlier time round the loop does not stay on the display.
+Either way, the loop takes half a second, so the distance is still measured
+twice a second.
+
+The check `duration > 0` matters. When nothing is in range, `duration` is
+negative, so `distance` is negative too, and a negative number is less than
+10. Without the check, the warning would blink when there is nothing in
+front of the sensor at all.
+
+Click Run. The first line shows the distance, and the second is empty.
+Bring a hand closer than 10 cm, and the warning blinks below the distance.
+Change `limit`, and run the program again, to warn at a different distance.
+
+## Summary
+
+A program shows a changing reading by writing each new one over the old,
+padded with spaces to the width of the line, and blinks a warning by
+writing it and then spaces over it.
+
+| Code | What it does |
+|------|--------------|
+| `lcd.move_to(0, 0)`, then `lcd.putstr(line)`, each time round the loop | writes the new reading over the old one |
+| A shorter line written over a longer one | leaves the end of the longer one on the display |
+| `line + " " * (16 - len(line))` | pads the line with spaces to 16 characters, so it covers all of the old one |
+| `lcd.clear()` each time round a loop | blanks the display before each reading, so it flickers |
+| `if duration > 0 and distance < limit:` | is true only for a real reading closer than the limit |
+| Text, a short sleep, spaces over the text, a short sleep | blinks the text once |

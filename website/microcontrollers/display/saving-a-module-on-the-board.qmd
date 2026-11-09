@@ -1,7 +1,7 @@
 ---
 title: "Saving a Module on the Board"
 unit: 3
-cluster: "Using a Display"
+cluster: "Building a Distance Meter"
 ---
 
 Code that someone else has written usually comes as a module: a Python file

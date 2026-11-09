@@ -19,11 +19,13 @@ With --pot as well, a 10k potentiometer stands in j20, j22, j24, its body over t
 rails: f20 -> bottom - rail, i24 -> top + rail, a jumper at column 29 joins the top
 + rail to the bottom one, and the wiper i22 -> j11 (above A0, GPIO0):
     ... glyph-c6-breadboard-pot.svg PINOUT.png --led --d15 --pot
-    ... glyph-c6-breadboard-pot.svg PINOUT.png --led --d15 --pot
-With --sonar as well (instead of --pot), the breadboard is full length, 60 columns,
-and an HC-SR04 stands in e44-e47 (Vcc, Trig, Echo, Gnd), facing the reader:
-a44 -> + rail, a47 -> - rail, D19 (a9) -> c45 (Trig), D18 (a8) -> c46 (Echo):
-    ... glyph-c6-breadboard-sonar.svg PINOUT.png --led --d15 --sonar
+With --long, the breadboard is full length, 60 columns, with nothing else on it:
+    ... long.svg PINOUT.png --long
+With --sonar (without --led), the breadboard is full length, and an HC-SR04 stands in
+e44-e47 (Vcc, Trig, Echo, Gnd), facing the reader: top + rail (column 36) -> d44 (Vcc),
+a47 -> bottom - rail, D19 (a9) -> c45 (Trig), D18 (a8) -> c46 (Echo). The top + rail
+gets its 5 volts from the LCD's picture, drawn over this one by draw_glyph_lcd.py:
+    ... sonar.svg PINOUT.png --sonar
 With --button as well (instead of --pot or --sonar), the breadboard is full length,
 a 12 mm push button straddles the centre gap with its pins in d34, d36, g34, g36,
 and the LED is drawn off. Without --d15, the button switches the LED by itself:
@@ -67,7 +69,8 @@ def text(x, y, s, size=13, fill=LABEL, anchor="middle", weight=400):
 # --- breadboard ---------------------------------------------------------------
 SONAR = "--sonar" in sys.argv
 BUTTON = "--button" in sys.argv
-NCOL = 60 if SONAR or BUTTON else 30  # the sensor and the button need a full-length breadboard
+LONG = "--long" in sys.argv          # a full-length breadboard with nothing else on it
+NCOL = 60 if SONAR or BUTTON or LONG else 30  # the sensor and the button need a full-length breadboard
 EXT = (NCOL - 30) * P
 W, H = 1160 + EXT, 800
 VX = -80                              # room on the left for the USB cable
@@ -238,7 +241,14 @@ if POT:
 # --- with --sonar: an HC-SR04 ultrasonic sensor standing in row e, facing the reader --
 if SONAR:
     VCC, TRIG, ECHO, GND = 44, 45, 46, 47          # its pins, in row e
-    wire(VCC, ROW["a"], RAIL["bot+"], "#E04A44", "#A8302B")    # a44 -> + rail (3V3)
+    # Vcc: the top + rail, which draw_glyph_lcd.py connects to 5V, at column 36, just left of
+    # the sensor, down and along row d to d44
+    xs, xv, yd = cx(36), cx(VCC), ROW["d"]
+    d = f"M{xs},{RAIL['top+']} L{xs},{yd-24} Q{xs},{yd} {xs+24},{yd} L{xv},{yd}"
+    add(f'<path d="{d}" stroke="#A8302B" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+        f'<path d="{d}" stroke="#E04A44" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>')
+    for x, y in ((xs, RAIL["top+"]), (xv, yd)):
+        add(f'<circle cx="{x}" cy="{y}" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>')
     wire(GND, ROW["a"], RAIL["bot-"], "#3A3A3A", "#1A1A1A")    # a47 -> - rail
     # D19 (pin 21, column 9) -> c45 (Trig) and D18 (pin 20, column 8) -> c46 (Echo),
     # dipping below row a, one inside the other so they do not cross
@@ -275,8 +285,8 @@ if SONAR:
         text(cx(col), BOT - 12, name, 10, "#FFFFFF", weight=600)
     aria += (" The breadboard is twice as long. Further along, an HC-SR04 ultrasonic sensor stands with its "
              "pins in e44 to e47, Vcc, Trig, Echo and Gnd, and its two round transducers facing the near edge "
-             "of the breadboard. A red jumper wire connects a44 to the plus rail, and a black one connects a47 "
-             "to the minus rail. An orange jumper wire connects a9, below the D19 pin, to c45, the Trig "
+             "of the breadboard. A red jumper wire runs from the upper plus rail at column 36 to d44, the Vcc "
+             "column, and a black one connects a47 to the lower minus rail. An orange jumper wire connects a9, below the D19 pin, to c45, the Trig "
              "column, and a blue one connects a8, below the D18 pin, to c46, the Echo column.")
 
 # --- with --button: a 12 mm push button across the centre gap, D7 to one side, GND to the other --

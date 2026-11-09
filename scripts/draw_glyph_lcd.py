@@ -3,17 +3,21 @@
 Builds on the picture of the Glyph C6 powering the breadboard rails, made by
 draw_glyph_breadboard.py, and adds:
 
-- two jumpers at columns 29 and 30 that join the top rails to the bottom ones
+- a red jumper from j7, above the 5V pin, to the top + rail (column 6), so the
+  top + rail carries 5 volts and the bottom + rail stays at 3.3 volts
+- a black jumper at column 30 that joins the top - rail to the bottom one
 - the LCD module above the breadboard, drawn after the robocraze product photo,
-  with its four header pins on the left end, on female jumper wires:
+  with its four header pins on the left end, on socket-to-plug jumper wires:
   GND -> top - rail (column 8), VCC -> top + rail (column 10),
   SDA -> j15 (below SDA, GPIO4), SCL -> j16 (below SCL, GPIO5).
   SDA and SCL drop through the gaps in the rails at columns 13 and 19.
 
-Usage:
-    python3 scripts/draw_glyph_lcd.py \
-        website/microcontrollers/images/glyph-c6-breadboard.svg \
+Usage, on a full-length breadboard (long.svg) and with the HC-SR04 as well (sonar.svg),
+both made by draw_glyph_breadboard.py:
+    python3 scripts/draw_glyph_lcd.py long.svg \
         website/microcontrollers/images/glyph-c6-breadboard-lcd.svg
+    python3 scripts/draw_glyph_lcd.py sonar.svg \
+        website/microcontrollers/images/glyph-c6-breadboard-lcd-sonar.svg
 """
 import re, sys
 
@@ -43,17 +47,20 @@ def stroke(d, colour, dark):
 def end(x, y):
     add(f'<circle cx="{x}" cy="{y}" r="5" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>')
 
-# --- jumpers joining the top rails to the bottom ones -------------------------------
-for col, y1, y2, colour, dark in ((29, RAIL["top+"], RAIL["bot+"], "#E04A44", "#A8302B"),
-                                  (30, RAIL["top-"], RAIL["bot-"], "#3A3A3A", "#1A1A1A")):
-    x = cx(col)
-    stroke(f"M{x},{y1} C{x-10},{y1+30} {x-10},{y2-30} {x},{y2}", colour, dark)
-    end(x, y1); end(x, y2)
+# --- 5V to the top + rail; the - rails joined at column 30 ---------------------------
+x1, x2 = cx(7), cx(6)                 # column 7 is a gap in the rails, so the wire leans to 6
+stroke(f"M{x1},{ROW_J} C{x1},{ROW_J-50} {x2},{RAIL['top+']+50} {x2},{RAIL['top+']}", "#E04A44", "#A8302B")
+end(x1, ROW_J); end(x2, RAIL["top+"])
+add(f'<text x="{x1+12}" y="190" font-size="12" fill="#C0392B" text-anchor="start" font-weight="700" '
+    'dominant-baseline="central">5V</text>')
+x, y1, y2 = cx(30), RAIL["top-"], RAIL["bot-"]
+stroke(f"M{x},{y1} C{x-10},{y1+30} {x-10},{y2-30} {x},{y2}", "#3A3A3A", "#1A1A1A")
+end(x, y1); end(x, y2)
 
 # --- the LCD module --------------------------------------------------------------
 L, R, T, B = 770, 1140, -262, -82     # PCB, about 80 x 36 mm, not to scale
 PINS = {"GND": -220, "VCC": -188, "SDA": -156, "SCL": -124}
-TIP = 728                             # where the wires leave the female jumpers
+TIP = 728                             # where the wires leave the sockets
 add(f'<rect x="{L}" y="{T}" width="{R-L}" height="{B-T}" rx="6" fill="#2E7D3A" stroke="#1F5A28" stroke-width="2"/>')
 for hx in (L + 14, R - 14):
     for hy in (T + 14, B - 14):
@@ -85,14 +92,14 @@ stroke(f"M{TIP},{PINS['SCL']} Q{cx(19)},{PINS['SCL']} {cx(19)},{PINS['SCL']+RAD}
        f"C{cx(19)},205 {cx(16)},186 {cx(16)},{ROW_J}", "#3FA34D", "#2A7535")
 for x, y in ((cx(8), RAIL["top-"]), (cx(10), RAIL["top+"]), (cx(15), ROW_J), (cx(16), ROW_J)):
     end(x, y)
-for y in PINS.values():               # the female jumper housings, on top of the wires
+for y in PINS.values():               # the socket housings, on top of the wires
     add(f'<rect x="{TIP-2}" y="{y-8}" width="18" height="16" rx="2" fill="#2A2A2A"/>')
 for name, y in PINS.items():          # pin names over the wires; on the module they are on the back
     add(f'<text x="{TIP-10}" y="{y-13}" font-size="11" fill="#5A574F" font-weight="700" text-anchor="end" '
         f'dominant-baseline="central">{name}</text>')
 
-aria = (" Two jumper wires join the top rails to the bottom ones: a red one at column 29 and a black one "
-        "at column 30. A 16 by 2 LCD module sits above the breadboard, showing Hello, world! on the first "
+aria = (" A red jumper wire connects j7, above the 5V pin, to the top plus rail, so the top plus rail has "
+        "5 volts and the bottom plus rail 3.3 volts. A black jumper wire at column 30 joins the two minus rails. A 16 by 2 LCD module sits above the breadboard, showing Hello, world! on the first "
         "line and Glyph C6 on the second. Four jumper wires run from the pins on its left end: GND to the "
         "top minus rail with a black wire, VCC to the top plus rail with a red wire, SDA to j15 with a blue "
         "wire, and SCL to j16 with a green wire.")
