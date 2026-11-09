@@ -235,6 +235,9 @@ website:
             - href: microcontrollers/programming/turning-an-led-on-and-off.qmd
             - href: microcontrollers/programming/blinking-an-led.qmd
             - href: microcontrollers/programming/blinking-an-led-on-the-breadboard.qmd
+        - section: "Reading Sensors"
+          contents:
+            - href: microcontrollers/sensors/setting-the-blink-speed-with-a-knob.qmd
 
 format:
   html:

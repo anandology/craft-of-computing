@@ -1,0 +1,147 @@
+---
+title: "Setting the Blink Speed with a Knob"
+unit: 3
+cluster: "Reading Sensors"
+---
+
+A program often needs a value from the world outside the board: a position,
+a light level, a temperature. A **sensor** turns such a quantity into a
+voltage, and the board reads that voltage on one of its pins. The simplest
+sensor is a **potentiometer**, a knob that we turn by hand.
+
+In this chapter, we'll learn how to:
+
+- connect a potentiometer to the board with jumper wires
+- read the position of its knob from a program
+- use that position to set how fast an LED blinks
+
+## The potentiometer
+
+A potentiometer, or pot for short, has three lugs. Inside, a strip of
+resistive material runs from the left lug to the right lug. The middle lug,
+called the **wiper**, touches the strip at one point, and that point moves
+along the strip as we turn the knob.
+
+We connect the outer lugs to 3V3 and GND. The wiper then gets a voltage
+between 0 and 3.3 volts: 0 volts with the knob turned all the way to one
+side, 3.3 volts with it turned all the way to the other, and values in
+between as we turn it. Our pot is marked **10 kΩ**: that is the resistance of
+the whole strip, from one outer lug to the other.
+
+## Connecting the potentiometer
+
+The pot's lugs do not fit in a breadboard, so we connect them with
+**female-to-male jumper wires**. The female end pushes onto a lug, and the
+male end goes into the breadboard.
+
+Start with the circuit that blinks an LED from D15. Unplug the USB cable.
+Then:
+
+1. Join the top rails to the bottom rails, so the top rails have power too.
+   Connect the bottom `+` rail to the top `+` rail in column 29 with a red
+   jumper wire, and the bottom `−` rail to the top `−` rail in column 30 with
+   a black one.
+2. Connect the pot's left lug to the top `−` rail, with a black wire.
+3. Connect the pot's right lug to the top `+` rail, with a red wire.
+4. Connect the pot's middle lug to `j11`, with a purple wire. `j11` is in the
+   same group as `i11`, the board's A0 pin, which is GPIO0.
+
+![The LED circuit from D15, with a 10 kΩ potentiometer above the breadboard. Its middle lug connects to A0 through `j11`, and its outer lugs to the top rails, which are joined to the bottom rails in columns 29 and 30. Board photo: PCBCupid.](../images/glyph-c6-breadboard-pot.svg)
+
+Trace the path through the pot before plugging in the USB cable:
+
+```text
+3V3 → + rail → right lug → strip → left lug → − rail → GND
+                             ↓
+                            wiper → A0
+```
+
+::: {.callout-warning}
+The female ends sit loosely on the flat lugs, and the lugs are close
+together. If the ends of the wires on the two outer lugs touch, they join
+3V3 directly to GND: a short circuit. Check that each wire is pushed fully
+onto its own lug, and that no bare metal touches a neighbour.
+:::
+
+## Reading the knob
+
+So far, every pin we used was a digital output: on or off, 3.3 volts or 0. To
+read a voltage anywhere in between, the board has an **analog-to-digital
+converter**, or **ADC**. It measures the voltage on a pin and turns it into a
+number. Only some pins are connected to it; on the Glyph C6, these are the
+pins labelled A0 to A3.
+
+Plug in the USB cable, connect Thonny to the board, and import `ADC` along
+with `Pin` in the REPL:
+
+```session
+>>> from machine import ADC, Pin
+```
+
+Then set up GPIO0 as an analog input:
+
+```session
+>>> knob = ADC(Pin(0))
+```
+
+`ADC(Pin(0))` connects GPIO0 to the ADC.
+
+Turn the knob all the way to one side, and read it:
+
+```session
+>>> knob.read_u16()
+```
+
+`read_u16()` returns a number from 0 to 65535: 0 for 0 volts, and 65535 for
+3.3 volts. With the knob at this end, it returns a number close
+to 0. Turn the knob all the way to the other side, and read it again. Now it
+returns a number close to 65535. In the middle, it returns a number in
+between. The last digits change from one reading to the next even with the
+knob still, because the measurement is never exact.
+
+## Setting the blink speed
+
+To control the LED with the knob, the program reads the knob each time round
+the loop and works out the delay from it. Type this program in the editor:
+
+```python
+from machine import ADC, Pin
+import time
+
+led = Pin(15, Pin.OUT)
+knob = ADC(Pin(0))
+
+while True:
+    delay = 0.05 + knob.read_u16() / 65535
+    led.on()
+    time.sleep(delay)
+    led.off()
+    time.sleep(delay)
+```
+
+`knob.read_u16() / 65535` is a number from 0 to 1, so `delay` is between 0.05
+and 1.05 seconds. The 0.05 keeps the delay from reaching 0: with no delay,
+the LED switches so fast that it looks dimly lit instead of blinking.
+
+Click Run, and turn the knob. At one end, the LED blinks about once every two
+seconds. At the other, it flickers about ten times a second. The program
+reads the knob once per blink, so a change takes effect at the next blink.
+
+If the LED blinks faster when you turn the knob the way you would expect to
+slow it down, unplug the USB cable and swap the red and black wires on the
+pot's outer lugs.
+
+## Summary
+
+A program reads a sensor through the ADC, which turns the voltage on a pin
+into a number the program can use.
+
+| Connection or code | What it does |
+|--------------------|--------------|
+| Pot's outer lugs → 3V3 and GND | puts the full 3.3 volts across the pot's strip |
+| Pot's middle lug (wiper) → A0 | gives A0 a voltage from 0 to 3.3 volts, set by the knob |
+| Top rails ↔ bottom rails | give the top rails power from the bottom ones |
+| ADC | measures the voltage on a pin; on the Glyph C6, only on A0 to A3 |
+| `knob = ADC(Pin(0))` | sets up GPIO0 to measure the voltage on it |
+| `knob.read_u16()` | returns the voltage as a number from 0 (0 volts) to 65535 (3.3 volts) |
+| `knob.read_u16() / 65535` | turns the reading into a number from 0 to 1 |
