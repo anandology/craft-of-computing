@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1110" viewBox="-80 -310 1240 1110" role="img" aria-label="A Glyph C6 board at the left end of a breadboard, straddling the centre gap with its pins in rows c and i and its USB cable to the left. A red jumper wire connects a2, below the 3V3 pin, to the lower plus rail. A black jumper wire connects a16, below the last GND pin, to the lower minus rail. A yellow jumper wire connects a7, below the D15 pin, to a23. A red LED has its anode in e23 and its cathode in e25. A 330 ohm resistor runs from d25 to d28, and a green jumper wire connects a28 to the minus rail. The LED is lit. A 10 kilohm potentiometer stands above the breadboard, its knob pointing up. A purple jumper wire connects its middle lug to j11, above the A0 pin. Its left lug connects to the top minus rail with a black wire, and its right lug to the top plus rail with a red wire. A red jumper wire joins the top plus rail to the bottom plus rail at column 29, and a black jumper wire joins the top minus rail to the bottom minus rail at column 30." font-family="'IBM Plex Sans', system-ui, sans-serif">
-<rect x="-80" y="-310" width="1240" height="1110" fill="#EAE8E3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="900" viewBox="-80 -100 1240 900" role="img" aria-label="A Glyph C6 board at the left end of a breadboard, straddling the centre gap with its pins in rows c and i and its USB cable to the left. A red jumper wire connects a2, below the 3V3 pin, to the lower plus rail. A black jumper wire connects a16, below the last GND pin, to the lower minus rail. A yellow jumper wire connects a7, below the D15 pin, to a23. A red LED has its anode in e23 and its cathode in e25. A 330 ohm resistor runs from d25 to d28, and a green jumper wire connects a28 to the minus rail. The LED is lit. A 10 kilohm potentiometer stands in the breadboard, its legs in j20, j22 and j24 and its knob pointing up. A black jumper wire connects f20, below the left leg, to the bottom minus rail. A red jumper wire connects i24, below the right leg, to the top plus rail, and another red jumper wire joins the top plus rail to the bottom plus rail at column 29. A purple jumper wire connects i22, below the middle leg, to j11, above the A0 pin." font-family="'IBM Plex Sans', system-ui, sans-serif">
+<rect x="-80" y="-100" width="1240" height="900" fill="#EAE8E3"/>
 <rect x="83" y="64" width="1012" height="693" rx="10" fill="#FAF9F5" stroke="#D9D6CF" stroke-width="2"/>
 <rect x="85" y="384" width="1008" height="52" fill="#E6E3DC"/>
 <line x1="106" y1="88" x2="1072" y2="88" stroke="#4A7FD6" stroke-width="3"/>
@@ -476,43 +476,40 @@
 <path d="M1021,138 C1011,168 1011,655 1021,685" stroke="#A8302B" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M1021,138 C1011,168 1011,655 1021,685" stroke="#E04A44" stroke-width="5" fill="none" stroke-linecap="round"/>
 <circle cx="1021" cy="138" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
 <circle cx="1021" cy="685" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
-<path d="M1053,106 C1043,136 1043,686 1053,716" stroke="#1A1A1A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M1053,106 C1043,136 1043,686 1053,716" stroke="#3A3A3A" stroke-width="5" fill="none" stroke-linecap="round"/>
-<circle cx="1053" cy="106" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
-<circle cx="1053" cy="716" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
-<rect x="440" y="-62" width="10" height="44" fill="#C9CCD0" stroke="#8C9096"/>
-<rect x="504" y="-62" width="10" height="44" fill="#C9CCD0" stroke="#8C9096"/>
-<rect x="568" y="-62" width="10" height="44" fill="#C9CCD0" stroke="#8C9096"/>
-<rect x="405" y="-152" width="208" height="92" rx="8" fill="#B5582A" stroke="#8A3F1C" stroke-width="2"/>
-<circle cx="445" cy="-88" r="12" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/><circle cx="445" cy="-88" r="4.5" fill="#6B3A1E"/>
-<circle cx="509" cy="-88" r="12" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/><circle cx="509" cy="-88" r="4.5" fill="#6B3A1E"/>
-<circle cx="573" cy="-88" r="12" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/><circle cx="573" cy="-88" r="4.5" fill="#6B3A1E"/>
-<rect x="393" y="-176" width="232" height="30" rx="6" fill="#B8BCC2" stroke="#8C9096" stroke-width="1.5"/>
-<rect x="471" y="-218" width="76" height="44" fill="#A9ADB2" stroke="#8C9096" stroke-width="1.5"/>
-<line x1="471" y1="-212" x2="547" y2="-212" stroke="#8C9096" stroke-width="1"/>
-<line x1="471" y1="-206" x2="547" y2="-206" stroke="#8C9096" stroke-width="1"/>
-<line x1="471" y1="-200" x2="547" y2="-200" stroke="#8C9096" stroke-width="1"/>
-<line x1="471" y1="-194" x2="547" y2="-194" stroke="#8C9096" stroke-width="1"/>
-<line x1="471" y1="-188" x2="547" y2="-188" stroke="#8C9096" stroke-width="1"/>
-<line x1="471" y1="-182" x2="547" y2="-182" stroke="#8C9096" stroke-width="1"/>
-<rect x="481" y="-298" width="56" height="82" rx="4" fill="#D4D7DB" stroke="#8C9096" stroke-width="1.5"/>
-<line x1="488" y1="-292" x2="488" y2="-220" stroke="#A9ADB2" stroke-width="1.5"/>
-<line x1="495" y1="-292" x2="495" y2="-220" stroke="#A9ADB2" stroke-width="1.5"/>
-<line x1="502" y1="-292" x2="502" y2="-220" stroke="#A9ADB2" stroke-width="1.5"/>
-<line x1="509" y1="-292" x2="509" y2="-220" stroke="#A9ADB2" stroke-width="1.5"/>
-<line x1="516" y1="-292" x2="516" y2="-220" stroke="#A9ADB2" stroke-width="1.5"/>
-<line x1="523" y1="-292" x2="523" y2="-220" stroke="#A9ADB2" stroke-width="1.5"/>
-<line x1="530" y1="-292" x2="530" y2="-220" stroke="#A9ADB2" stroke-width="1.5"/>
-<rect x="506" y="-298" width="6" height="26" fill="#6E7278"/>
-<path d="M451,-252 A62,22 0 0 0 561,-246" stroke="#8A877F" stroke-width="2.5" fill="none"/><path d="M569,-252 L553,-252 L563,-238 Z" fill="#8A877F"/>
-<text x="631" y="-105" font-size="15" fill="#5A574F" text-anchor="start" font-weight="700" dominant-baseline="central">10 kΩ</text>
-<path d="M445,-18 C445,44.0 445,44.0 445,106" stroke="#1A1A1A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M445,-18 C445,44.0 445,44.0 445,106" stroke="#3A3A3A" stroke-width="5" fill="none" stroke-linecap="round"/>
-<circle cx="445" cy="106" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
-<path d="M509,-18 L509,165 C509,205 445,186 445,236" stroke="#6E45A8" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M509,-18 L509,165 C509,205 445,186 445,236" stroke="#9B6BD6" stroke-width="5" fill="none" stroke-linecap="round"/>
+<rect x="728" y="148" width="10" height="88" fill="#C9CCD0" stroke="#8C9096"/><circle cx="733" cy="236" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
+<rect x="792" y="148" width="10" height="88" fill="#C9CCD0" stroke="#8C9096"/><circle cx="797" cy="236" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
+<rect x="856" y="148" width="10" height="88" fill="#C9CCD0" stroke="#8C9096"/><circle cx="861" cy="236" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
+<rect x="693" y="58" width="208" height="92" rx="8" fill="#B5582A" stroke="#8A3F1C" stroke-width="2"/>
+<circle cx="733" cy="122" r="12" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/><circle cx="733" cy="122" r="4.5" fill="#6B3A1E"/>
+<circle cx="797" cy="122" r="12" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/><circle cx="797" cy="122" r="4.5" fill="#6B3A1E"/>
+<circle cx="861" cy="122" r="12" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/><circle cx="861" cy="122" r="4.5" fill="#6B3A1E"/>
+<rect x="681" y="34" width="232" height="30" rx="6" fill="#B8BCC2" stroke="#8C9096" stroke-width="1.5"/>
+<rect x="759" y="-8" width="76" height="44" fill="#A9ADB2" stroke="#8C9096" stroke-width="1.5"/>
+<line x1="759" y1="-2" x2="835" y2="-2" stroke="#8C9096" stroke-width="1"/>
+<line x1="759" y1="4" x2="835" y2="4" stroke="#8C9096" stroke-width="1"/>
+<line x1="759" y1="10" x2="835" y2="10" stroke="#8C9096" stroke-width="1"/>
+<line x1="759" y1="16" x2="835" y2="16" stroke="#8C9096" stroke-width="1"/>
+<line x1="759" y1="22" x2="835" y2="22" stroke="#8C9096" stroke-width="1"/>
+<line x1="759" y1="28" x2="835" y2="28" stroke="#8C9096" stroke-width="1"/>
+<rect x="769" y="-88" width="56" height="82" rx="4" fill="#D4D7DB" stroke="#8C9096" stroke-width="1.5"/>
+<line x1="776" y1="-82" x2="776" y2="-10" stroke="#A9ADB2" stroke-width="1.5"/>
+<line x1="783" y1="-82" x2="783" y2="-10" stroke="#A9ADB2" stroke-width="1.5"/>
+<line x1="790" y1="-82" x2="790" y2="-10" stroke="#A9ADB2" stroke-width="1.5"/>
+<line x1="797" y1="-82" x2="797" y2="-10" stroke="#A9ADB2" stroke-width="1.5"/>
+<line x1="804" y1="-82" x2="804" y2="-10" stroke="#A9ADB2" stroke-width="1.5"/>
+<line x1="811" y1="-82" x2="811" y2="-10" stroke="#A9ADB2" stroke-width="1.5"/>
+<line x1="818" y1="-82" x2="818" y2="-10" stroke="#A9ADB2" stroke-width="1.5"/>
+<rect x="794" y="-88" width="6" height="26" fill="#6E7278"/>
+<path d="M739,-42 A62,22 0 0 0 849,-36" stroke="#8A877F" stroke-width="2.5" fill="none"/><path d="M857,-42 L841,-42 L851,-28 Z" fill="#8A877F"/>
+<text x="927" y="49" font-size="15" fill="#5A574F" text-anchor="start" font-weight="700" dominant-baseline="central">10 kΩ</text>
+<path d="M733,364 C723,394 723,686 733,716" stroke="#1A1A1A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M733,364 C723,394 723,686 733,716" stroke="#3A3A3A" stroke-width="5" fill="none" stroke-linecap="round"/>
+<circle cx="733" cy="364" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
+<circle cx="733" cy="716" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
+<path d="M861,268 C881,200 925,190 925,138" stroke="#A8302B" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M861,268 C881,200 925,190 925,138" stroke="#E04A44" stroke-width="5" fill="none" stroke-linecap="round"/>
+<circle cx="861" cy="268" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
+<circle cx="925" cy="138" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
+<path d="M797,268 C765,180 477,180 445,236" stroke="#6E45A8" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M797,268 C765,180 477,180 445,236" stroke="#9B6BD6" stroke-width="5" fill="none" stroke-linecap="round"/>
+<circle cx="797" cy="268" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
 <circle cx="445" cy="236" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
-<path d="M573,-18 C573,60.0 573,60.0 573,138" stroke="#A8302B" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M573,-18 C573,60.0 573,60.0 573,138" stroke="#E04A44" stroke-width="5" fill="none" stroke-linecap="round"/>
-<circle cx="573" cy="138" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>
-<rect x="437" y="-30" width="16" height="28" rx="2" fill="#2A2A2A"/>
-<rect x="501" y="-30" width="16" height="28" rx="2" fill="#2A2A2A"/>
-<rect x="565" y="-30" width="16" height="28" rx="2" fill="#2A2A2A"/>
 <text x="435" y="186" font-size="12" fill="#6E45A8" text-anchor="end" font-weight="700" dominant-baseline="central">A0</text>
 </svg>

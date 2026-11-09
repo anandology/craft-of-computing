@@ -15,9 +15,10 @@ With --led, it adds the LED circuit of breadboard-led.png in columns 23-28:
 With --d15 as well, the + rail -> a23 jumper is replaced by a yellow jumper
 from a7 (below D15) to a23, so a program switches the LED through GPIO15:
     ... glyph-c6-breadboard-d15.svg PINOUT.png --led --d15
-With --pot as well, a 10k potentiometer stands above the breadboard, on female
-jumper wires: wiper -> j11 (below A0, GPIO0), outer lugs -> top - and + rails,
-and two jumpers at columns 29 and 30 join the top rails to the bottom ones:
+With --pot as well, a 10k potentiometer stands in j20, j22, j24, its body over the top
+rails: f20 -> bottom - rail, i24 -> top + rail, a jumper at column 29 joins the top
++ rail to the bottom one, and the wiper i22 -> j11 (above A0, GPIO0):
+    ... glyph-c6-breadboard-pot.svg PINOUT.png --led --d15 --pot
     ... glyph-c6-breadboard-pot.svg PINOUT.png --led --d15 --pot
 With --sonar as well (instead of --pot), the breadboard is full length, 60 columns,
 and an HC-SR04 stands in e44-e47 (Vcc, Trig, Echo, Gnd), facing the reader:
@@ -71,7 +72,7 @@ EXT = (NCOL - 30) * P
 W, H = 1160 + EXT, 800
 VX = -80                              # room on the left for the USB cable
 POT = "--pot" in sys.argv
-VY = -310 if POT else 0               # room above for the potentiometer
+VY = -100 if POT else 0               # room above for the potentiometer
 add(f'<rect x="{VX}"' + (f' y="{VY}"' if VY else '') + f' width="{W-VX}" height="{H-VY}" fill="{BG}"/>')
 RAIL_COLS = [c for g in range(NCOL // 6) for c in range(2 + 6 * g, 7 + 6 * g)]
 add(f'<rect x="83" y="64" width="{1012+EXT}" height="693" rx="10" fill="{BOARD}" stroke="{EDGE}" stroke-width="2"/>')
@@ -191,43 +192,48 @@ def lead(x1, y1, x2, y2, colour, dark, knee=None):
 
 if POT:
     wire(29, RAIL["top+"], RAIL["bot+"], "#E04A44", "#A8302B")    # top + rail <-> bottom + rail
-    wire(30, RAIL["top-"], RAIL["bot-"], "#3A3A3A", "#1A1A1A")    # top - rail <-> bottom - rail
-    X = cx(13)                          # wiper lug over column 13, a gap in the rails
-    LUGS = (X - 2 * P, X, X + 2 * P)    # 0.2" apart, as on the part
+    LEGS = (cx(20), cx(22), cx(24))     # legs in j20, j22, j24: 0.2" apart, as on the part
+    X = LEGS[1]
     METAL, METAL_DARK = "#C9CCD0", "#8C9096"
-    # legs, with a female jumper pushed onto each
-    for x in LUGS:
-        add(f'<rect x="{x-5}" y="-62" width="10" height="44" fill="{METAL}" stroke="{METAL_DARK}"/>')
+    BB = 150                            # bottom of the body, behind the top rails
+    for x in LEGS:
+        add(f'<rect x="{x-5}" y="{BB-2}" width="10" height="{ROW["j"]-BB+2}" fill="{METAL}" stroke="{METAL_DARK}"/>'
+            f'<circle cx="{x}" cy="{ROW["j"]}" r="5" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>')
     # body: brown phenolic case with an eyelet over each leg
-    add(f'<rect x="{X-104}" y="-152" width="208" height="92" rx="8" fill="#B5582A" stroke="#8A3F1C" stroke-width="2"/>')
-    for x in LUGS:
-        add(f'<circle cx="{x}" cy="-88" r="12" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>'
-            f'<circle cx="{x}" cy="-88" r="4.5" fill="#6B3A1E"/>')
+    add(f'<rect x="{X-104}" y="{BB-92}" width="208" height="92" rx="8" fill="#B5582A" stroke="#8A3F1C" stroke-width="2"/>')
+    for x in LEGS:
+        add(f'<circle cx="{x}" cy="{BB-28}" r="12" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>'
+            f'<circle cx="{x}" cy="{BB-28}" r="4.5" fill="#6B3A1E"/>')
     # mounting plate, threaded bushing and knurled shaft with its slot
-    add(f'<rect x="{X-116}" y="-176" width="232" height="30" rx="6" fill="#B8BCC2" stroke="{METAL_DARK}" stroke-width="1.5"/>')
-    add(f'<rect x="{X-38}" y="-218" width="76" height="44" fill="#A9ADB2" stroke="{METAL_DARK}" stroke-width="1.5"/>')
-    for y in range(-212, -176, 6):
+    T = BB - 116                        # top of the plate
+    add(f'<rect x="{X-116}" y="{T}" width="232" height="30" rx="6" fill="#B8BCC2" stroke="{METAL_DARK}" stroke-width="1.5"/>')
+    add(f'<rect x="{X-38}" y="{T-42}" width="76" height="44" fill="#A9ADB2" stroke="{METAL_DARK}" stroke-width="1.5"/>')
+    for y in range(T - 36, T, 6):
         add(f'<line x1="{X-38}" y1="{y}" x2="{X+38}" y2="{y}" stroke="{METAL_DARK}" stroke-width="1"/>')
-    add(f'<rect x="{X-28}" y="-298" width="56" height="82" rx="4" fill="#D4D7DB" stroke="{METAL_DARK}" stroke-width="1.5"/>')
+    add(f'<rect x="{X-28}" y="{T-122}" width="56" height="82" rx="4" fill="#D4D7DB" stroke="{METAL_DARK}" stroke-width="1.5"/>')
     for x in range(X - 21, X + 22, 7):
-        add(f'<line x1="{x}" y1="-292" x2="{x}" y2="-220" stroke="#A9ADB2" stroke-width="1.5"/>')
-    add(f'<rect x="{X-3}" y="-298" width="6" height="26" fill="#6E7278"/>')
+        add(f'<line x1="{x}" y1="{T-116}" x2="{x}" y2="{T-44}" stroke="#A9ADB2" stroke-width="1.5"/>')
+    add(f'<rect x="{X-3}" y="{T-122}" width="6" height="26" fill="#6E7278"/>')
     # a curved arrow: turn the knob
-    add(f'<path d="M{X-58},-252 A62,22 0 0 0 {X+52},-246" stroke="{LABEL}" stroke-width="2.5" fill="none"/>'
-        f'<path d="M{X+60},-252 L{X+44},-252 L{X+54},-238 Z" fill="{LABEL}"/>')
-    text(X + 122, -105, "10 kΩ", 15, "#5A574F", "start", 700)
-    # jumper wires from the lugs: left -> top - rail, wiper -> j11 (A0), right -> top + rail
-    lead(LUGS[0], -18, cx(11), RAIL["top-"], "#3A3A3A", "#1A1A1A")
-    lead(LUGS[1], -18, cx(11), ROW["j"], "#9B6BD6", "#6E45A8", knee=165)   # through the rail gap
-    lead(LUGS[2], -18, cx(15), RAIL["top+"], "#E04A44", "#A8302B")
-    for x in LUGS:
-        add(f'<rect x="{x-8}" y="-30" width="16" height="28" rx="2" fill="#2A2A2A"/>')
+    add(f'<path d="M{X-58},{T-76} A62,22 0 0 0 {X+52},{T-70}" stroke="{LABEL}" stroke-width="2.5" fill="none"/>'
+        f'<path d="M{X+60},{T-76} L{X+44},{T-76} L{X+54},{T-62} Z" fill="{LABEL}"/>')
+    text(X + 130, T + 15, "10 kΩ", 15, "#5A574F", "start", 700)
+    # left leg: f20 -> bottom - rail; right leg: i24 -> top + rail; wiper: i22 -> j11 (A0)
+    wire(20, ROW["f"], RAIL["bot-"], "#3A3A3A", "#1A1A1A")
+    def jumper(x1, y1, x2, y2, c1, c2, colour, dark):
+        d = f"M{x1},{y1} C{c1[0]},{c1[1]} {c2[0]},{c2[1]} {x2},{y2}"
+        add(f'<path d="{d}" stroke="{dark}" stroke-width="8" fill="none" stroke-linecap="round"/>'
+            f'<path d="{d}" stroke="{colour}" stroke-width="5" fill="none" stroke-linecap="round"/>')
+        for x, y in ((x1, y1), (x2, y2)):
+            add(f'<circle cx="{x}" cy="{y}" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>')
+    jumper(cx(24), ROW["i"], cx(26), RAIL["top+"], (cx(24) + 20, 200), (cx(26), 190), "#E04A44", "#A8302B")
+    jumper(cx(22), ROW["i"], cx(11), ROW["j"], (cx(21), 180), (cx(12), 180), "#9B6BD6", "#6E45A8")
     text(cx(11) - 10, 186, "A0", 12, "#6E45A8", "end", 700)
-    aria += (" A 10 kilohm potentiometer stands above the breadboard, its knob pointing up. A purple jumper "
-             "wire connects its middle lug to j11, above the A0 pin. Its left lug connects to the top minus "
-             "rail with a black wire, and its right lug to the top plus rail with a red wire. A red jumper "
-             "wire joins the top plus rail to the bottom plus rail at column 29, and a black jumper wire joins "
-             "the top minus rail to the bottom minus rail at column 30.")
+    aria += (" A 10 kilohm potentiometer stands in the breadboard, its legs in j20, j22 and j24 and its knob "
+             "pointing up. A black jumper wire connects f20, below the left leg, to the bottom minus rail. A red "
+             "jumper wire connects i24, below the right leg, to the top plus rail, and another red jumper wire "
+             "joins the top plus rail to the bottom plus rail at column 29. A purple jumper wire connects i22, "
+             "below the middle leg, to j11, above the A0 pin.")
 
 # --- with --sonar: an HC-SR04 ultrasonic sensor standing in row e, facing the reader --
 if SONAR:
