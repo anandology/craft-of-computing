@@ -19,6 +19,10 @@ With --pot as well, a 10k potentiometer stands above the breadboard, on female
 jumper wires: wiper -> j11 (below A0, GPIO0), outer lugs -> top - and + rails,
 and two jumpers at columns 29 and 30 join the top rails to the bottom ones:
     ... glyph-c6-breadboard-pot.svg PINOUT.png --led --d15 --pot
+With --sonar as well (instead of --pot), the breadboard is full length, 60 columns,
+and an HC-SR04 stands in e44-e47 (Vcc, Trig, Echo, Gnd), facing the reader:
+a44 -> + rail, a47 -> - rail, D19 (a9) -> c45 (Trig), D18 (a8) -> c46 (Echo):
+    ... glyph-c6-breadboard-sonar.svg PINOUT.png --led --d15 --sonar
 
 PINOUT.png is PCBCupid's Glyph C6 pinout image at its full 5168x3669 size;
 the crop coordinates below are in its pixels. Download it from:
@@ -38,7 +42,6 @@ def cx(col):                          # column 1..30
 ROW = {"j": 236, "i": 268, "h": 300, "g": 332, "f": 364,
        "e": 460, "d": 492, "c": 524, "b": 556, "a": 588}
 RAIL = {"top-": 106, "top+": 138, "bot+": 685, "bot-": 716}
-RAIL_COLS = [c for g in range(5) for c in range(2 + 6 * g, 7 + 6 * g)]
 
 out = []
 def add(s): out.append(s)
@@ -52,25 +55,29 @@ def text(x, y, s, size=13, fill=LABEL, anchor="middle", weight=400):
         f'font-weight="{weight}" dominant-baseline="central">{s}</text>')
 
 # --- breadboard ---------------------------------------------------------------
-W, H = 1160, 800
+SONAR = "--sonar" in sys.argv
+NCOL = 60 if SONAR else 30            # the sensor needs a full-length breadboard
+EXT = (NCOL - 30) * P
+W, H = 1160 + EXT, 800
 VX = -80                              # room on the left for the USB cable
 POT = "--pot" in sys.argv
 VY = -310 if POT else 0               # room above for the potentiometer
 add(f'<rect x="{VX}"' + (f' y="{VY}"' if VY else '') + f' width="{W-VX}" height="{H-VY}" fill="{BG}"/>')
-add(f'<rect x="83" y="64" width="1012" height="693" rx="10" fill="{BOARD}" stroke="{EDGE}" stroke-width="2"/>')
-add(f'<rect x="85" y="384" width="1008" height="52" fill="#E6E3DC"/>')
+RAIL_COLS = [c for g in range(NCOL // 6) for c in range(2 + 6 * g, 7 + 6 * g)]
+add(f'<rect x="83" y="64" width="{1012+EXT}" height="693" rx="10" fill="{BOARD}" stroke="{EDGE}" stroke-width="2"/>')
+add(f'<rect x="85" y="384" width="{1008+EXT}" height="52" fill="#E6E3DC"/>')
 for y, c in [(88, BLUE), (157, RED), (664, RED), (734, BLUE)]:
-    add(f'<line x1="106" y1="{y}" x2="1072" y2="{y}" stroke="{c}" stroke-width="3"/>')
+    add(f'<line x1="106" y1="{y}" x2="{1072+EXT}" y2="{y}" stroke="{c}" stroke-width="3"/>')
 for key, y in RAIL.items():
     for col in RAIL_COLS:
         hole(cx(col), y)
     sign, colr = ("+", RED) if key.endswith("+") else ("−", BLUE)
     text(103, y, sign, 15, colr, weight=700)
 for r, y in ROW.items():
-    for col in range(1, 31):
+    for col in range(1, NCOL + 1):
         hole(cx(col), y)
-    text(101, y, r); text(1076, y, r)
-for col in range(5, 31, 5):
+    text(101, y, r); text(1076 + EXT, y, r)
+for col in range(5, NCOL + 1, 5):
     text(cx(col), 216, col); text(cx(col), 617, col)
 
 # --- Glyph C6, cut from the PCBCupid pinout image --------------------------------
@@ -109,7 +116,10 @@ def wire(col, y1, y2, colour, dark):
         add(f'<circle cx="{x}" cy="{y}" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>')
 wire(2, ROW["a"], RAIL["bot+"], "#E04A44", "#A8302B")     # 3V3 (pin 14) -> + rail
 wire(16, ROW["a"], RAIL["bot-"], "#3A3A3A", "#1A1A1A")    # GND (pin 28) -> - rail
-text(cx(16) + 10, 654 if "--d15" in sys.argv else 642, "GND", 12, "#3A3A3A", "start", 700)  # below the D15 jumper
+if SONAR:                             # left of the wire, above the D18 and D19 jumpers
+    text(cx(16) - 10, 612, "GND", 12, "#3A3A3A", "end", 700)
+else:                                 # below the D15 jumper
+    text(cx(16) + 10, 654 if "--d15" in sys.argv else 642, "GND", 12, "#3A3A3A", "start", 700)
 text(cx(2) + 10, 642, "3V3", 12, "#C0392B", "start", 700)
 
 aria = ("A Glyph C6 board at the left end of a breadboard, straddling the centre gap with its pins in rows c and i "
@@ -207,6 +217,50 @@ if POT:
              "rail with a black wire, and its right lug to the top plus rail with a red wire. A red jumper "
              "wire joins the top plus rail to the bottom plus rail at column 29, and a black jumper wire joins "
              "the top minus rail to the bottom minus rail at column 30.")
+
+# --- with --sonar: an HC-SR04 ultrasonic sensor standing in row e, facing the reader --
+if SONAR:
+    VCC, TRIG, ECHO, GND = 44, 45, 46, 47          # its pins, in row e
+    wire(VCC, ROW["a"], RAIL["bot+"], "#E04A44", "#A8302B")    # a44 -> + rail (3V3)
+    wire(GND, ROW["a"], RAIL["bot-"], "#3A3A3A", "#1A1A1A")    # a47 -> - rail
+    # D19 (pin 21, column 9) -> c45 (Trig) and D18 (pin 20, column 8) -> c46 (Echo),
+    # dipping below row a, one inside the other so they do not cross
+    for x1, x2, low, colour, dark in ((cx(9), cx(TRIG), 668, "#F08A24", "#B4621A"),
+                                      (cx(8), cx(ECHO), 692, "#3D7BE0", "#2856A8")):
+        y1, y2 = ROW["a"], ROW["c"]
+        d = f"M{x1},{y1} C{x1},{low} {x2},{low} {x2},{y2}"
+        add(f'<path d="{d}" stroke="{dark}" stroke-width="8" fill="none" stroke-linecap="round"/>'
+            f'<path d="{d}" stroke="{colour}" stroke-width="5" fill="none" stroke-linecap="round"/>')
+        for x, y in ((x1, y1), (x2, y2)):
+            add(f'<circle cx="{x}" cy="{y}" r="5" fill="#C9CCD0" stroke="#8C9096" stroke-width="1.5"/>')
+    # the sensor, drawn face-on as if standing up from row e: legs, header, board
+    METAL, METAL_DARK = "#C9CCD0", "#8C9096"
+    X = (cx(VCC) + cx(GND)) / 2
+    PW, TOP, BOT = 567, 152, 404                   # 45 x 20 mm board
+    for col in (VCC, TRIG, ECHO, GND):
+        add(f'<rect x="{cx(col)-3}" y="{BOT+16}" width="6" height="{ROW["e"]-BOT-16}" fill="{METAL}" stroke="{METAL_DARK}"/>'
+            f'<circle cx="{cx(col)}" cy="{ROW["e"]}" r="4" fill="{METAL}" stroke="{METAL_DARK}"/>')
+    add(f'<rect x="{cx(VCC)-16}" y="{BOT}" width="{cx(GND)-cx(VCC)+32}" height="18" rx="2" fill="#2A2A2A"/>')
+    add(f'<rect x="{X-PW/2}" y="{TOP}" width="{PW}" height="{BOT-TOP}" rx="6" fill="#1F5FA8" stroke="#16457A" stroke-width="2"/>')
+    for hx in (X - PW/2 + 16, X + PW/2 - 16):
+        for hy in (TOP + 16, BOT - 16):
+            add(f'<circle cx="{hx}" cy="{hy}" r="8" fill="{BG}" stroke="{METAL}" stroke-width="3"/>')
+    add('<defs><pattern id="mesh" width="7" height="7" patternUnits="userSpaceOnUse">'
+        '<rect width="7" height="7" fill="#33363B"/><circle cx="3.5" cy="3.5" r="1.6" fill="#5A5E65"/></pattern></defs>')
+    CY = (TOP + BOT) / 2
+    for dx, name in ((-164, "T"), (164, "R")):  # transmitter left, receiver right
+        add(f'<circle cx="{X+dx}" cy="{CY}" r="101" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="2"/>'
+            f'<circle cx="{X+dx}" cy="{CY}" r="84" fill="url(#mesh)" stroke="#6E7278" stroke-width="2"/>')
+        text(X + dx * 0.42, TOP + 37, name, 15, "#FFFFFF", weight=700)
+    add(f'<rect x="{X-30}" y="{TOP+70}" width="60" height="22" rx="11" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>')
+    text(X, CY + 70, "HC-SR04", 14, "#FFFFFF", weight=700)
+    for col, name in ((VCC, "Vcc"), (TRIG, "Trig"), (ECHO, "Echo"), (GND, "Gnd")):
+        text(cx(col), BOT - 12, name, 10, "#FFFFFF", weight=600)
+    aria += (" The breadboard is twice as long. Further along, an HC-SR04 ultrasonic sensor stands with its "
+             "pins in e44 to e47, Vcc, Trig, Echo and Gnd, and its two round transducers facing the near edge "
+             "of the breadboard. A red jumper wire connects a44 to the plus rail, and a black one connects a47 "
+             "to the minus rail. An orange jumper wire connects a9, below the D19 pin, to c45, the Trig "
+             "column, and a blue one connects a8, below the D18 pin, to c46, the Echo column.")
 
 open(sys.argv[1], "w").write(
     f'<svg xmlns="http://www.w3.org/2000/svg" width="{W-VX}" height="{H-VY}" viewBox="{VX} {VY} {W-VX} {H-VY}" role="img" '

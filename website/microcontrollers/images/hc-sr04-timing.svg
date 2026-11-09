@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="350" viewBox="0 0 900 350" role="img" aria-label="A timing diagram with three rows. Trig: the program holds it high for 10 microseconds. Sound: just after, the sensor sends a short burst of sound, and later a weaker echo comes back. Echo: it goes high when the burst has gone out and low when the echo comes back, so the length of the Echo pulse is the time the sound took to travel there and back." font-family="'IBM Plex Sans', system-ui, sans-serif">
+<rect x="1" y="1" width="898" height="348" rx="10" fill="#F5F1E8" stroke="#DFD8C8"/>
+<line x1="290" y1="131" x2="290" y2="189" stroke="#8A8270" stroke-width="1.5" stroke-dasharray="5 5"/>
+<line x1="290" y1="221" x2="290" y2="275" stroke="#8A8270" stroke-width="1.5" stroke-dasharray="5 5"/>
+<line x1="620" y1="131" x2="620" y2="189" stroke="#8A8270" stroke-width="1.5" stroke-dasharray="5 5"/>
+<line x1="620" y1="221" x2="620" y2="275" stroke="#8A8270" stroke-width="1.5" stroke-dasharray="5 5"/>
+<text x="126" y="73.0" font-size="18" fill="#1A1916" text-anchor="end" font-weight="600" dominant-baseline="central">Trig</text>
+<text x="126" y="158.0" font-size="18" fill="#1A1916" text-anchor="end" font-weight="600" dominant-baseline="central">Sound</text>
+<line x1="150" y1="175" x2="860" y2="175" stroke="#DFD8C8" stroke-width="2"/>
+<text x="126" y="248.0" font-size="18" fill="#1A1916" text-anchor="end" font-weight="600" dominant-baseline="central">Echo</text>
+<path d="M150,90 H180 V56 H210 V90 H860" stroke="#3C5A8A" stroke-width="3" fill="none" stroke-linejoin="round"/>
+<text x="195.0" y="38" font-size="15" fill="#8A8270" text-anchor="middle" font-weight="400" dominant-baseline="central">10 µs</text>
+<text x="228" y="73.0" font-size="15" fill="#8A8270" text-anchor="start" font-weight="400" dominant-baseline="central">the program sends a pulse</text>
+<polyline points="230.0,175.0 231.0,163.1 232.0,159.1 233.0,165.6 234.0,178.3 235.0,188.9 236.0,190.2 237.0,181.5 238.0,168.5 239.0,159.8 240.0,161.1 241.0,171.7 242.0,184.4 243.0,190.9 244.0,186.9 245.0,175.0 246.0,163.1 247.0,159.1 248.0,165.6 249.0,178.3 250.0,188.9 251.0,190.2 252.0,181.5 253.0,168.5 254.0,159.8 255.0,161.1 256.0,171.7 257.0,184.4 258.0,190.9 259.0,186.9 260.0,175.0 261.0,163.1 262.0,159.1 263.0,165.6 264.0,178.3 265.0,188.9 266.0,190.2 267.0,181.5 268.0,168.5 269.0,159.8 270.0,161.1 271.0,171.7 272.0,184.4 273.0,190.9 274.0,186.9 275.0,175.0 276.0,163.1 277.0,159.1 278.0,165.6 279.0,178.3 280.0,188.9 281.0,190.2 282.0,181.5 283.0,168.5 284.0,159.8 285.0,161.1 286.0,171.7 287.0,184.4 288.0,190.9 289.0,186.9 290.0,175.0" stroke="#3C5A8A" stroke-width="2.5" fill="none"/>
+<polyline points="620.0,175.0 621.0,169.8 622.0,168.0 623.0,170.9 624.0,176.5 625.0,181.1 626.0,181.7 627.0,177.8 628.0,172.2 629.0,168.3 630.0,168.9 631.0,173.5 632.0,179.1 633.0,182.0 634.0,180.2 635.0,175.0 636.0,169.8 637.0,168.0 638.0,170.9 639.0,176.5 640.0,181.1 641.0,181.7 642.0,177.8 643.0,172.2 644.0,168.3 645.0,168.9 646.0,173.5 647.0,179.1 648.0,182.0 649.0,180.2 650.0,175.0 651.0,169.8 652.0,168.0 653.0,170.9 654.0,176.5 655.0,181.1 656.0,181.7 657.0,177.8 658.0,172.2 659.0,168.3 660.0,168.9 661.0,173.5 662.0,179.1 663.0,182.0 664.0,180.2 665.0,175.0 666.0,169.8 667.0,168.0 668.0,170.9 669.0,176.5 670.0,181.1 671.0,181.7 672.0,177.8 673.0,172.2 674.0,168.3 675.0,168.9 676.0,173.5 677.0,179.1 678.0,182.0 679.0,180.2 680.0,175.0" stroke="#3C5A8A" stroke-width="2.5" fill="none"/>
+<text x="260.0" y="205" font-size="15" fill="#8A8270" text-anchor="middle" font-weight="400" dominant-baseline="central">sound goes out</text>
+<text x="650.0" y="205" font-size="15" fill="#8A8270" text-anchor="middle" font-weight="400" dominant-baseline="central">echo comes back</text>
+<path d="M150,265 H290 V231 H620 V265 H860" stroke="#3C5A8A" stroke-width="3" fill="none" stroke-linejoin="round"/>
+<path d="M290,287 V295 H620 V287" stroke="#1A1916" stroke-width="1.8" fill="none"/>
+<text x="455.0" y="319" font-size="16" fill="#1A1916" text-anchor="middle" font-weight="600" dominant-baseline="central">Echo stays high while the sound travels there and back</text>
+</svg>
