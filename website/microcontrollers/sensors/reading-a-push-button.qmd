@@ -13,6 +13,7 @@ In this chapter, we'll learn how to:
 - connect the button to a pin of the board
 - read the button from the REPL
 - light the LED from a program while the button is pressed
+- slow down a blinking LED with the button
 
 ## Connecting the button to the board
 
@@ -109,6 +110,60 @@ The LED does what it did with the button wired straight into its circuit.
 The difference is that the program now decides: change `== 0` to `== 1`,
 and the same button turns the LED off instead.
 
+## Changing the blink speed
+
+Since the program decides what a press does, a press can do something other
+than light the LED. Here, each press makes the LED blink more slowly. Type
+this program in the editor:
+
+```python
+from machine import Pin
+import time
+
+led = Pin(15, Pin.OUT)
+button = Pin(7, Pin.IN, Pin.PULL_UP)
+
+delay = 0.1
+
+while True:
+    if button.value() == 0:
+        delay = delay + 0.1
+        print(delay)
+        while button.value() == 0:
+            time.sleep(0.01)
+    else:
+        led.on()
+        time.sleep(delay)
+        led.off()
+        time.sleep(delay)
+```
+
+`delay` is how long the LED stays on, and then off, in seconds. Each time
+round the loop, the program checks the button once:
+
+- If the button is released, it blinks the LED once, with the current
+  `delay`.
+- If the button is pressed, it adds 0.1 to `delay`, prints the new value in
+  the Shell, and waits until the button is released.
+
+The inner `while` loop does the waiting: it keeps sleeping for a hundredth
+of a second for as long as the button reads 0. Without it, the outer loop
+would come back to the check a moment later, while the button is still
+down, and add 0.1 again and again for as long as we hold it. With it, one
+press adds 0.1 once, however long we hold the button.
+
+Click Run. The LED blinks fast. Press the button, and the Shell shows the
+new delay, and the LED blinks a little more slowly. Each press slows it
+down further. Click Stop to end the program; running it again starts from
+0.1 seconds.
+
+::: {.callout-note}
+The program checks the button only between blinks. While it is in
+`time.sleep(delay)`, it does not look at the button, so a quick press can be
+missed. Hold the button until the Shell shows the new delay. The slower the
+LED blinks, the longer we have to hold it.
+:::
+
 ## Summary
 
 A program reads a push button through an input pin with a pull-up, which
@@ -121,3 +176,5 @@ reads 1 while the button is released and 0 while it is pressed.
 | `button.value()` | returns 1 while the button is released, and 0 while it is pressed |
 | An input pin connected to nothing | floats: it reads 0 or 1 at random |
 | `if button.value() == 0:` | is true while the button is pressed |
+| `while button.value() == 0:` with a short sleep inside, after handling a press | waits for the button to be released, so a long press counts once |
+| A program that checks the button once each time round the loop | notices a press only when it reaches the check; it misses a press made while it sleeps |
