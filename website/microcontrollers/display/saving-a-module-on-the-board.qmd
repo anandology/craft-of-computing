@@ -1,0 +1,97 @@
+---
+title: "Saving a Module on the Board"
+unit: 3
+cluster: "Using a Display"
+---
+
+Code that someone else has written usually comes as a module: a Python file
+that we import. MicroPython on the board imports a module from a file saved
+in the board's own storage, so before we can use the module, we save its
+file there.
+
+In this chapter, we'll learn how to:
+
+- see the files saved on the board
+- save a module on the board with Thonny
+- import it from the REPL
+
+## The files on the board
+
+The board has a small amount of storage, like a tiny disk. To see the files
+in it, connect Thonny to the board and choose **View → Files**. A Files pane
+opens with two parts: **This computer** at the top, and **MicroPython device**
+at the bottom.
+
+On a new board, the device part shows one file, `boot.py`. MicroPython
+created it when it first started, and it runs every time the board starts.
+We leave it as it is.
+
+## Saving the LCD driver
+
+The next chapter uses an LCD display. MicroPython has no code for this
+display built in, so we use a **driver**: a module that knows how to talk to
+the display. The driver we use comes in two files, both from the
+[python_lcd](https://github.com/dhylands/python_lcd) project:
+
+- `lcd_api.py`, the commands any such display understands
+- `machine_i2c_lcd.py`, which sends those commands to our display
+
+To save the first file on the board:
+
+1. Open <https://raw.githubusercontent.com/dhylands/python_lcd/master/lcd/lcd_api.py>
+   in the browser. It shows the file as plain text.
+2. Select all the text, and copy it.
+3. In Thonny, choose **File → New**, and paste the text into the editor.
+4. Choose **File → Save as**. Thonny asks where to save it. Click
+   **MicroPython device**.
+5. Type the name `lcd_api.py`, and click **OK**.
+
+Do the same for the second file, from
+<https://raw.githubusercontent.com/dhylands/python_lcd/master/lcd/machine_i2c_lcd.py>,
+and save it as `machine_i2c_lcd.py`.
+
+The device part of the Files pane now shows three files: `boot.py`,
+`lcd_api.py` and `machine_i2c_lcd.py`.
+
+::: {.callout-warning}
+The name must be exactly the module's name, followed by `.py`. A file saved
+as `lcd-api.py`, or saved on **This computer** instead of the device, gives
+no error when we save it. The error comes later, when a program imports the
+module.
+:::
+
+## Importing the driver
+
+In the REPL, import the class we'll use from the driver:
+
+```session
+>>> from machine_i2c_lcd import I2cLcd
+```
+
+It prints nothing: MicroPython found the file on the board. Without the file,
+the same line gives an error:
+
+```session
+>>> from machine_i2c_lcd import I2cLcd
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ImportError: no module named 'machine_i2c_lcd'
+```
+
+`machine_i2c_lcd.py` imports `lcd_api` itself, on its fourth line. So if
+only `lcd_api.py` is missing, the error names `lcd_api` instead. Both files
+have to be on the board.
+
+## Summary
+
+MicroPython imports a module from a file saved on the board, so a module
+that is not built in has to be saved there first.
+
+| Step or code | What it does |
+|--------------|--------------|
+| **View → Files** | shows the files on the computer and on the board |
+| **File → Save as**, then **MicroPython device** | saves the file in the editor on the board |
+| `boot.py` | runs every time the board starts; created by MicroPython |
+| File name | must be the module's name followed by `.py`, such as `lcd_api.py` |
+| `from module_name import name` | imports from `module_name.py` saved on the board |
+| `ImportError: no module named '...'` | the file for that module is not on the board, or has a different name |

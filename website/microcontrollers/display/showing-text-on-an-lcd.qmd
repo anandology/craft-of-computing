@@ -1,0 +1,157 @@
+---
+title: "Showing Text on an LCD"
+unit: 3
+cluster: "Using a Display"
+---
+
+A board often has to show us something without a computer attached: a
+reading, a message, a count. An **LCD display module** does this: ours shows
+two lines of 16 characters each.
+
+In this chapter, we'll learn how to:
+
+- connect the display to the board with four wires
+- find its address
+- show text on it from the REPL
+
+## The display module
+
+The module is a 16x2 LCD with a small board on its back, called a
+**backpack**. An LCD on its own needs about a dozen wires; the backpack
+reduces them to four:
+
+- **GND** and **VCC**, for power
+- **SDA** and **SCL**, for the data
+
+The backpack talks to the board over **I2C**, a way for chips to talk over
+two wires. SDA carries the data, and SCL, the clock, tells both sides when
+to read each bit. Many devices can share the same two wires, so each one has
+its own number, called its **address**.
+
+The backpack also has a small blue potentiometer. It sets the **contrast**,
+how dark the characters are against the background.
+
+## Connecting the display
+
+The display is too big for the breadboard, so it sits beside it, connected
+with **female-to-male jumper wires**: the female end pushes onto a pin of the
+display, and the male end goes into the breadboard.
+
+On the Glyph C6, the pins labelled SDA and SCL are GPIO4 and GPIO5. Start
+with the board on the breadboard, with 3V3 connected to the bottom `+` rail
+and GND to the bottom `−` rail. Unplug the USB cable. Then:
+
+1. Join the top rails to the bottom rails, so the top rails have power too.
+   Connect the bottom `+` rail to the top `+` rail in column 29 with a red
+   jumper wire, and the bottom `−` rail to the top `−` rail in column 30 with
+   a black one.
+2. Connect the display's GND to the top `−` rail, with a black wire.
+3. Connect VCC to the top `+` rail, with a red wire.
+4. Connect SDA to `j15`, below the board's SDA pin, with a blue wire.
+5. Connect SCL to `j16`, below the board's SCL pin, with a green wire.
+
+![The Glyph C6 on a breadboard, with a 16x2 LCD module above it. Its GND and VCC connect to the top rails, which are joined to the bottom rails in columns 29 and 30. Its SDA and SCL connect to `j15` and `j16`, below the board's SDA and SCL pins. Board photo: PCBCupid.](../images/glyph-c6-breadboard-lcd.svg)
+
+::: {.callout-warning}
+Connect VCC to 3V3, not to the board's 5V pin. The backpack connects SDA and
+SCL to VCC through resistors, so with VCC at 5 volts, the board's SDA and
+SCL pins get 5 volts too: more than the ESP32's pins are made for.
+:::
+
+Plug in the USB cable. The display lights up, with no text yet.
+
+## Finding the address
+
+Connect Thonny to the board, and set up the I2C connection in the REPL:
+
+```session
+>>> from machine import I2C, Pin
+```
+
+```session
+>>> i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+```
+
+`I2C(0, ...)` uses the chip's I2C controller, on GPIO4 for SDA and GPIO5 for
+SCL. `freq=100000` sets the speed to 100,000 bits a second, the speed the
+chip on the backpack is made for.
+
+Now ask every device on the two wires to answer:
+
+```session
+>>> i2c.scan()
+```
+
+`scan()` returns a list of the addresses that answered. Here there is one
+device, the display, so the list has one number in it. Most of these
+backpacks answer at 39; some at 63. An empty list, `[]`, means no device
+answered: unplug the USB cable and check the four wires.
+
+## Showing text
+
+The driver we saved on the board gives us the `I2cLcd` class. Import it, and
+create an `I2cLcd` for our display:
+
+```session
+>>> from machine_i2c_lcd import I2cLcd
+```
+
+```session
+>>> lcd = I2cLcd(i2c, 39, 2, 16)
+```
+
+The arguments are the I2C connection, the address that `scan()` returned, and
+the size of the display: 2 lines of 16 characters. Use your own address if it
+is not 39.
+
+Show some text:
+
+```session
+>>> lcd.putstr("Hello, world!")
+```
+
+`Hello, world!` appears on the first line, at the left. `putstr()` writes
+from the **cursor**, the position where the next character goes, and moves
+the cursor along as it writes.
+
+To write on the second line, move the cursor first:
+
+```session
+>>> lcd.move_to(0, 1)
+```
+
+```session
+>>> lcd.putstr("Glyph C6")
+```
+
+`move_to(column, line)` counts both from 0, so `move_to(0, 1)` is the first
+column of the second line. The display now shows both lines.
+
+To clear the display, and move the cursor back to the start:
+
+```session
+>>> lcd.clear()
+```
+
+::: {.callout-note}
+If the display lights up but shows no text, or shows a row of solid blocks,
+turn the contrast potentiometer on the back with a small screwdriver until
+the characters appear.
+:::
+
+## Summary
+
+A program shows text on the LCD through its driver, which sends the text to
+the display's I2C address over the SDA and SCL wires.
+
+| Connection or code | What it does |
+|--------------------|--------------|
+| GND → `−` rail, VCC → `+` rail (3V3) | powers the display; VCC goes to 3V3, never 5V |
+| SDA → GPIO4, SCL → GPIO5 | the two I2C wires on the Glyph C6 |
+| `i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)` | sets up an I2C connection on GPIO4 and GPIO5 |
+| `i2c.scan()` | returns the addresses of the devices that answer; `[]` means none |
+| `lcd = I2cLcd(i2c, address, 2, 16)` | sets up a 2-line, 16-character display at that address |
+| `lcd.putstr("text")` | writes the text from the cursor |
+| `lcd.move_to(column, line)` | moves the cursor; both count from 0 |
+| `lcd.clear()` | clears the display and moves the cursor to the start |
+| Contrast potentiometer | on the back; turn it if the text is missing or shows as blocks |

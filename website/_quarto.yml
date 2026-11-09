@@ -238,6 +238,10 @@ website:
         - section: "Reading Sensors"
           contents:
             - href: microcontrollers/sensors/setting-the-blink-speed-with-a-knob.qmd
+        - section: "Using a Display"
+          contents:
+            - href: microcontrollers/display/saving-a-module-on-the-board.qmd
+            - href: microcontrollers/display/showing-text-on-an-lcd.qmd
 
 format:
   html:
