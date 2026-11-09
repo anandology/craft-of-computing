@@ -1,0 +1,193 @@
+---
+title: "Turning on a Light in the Dark"
+unit: 3
+cluster: "Reading Sensors"
+---
+
+Many circuits need to know how much light there is, such as a night light or
+a street lamp that turns itself on at dusk. A **light sensor** measures this,
+and ours is an **LDR module**: a small board that gives both the light level
+and whether it is darker than a level we set.
+
+In this chapter, we'll learn how to:
+
+- connect an LDR module to the board
+- read whether it is dark, from its digital output
+- set how dark is dark, with the screw on the module
+- read the light level itself, from its analog output
+- turn on the LED only when it is dark
+
+## The LDR module
+
+An **LDR**, or light-dependent resistor, is the round part with a squiggly
+line on its face, at the end of the module. Its resistance changes with
+light: low in bright light, and high in the dark. The module turns that into
+a voltage between 0 and 3.3 volts, the same way the pot did.
+
+A chip on the module compares that voltage with a level, set by the screw on
+the blue **trimmer**, and turns a second output on or off. So the module has
+two outputs, and four pins:
+
+| Pin | Connects to   | What it does |
+|-----|---------------|--------------|
+| VCC | 3V3           | powers the module |
+| GND | GND           | completes the circuit |
+| DO  | a GPIO input  | digital output: 1 when it is darker than the level, 0 when it is brighter |
+| AO  | an ADC pin    | analog output: a voltage that goes up as it gets darker |
+
+The module also has two small LEDs. One lights while the module has power.
+The other lights while DO is 0, that is, while it is brighter than the
+level.
+
+## Connecting the module
+
+The module's pins stick straight out of one end, so it stands upright in the
+breadboard, with the LDR at the top. Seen from the back, the pins are VCC,
+GND, DO and AO, from left to right.
+
+Start with the circuit that blinks an LED from D15, on the full-length
+breadboard. Unplug the USB cable. Then:
+
+1. Push the module's pins into `j32` to `j35`, with its back towards you:
+   VCC in `j32`, GND in `j33`, DO in `j34` and AO in `j35`.
+2. Connect `f32` to the bottom `+` rail with a red jumper wire. This gives
+   VCC 3.3 volts.
+3. Connect `f33` to the bottom `−` rail with a black jumper wire. This
+   connects GND to GND.
+4. Connect `i34` to `j9`, above D7, with a jumper wire. This connects DO to
+   GPIO7.
+5. Connect `h35` to `j11`, above A0, with a jumper wire. This connects AO to
+   GPIO0, which has the ADC.
+
+![The LED circuit from D15, on a full-length breadboard, with an LDR module standing in `j32` to `j35`, its back to us. Its VCC and GND connect to the bottom `+` and `−` rails, its DO to D7, and its AO to A0. Board photo: PCBCupid.](../images/glyph-c6-breadboard-ldr.svg)
+
+Plug in the USB cable. The power LED on the module lights.
+
+## Reading whether it is dark
+
+Connect Thonny to the board, and set up GPIO7 as an input in the REPL:
+
+```session
+>>> from machine import ADC, Pin
+```
+
+```session
+>>> dark = Pin(7, Pin.IN)
+```
+
+This time there is no `Pin.PULL_UP`. A push button only connects the pin to
+GND, and leaves it floating when released. The module sets DO to 0 or to 3.3
+volts itself, so the pin never floats.
+
+Read the pin in the light of the room:
+
+```session
+>>> dark.value()
+```
+
+It returns 0: it is brighter than the level. Now cover the LDR with a
+finger, and read the pin again:
+
+```session
+>>> dark.value()
+```
+
+This time it returns 1. As DO changes, the second LED on the module goes off
+and on, so we can see the answer without reading the pin.
+
+If the value does not change, or is 1 even in the light, the level is set
+too far one way or the other. The next section sets it.
+
+## Setting the level
+
+The level is set on the module, not in the program. Turn the screw on the
+blue trimmer with a small screwdriver, and watch the module's second LED:
+
+1. With the LDR in the light of the room, turn the screw until the LED goes
+   off.
+2. Turn it back, slowly, until the LED just comes on again.
+
+The module now switches when the light falls a little below the light of the
+room. Cover the LDR with a finger, and the LED goes off. To make it switch
+only when it is darker, turn the screw a little further back.
+
+## Reading the light level
+
+DO tells us only which side of the level the light is on. AO gives the
+voltage itself, so the program can see how bright or dark it is. We read it
+through the ADC, as we read the knob. Set up GPIO0 as an analog input:
+
+```session
+>>> light = ADC(Pin(0))
+```
+
+Read it in the light of the room:
+
+```session
+>>> light.read_u16()
+```
+
+`read_u16()` returns a number from 0 to 65535, as it did for the knob. Cover
+the LDR with a finger, and read it again:
+
+```session
+>>> light.read_u16()
+```
+
+The number is now higher: the darker it is, the higher the voltage on AO.
+Try it with the LDR under a hand, near a window, and with a phone's torch
+shining on it, and watch the number change.
+
+DO is AO compared with the level. Turning the screw does not change AO at
+all; it only changes the voltage at which DO switches.
+
+## Turning on the light in the dark
+
+The program reads DO over and over, and turns the LED on while it reads 1.
+Type this program in the editor:
+
+```python
+from machine import Pin
+
+led = Pin(15, Pin.OUT)
+dark = Pin(7, Pin.IN)
+
+while True:
+    if dark.value() == 1:
+        led.on()
+    else:
+        led.off()
+```
+
+This is the program that lit the LED with the push button, with the module
+in place of the button, and `== 1` in place of `== 0`, because DO is 1 in
+the dark.
+
+Click Run. In the light, the LED is off. Cover the LDR with your hand, and
+the LED lights; take your hand away, and it goes off. Click Stop to end the
+program.
+
+::: {.callout-note}
+When the light is close to the level, DO can switch on and off many times a
+second, and the LED flickers. Move the module into more light or less, or
+turn the screw a little.
+:::
+
+## Summary
+
+A light sensor module gives the light level on AO, read through the ADC, and
+whether it is darker than a level we set with a screw on DO, read like a
+push button.
+
+| Connection or code | What it does |
+|--------------------|--------------|
+| LDR | a resistor whose resistance is high in the dark and low in the light |
+| VCC → 3V3, GND → GND | powers the module |
+| DO → D7 | lets the program read whether it is darker than the level |
+| AO → A0 | lets the program read the light level |
+| Trimmer on the module | sets the level at which DO switches; does not change AO |
+| `dark = Pin(7, Pin.IN)` | sets up GPIO7 as an input; no pull-up, since the module sets DO itself |
+| `dark.value()` | returns 1 when it is darker than the level, and 0 when it is brighter |
+| `light = ADC(Pin(0))` | sets up GPIO0 to measure the voltage on AO |
+| `light.read_u16()` | returns the light level as a number from 0 to 65535; higher means darker |
+| `if dark.value() == 1:` | is true while it is dark |

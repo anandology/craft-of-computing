@@ -19,6 +19,11 @@ With --pot as well, a 10k potentiometer stands in j20, j22, j24, its body over t
 rails: f20 -> bottom - rail, i24 -> top + rail, a jumper at column 29 joins the top
 + rail to the bottom one, and the wiper i22 -> j11 (above A0, GPIO0):
     ... glyph-c6-breadboard-pot.svg PINOUT.png --led --d15 --pot
+With --ldr as well (instead of --pot), the breadboard is full length, and an LDR
+light sensor module stands in j32-j35 (VCC, GND, DO, AO), its back to the reader:
+f32 -> bottom + rail, f33 -> bottom - rail, DO (i34) -> D7 (j9), AO (h35) -> A0 (j11).
+The LED is drawn off:
+    ... glyph-c6-breadboard-ldr.svg PINOUT.png --led --d15 --ldr
 With --long, the breadboard is full length, 60 columns, with nothing else on it:
     ... long.svg PINOUT.png --long
 With --sonar (without --led), the breadboard is full length, and an HC-SR04 stands in
@@ -69,13 +74,14 @@ def text(x, y, s, size=13, fill=LABEL, anchor="middle", weight=400):
 # --- breadboard ---------------------------------------------------------------
 SONAR = "--sonar" in sys.argv
 BUTTON = "--button" in sys.argv
+LDR = "--ldr" in sys.argv
 LONG = "--long" in sys.argv          # a full-length breadboard with nothing else on it
-NCOL = 60 if SONAR or BUTTON or LONG else 30  # the sensor and the button need a full-length breadboard
+NCOL = 60 if SONAR or BUTTON or LDR or LONG else 30  # the sensors and the button need a full-length breadboard
 EXT = (NCOL - 30) * P
 W, H = 1160 + EXT, 800
 VX = -80                              # room on the left for the USB cable
 POT = "--pot" in sys.argv
-VY = -100 if POT else 0               # room above for the potentiometer
+VY = -100 if POT else -240 if LDR else 0   # room above for the potentiometer or the light sensor
 add(f'<rect x="{VX}"' + (f' y="{VY}"' if VY else '') + f' width="{W-VX}" height="{H-VY}" fill="{BG}"/>')
 RAIL_COLS = [c for g in range(NCOL // 6) for c in range(2 + 6 * g, 7 + 6 * g)]
 add(f'<rect x="83" y="64" width="{1012+EXT}" height="693" rx="10" fill="{BOARD}" stroke="{EDGE}" stroke-width="2"/>')
@@ -148,7 +154,7 @@ if "--led" in sys.argv:
     add('<defs><radialGradient id="glow"><stop offset="0" stop-color="#FFF6E8" stop-opacity="0.95"/>'
         '<stop offset="0.3" stop-color="#FFD6C8" stop-opacity="0.55"/>'
         '<stop offset="1" stop-color="#FFB09A" stop-opacity="0"/></radialGradient></defs>')
-    if not BUTTON:                      # with the button, the LED is drawn off
+    if not BUTTON and not LDR:          # with the button or the light sensor, the LED is drawn off
         add(f'<circle cx="{lx}" cy="{ly}" r="140" fill="url(#glow)"/>')
     D15 = "--d15" in sys.argv
     if not D15 and not BUTTON:
@@ -182,7 +188,7 @@ if "--led" in sys.argv:
     aria += ((" A yellow jumper wire connects a7, below the D15 pin, to a23." if D15 else
               "" if BUTTON else " A blue jumper wire connects the plus rail to a23.") + " A red LED has its anode in e23 and its cathode "
              "in e25. A 330 ohm resistor runs from d25 to d28, and a green jumper wire connects a28 to the "
-             "minus rail." + ("" if BUTTON else " The LED is lit."))
+             "minus rail." + ("" if BUTTON or LDR else " The LED is lit."))
 # --- with --pot: a potentiometer above the board, wiper to A0 ----------------------
 def lead(x1, y1, x2, y2, colour, dark, knee=None):
     if knee:                            # straight down to the knee, then bend across
@@ -237,6 +243,63 @@ if POT:
              "jumper wire connects i24, below the right leg, to the top plus rail, and another red jumper wire "
              "joins the top plus rail to the bottom plus rail at column 29. A purple jumper wire connects i22, "
              "below the middle leg, to j11, above the A0 pin.")
+
+# --- with --ldr: an LDR light sensor module standing in row j, its back to the reader ---
+if LDR:
+    VCC, GND, DO, AO = 32, 33, 34, 35              # its pins, in row j, seen from the back
+    METAL, METAL_DARK = "#C9CCD0", "#8C9096"
+    wire(VCC, ROW["f"], RAIL["bot+"], "#E04A44", "#A8302B")    # f32 -> bottom + rail (3V3)
+    wire(GND, ROW["f"], RAIL["bot-"], "#3A3A3A", "#1A1A1A")    # f33 -> bottom - rail
+    # DO: i34 -> j9 (D7), AO: h35 -> j11 (A0), up and left over the column numbers,
+    # DO outside AO so they do not cross
+    def route(col, row, end, rise, top, colour, dark):
+        x1, y1, x2, y2 = cx(col), ROW[row], cx(end), ROW["j"]
+        xr = cx(rise)                              # left along the row, up at column `rise`
+        d = (f"M{x1},{y1} L{xr+24},{y1} Q{xr},{y1} {xr},{y1-24} L{xr},{top+24} "
+             f"Q{xr},{top} {xr-24},{top} L{x2+24},{top} Q{x2},{top} {x2},{top+24} L{x2},{y2}")
+        add(f'<path d="{d}" stroke="{dark}" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+            f'<path d="{d}" stroke="{colour}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>')
+        for x, y in ((x1, y1), (x2, y2)):
+            add(f'<circle cx="{x}" cy="{y}" r="5" fill="{METAL}" stroke="{METAL_DARK}" stroke-width="1.5"/>')
+    route(DO, "i", 9, 31, 166, "#49C2BF", "#2E9C9A")
+    route(AO, "h", 11, 30, 188, "#9B6BD6", "#6E45A8")
+    text(cx(9) - 10, 206, "D7", 12, "#237A78", "end", 700)
+    text(cx(11) + 10, 206, "A0", 12, "#6E45A8", "start", 700)
+    # the module, drawn from the back as if standing up from row j: legs, header, board
+    X = (cx(GND) + cx(DO)) / 2
+    BW, BOT = 176, ROW["j"] - 52                   # 14 mm wide, header at the bottom edge
+    TOP = BOT - 306
+    for col in (VCC, GND, DO, AO):
+        add(f'<rect x="{cx(col)-3}" y="{BOT+16}" width="6" height="{ROW["j"]-BOT-16}" fill="{METAL}" stroke="{METAL_DARK}"/>'
+            f'<circle cx="{cx(col)}" cy="{ROW["j"]}" r="4" fill="{METAL}" stroke="{METAL_DARK}"/>')
+    add(f'<rect x="{X-64}" y="{BOT}" width="128" height="18" rx="2" fill="#2A2A2A"/>')
+    add(f'<rect x="{X-BW/2}" y="{TOP}" width="{BW}" height="{BOT-TOP}" rx="6" fill="#1F5FA8" stroke="#16457A" stroke-width="2"/>')
+    for hy in (TOP + 104, BOT - 52):               # mounting holes
+        add(f'<circle cx="{X}" cy="{hy}" r="12" fill="{BG}" stroke="{METAL}" stroke-width="4"/>')
+    # solder joints of the parts on the front: the chip, the trimmer, the LDR
+    for i in range(4):
+        for dx in (-34, 34):
+            add(f'<rect x="{X+dx-4}" y="{TOP+33+i*9}" width="8" height="5" fill="{METAL}"/>')
+    for dx in (-24, 0, 24):
+        add(f'<circle cx="{X+dx}" cy="{TOP+172}" r="5" fill="{METAL}" stroke="{METAL_DARK}"/>')
+    for dx in (-14, 14):
+        add(f'<circle cx="{X+dx}" cy="{TOP+14}" r="4" fill="{METAL}" stroke="{METAL_DARK}"/>')
+    # LDR at the far end: legs, then the round head with its squiggle
+    for dx in (-14, 14):
+        add(f'<line x1="{X+dx}" y1="{TOP+10}" x2="{X+dx}" y2="{TOP-24}" stroke="#A9ADB2" stroke-width="3"/>')
+    HY = TOP - 46
+    add(f'<circle cx="{X}" cy="{HY}" r="30" fill="#E7B98A" stroke="#B3804F" stroke-width="2"/>')
+    add(f'<path d="M{X-16},{HY-14} L{X+14},{HY-14} Q{X+20},{HY-8} {X+14},{HY-4} L{X-14},{HY-4} '
+        f'Q{X-20},{HY+2} {X-14},{HY+6} L{X+14},{HY+6} Q{X+20},{HY+12} {X+14},{HY+16}" '
+        f'stroke="#B0412E" stroke-width="3" fill="none"/>')
+    text(X - 44, HY, "LDR", 14, "#5A574F", "end", 700)
+    for col, name in ((VCC, "VCC"), (GND, "GND"), (DO, "DO"), (AO, "AO")):
+        text(cx(col), BOT - 14, name, 10, "#FFFFFF", weight=600)
+    aria += (" The breadboard is twice as long. Further along, an LDR light sensor module stands with its "
+             "back to the reader, its pins in j32 to j35, VCC, GND, DO and AO, and its light-dependent "
+             "resistor pointing up. A red jumper wire connects f32 to the bottom plus rail, and a black one "
+             "connects f33 to the bottom minus rail. A teal jumper wire runs from i34 over the column numbers "
+             "to j9, above the D7 pin, and a purple one from h35 to j11, above the A0 pin.")
 
 # --- with --sonar: an HC-SR04 ultrasonic sensor standing in row e, facing the reader --
 if SONAR:
