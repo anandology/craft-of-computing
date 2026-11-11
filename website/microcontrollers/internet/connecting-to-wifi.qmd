@@ -1,0 +1,217 @@
+---
+title: "Connecting to Wi-Fi"
+unit: 3
+cluster: "Connecting to the Internet"
+---
+
+A board that can reach the internet can fetch a message, a reading or the
+time from another computer. The chip on the Glyph C6 has **Wi-Fi** built
+in, and MicroPython controls it with the `network` module.
+
+In this chapter, we'll learn how to:
+
+- list the Wi-Fi networks the board can see
+- connect the board to a Wi-Fi network from the REPL
+- see the address the network gives the board
+- save a `wifi` module on the board, so a program lists the networks or
+  connects with one line
+
+## The network
+
+The board joins a Wi-Fi network the way a phone does: it finds the network
+by its name, called the **SSID**, and gives the password. In class, the
+network is a phone's hotspot.
+
+## Finding the networks
+
+Connect Thonny to the board, and in the REPL, import the module:
+
+```session
+>>> import network
+```
+
+Then create a `WLAN` object for the board's Wi-Fi:
+
+```session
+>>> wlan = network.WLAN(network.STA_IF)
+```
+
+`STA_IF` stands for the **station interface**: the board joins a network,
+like a phone. The other interface, `AP_IF`, would make the board a hotspot
+itself, which we do not need.
+
+The Wi-Fi is off when the board starts. Turn it on:
+
+```session
+>>> wlan.active(True)
+True
+```
+
+Before connecting, check that the board can see the hotspot. `scan()`
+listens for the networks around the board, which takes a second or two:
+
+```session
+>>> wlan.scan()
+[(b'MyPhone', b'\x9a\xd3\x1c\x8e\x04\x10', 6, -48, 3, False)]
+```
+
+It returns a list with a tuple for each network. Two of the six items in a
+tuple matter to us:
+
+- the first, the network's name. The `b` before the quotes means it is
+  **bytes**: the raw numbers stored for the text, not a string. The
+  `decode()` method of bytes turns them into a string.
+- the fourth, the **signal strength**, in a unit called dBm. The numbers are
+  negative, and the closer to 0, the stronger the signal: -48 is a strong
+  signal, and -80 a weak one.
+
+If your hotspot is not in the list, the board cannot see it, and connecting
+to it will not work. Check that the hotspot is on, and scan again. The list
+also shows the name exactly as the board sees it, so we can copy it into
+`connect()`.
+
+## Connecting from the REPL
+
+Now connect, with the name and the password of your hotspot:
+
+```session
+>>> wlan.connect("MyPhone", "mypassword")
+```
+
+`connect()` returns at once, before the connection is made. Ask whether it
+is connected:
+
+```session
+>>> wlan.isconnected()
+False
+```
+
+Joining a network takes a few seconds. Wait a moment, and ask again:
+
+```session
+>>> wlan.isconnected()
+True
+```
+
+If it is still `False` after 15 seconds or so, check the name and the
+password, and call `connect()` again. Both are case-sensitive: `myphone`
+is not `MyPhone`.
+
+## The board's address
+
+When the board joins, the hotspot gives it an **IP address**, its address on
+that network, which other computers use to send data to it:
+
+```session
+>>> wlan.ifconfig()
+('192.168.43.57', '255.255.255.0', '192.168.43.1', '192.168.43.1')
+```
+
+`ifconfig()` returns a tuple of four addresses. The first is the board's
+own address; the others are details of the network that we do not need.
+Your board's address will be different, and may change each time it
+connects.
+
+## A module for Wi-Fi
+
+Every program that uses the internet has to connect first, and wait until
+the connection is made. Instead of typing those steps in every program, we
+save them once, as functions in a module on the board, together with a
+function that lists the networks in a form that is easier to read.
+
+In Thonny, choose **File → New**, and type:
+
+```python
+import network
+import time
+
+
+def list_networks():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    for found in wlan.scan():
+        name = found[0].decode()
+        strength = found[3]
+        print(name, strength)
+
+
+def connect(ssid, password):
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    if not wlan.isconnected():
+        wlan.connect(ssid, password)
+        seconds = 0
+        while not wlan.isconnected() and seconds < 15:
+            time.sleep(1)
+            seconds += 1
+    if not wlan.isconnected():
+        return None
+    return wlan.ifconfig()[0]
+```
+
+Save it on the board, with **File → Save as** and **MicroPython device**, as
+`wifi.py`.
+
+`list_networks()` scans, and prints the name and the signal strength of
+each network, one on a line. Try it in the REPL:
+
+```session
+>>> import wifi
+```
+
+```session
+>>> wifi.list_networks()
+MyPhone -48
+```
+
+`connect()` has the lines we typed in the REPL to connect. Instead of
+asking ourselves whether the board is connected, the `while` loop asks once
+a second, for up to 15 seconds. `connect()` then returns the board's IP address, or `None`
+if it did not connect.
+
+If the board is already connected, `connect()` skips the connecting and
+returns the address straight away. So a program can call it every time it
+runs, without connecting all over again.
+
+## Connecting from a program
+
+Type this program in the editor, with your hotspot's name and password:
+
+```python
+import wifi
+
+ip = wifi.connect("MyPhone", "mypassword")
+if ip is None:
+    print("Could not connect")
+else:
+    print("Connected, with address", ip)
+```
+
+Click Run. After a few seconds, the Shell shows:
+
+```text
+Connected, with address 192.168.43.57
+```
+
+Turn off the hotspot, wait a few seconds, and run the program again. The
+board has lost the network, so `connect()` tries to join it again, and after
+15 seconds the program prints `Could not connect`.
+
+## Summary
+
+A board joins a Wi-Fi network as a station, with the network's name and
+password, and the network gives it an IP address.
+
+| Code or setting | What it does |
+|-----------------|--------------|
+| `import network` | the module that controls the board's Wi-Fi |
+| `wlan = network.WLAN(network.STA_IF)` | the board's Wi-Fi, as a station that joins a network |
+| `wlan.active(True)` | turns the Wi-Fi on; it is off when the board starts |
+| `wlan.connect("name", "password")` | starts connecting, and returns before the connection is made |
+| `wlan.scan()` | returns a tuple for each network the board can see |
+| `name_bytes.decode()` | turns bytes, such as `b'MyPhone'`, into a string |
+| Signal strength, in dBm | negative; the closer to 0, the stronger: -48 is strong, -80 weak |
+| `wlan.isconnected()` | `True` once the board has joined the network |
+| `wlan.ifconfig()[0]` | the board's IP address on the network |
+| `wifi.list_networks()` | from `wifi.py` on the board: prints the name and the signal strength of each network the board can see |
+| `wifi.connect("name", "password")` | from `wifi.py` on the board: connects, waits up to 15 seconds, and returns the IP address, or `None` |

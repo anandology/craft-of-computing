@@ -247,6 +247,10 @@ website:
             - href: microcontrollers/display/showing-text-on-an-lcd.qmd
             - href: microcontrollers/display/measuring-distance.qmd
             - href: microcontrollers/display/showing-the-distance-on-the-display.qmd
+        - section: "Connecting to the Internet"
+          contents:
+            - href: microcontrollers/internet/connecting-to-wifi.qmd
+            - href: microcontrollers/internet/showing-a-message-from-the-web.qmd
 
 format:
   html:

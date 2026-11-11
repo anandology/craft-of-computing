@@ -1,0 +1,289 @@
+---
+title: "Showing a Message from the Web"
+unit: 3
+cluster: "Connecting to the Internet"
+---
+
+A board on Wi-Fi can fetch a page from a web server, the same way a Python
+program on a computer does. MicroPython has the `urequests` module for this:
+a small version of `requests`, with the same `get()`, `status_code` and
+`text`.
+
+In this chapter, we'll learn how to:
+
+- put a message on the web, in our `public_html` on the course server
+- fetch it from the board with `urequests.get()`
+- add a `read_url()` function to the `wifi` module
+- show it on the display, and change it from anywhere
+
+## Putting a message on the web
+
+Whatever is in `public_html` on the course server is on the web. We keep the
+board's files together, in a directory of their own there. Log in to the
+server:
+
+```session
+$ ssh coc.apucomputing.in
+```
+
+Make the directory, and go into it:
+
+```session
+anand@coc:~$ mkdir -p public_html/esp32
+anand@coc:~$ cd public_html/esp32
+```
+
+`-p` tells `mkdir` not to complain if the directory is already there, so the
+command is safe to run again.
+
+Write a message into a file:
+
+```session
+anand@coc:~/public_html/esp32$ echo Hello from the web > message.txt
+```
+
+Open <https://coc.apucomputing.in/~anand/esp32/message.txt> in the browser,
+with your own username in place of `anand`. It shows `Hello from the web`. Stay
+logged in to the server: we change the message later.
+
+## Fetching it from the board
+
+Connect Thonny to the board, and connect to the Wi-Fi with the `wifi`
+module we saved on the board:
+
+```session
+>>> import wifi
+```
+
+```session
+>>> wifi.connect("MyPhone", "mypassword")
+'192.168.43.57'
+```
+
+Now fetch the message, with your own username in the URL:
+
+```session
+>>> import urequests
+```
+
+```session
+>>> response = urequests.get("https://coc.apucomputing.in/~anand/esp32/message.txt")
+```
+
+The response has the status code and the text, as it does on the computer:
+
+```session
+>>> response.status_code
+200
+```
+
+```session
+>>> response.text
+'Hello from the web\n'
+```
+
+The text ends with `\n`, the newline that `echo` wrote at the end of the
+file. `strip()` takes it off:
+
+```session
+>>> response.text.strip()
+'Hello from the web'
+```
+
+A response keeps its connection to the server open until it is closed. The
+board can keep only a few connections open at a time, so close each
+response once we have read it:
+
+```session
+>>> response.close()
+```
+
+A URL with no file behind it gives the status code 404, and the text of the
+server's error page instead of a message:
+
+```session
+>>> response = urequests.get("https://coc.apucomputing.in/~anand/esp32/no-file.txt")
+```
+
+```session
+>>> response.status_code
+404
+```
+
+```session
+>>> response.close()
+```
+
+## A function for reading a URL
+
+A program that reads a URL has to check the status code, and close the
+response. We put these steps in a function, `read_url()`, in the `wifi`
+module.
+
+Open `wifi.py` from the board: choose **File → Open**, click
+**MicroPython device**, and choose `wifi.py`. Add `import urequests` at the
+top, and the `read_url()` function at the end. The whole file is now:
+
+```python
+import network
+import urequests
+import time
+
+
+def list_networks():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    for found in wlan.scan():
+        name = found[0].decode()
+        strength = found[3]
+        print(name, strength)
+
+
+def connect(ssid, password):
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    if not wlan.isconnected():
+        wlan.connect(ssid, password)
+        seconds = 0
+        while not wlan.isconnected() and seconds < 15:
+            time.sleep(1)
+            seconds += 1
+    if not wlan.isconnected():
+        return None
+    return wlan.ifconfig()[0]
+
+
+def read_url(url):
+    response = urequests.get(url)
+    status = response.status_code
+    text = response.text
+    response.close()
+    if status != 200:
+        print("Could not read", url, "- status code", status)
+        return ""
+    return text
+```
+
+Save the file with **File → Save**.
+
+`read_url()` fetches the URL, and keeps the status code and the text before
+it closes the response. It returns the text of the page, or prints the status
+code and returns an empty string, `""`. Either way, it returns a string, so
+the program that called it can use it the same way.
+
+The REPL still has the old `wifi` module imported. Click **Stop** to restart
+MicroPython on the board, and import the module again:
+
+```session
+>>> import wifi
+```
+
+```session
+>>> wifi.connect("MyPhone", "mypassword")
+'192.168.43.57'
+```
+
+```session
+>>> wifi.read_url("https://coc.apucomputing.in/~anand/esp32/message.txt")
+'Hello from the web\n'
+```
+
+```session
+>>> wifi.read_url("https://coc.apucomputing.in/~anand/esp32/no-file.txt")
+Could not read https://coc.apucomputing.in/~anand/esp32/no-file.txt - status code 404
+''
+```
+
+## Showing it on the display
+
+We use the circuit with the display. Plug in the USB cable, and type this
+program in the editor, with your own hotspot and username:
+
+```python
+from machine import I2C, Pin
+from machine_i2c_lcd import I2cLcd
+import time
+import wifi
+
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+lcd = I2cLcd(i2c, 39, 2, 16)
+
+url = "https://coc.apucomputing.in/~anand/esp32/message.txt"
+
+lcd.clear()
+lcd.putstr("Connecting...")
+ip = wifi.connect("MyPhone", "mypassword")
+lcd.clear()
+
+if ip is None:
+    lcd.putstr("No Wi-Fi")
+else:
+    while True:
+        message = wifi.read_url(url).strip()
+        lcd.clear()
+        lcd.putstr(message)
+        time.sleep(10)
+```
+
+The program shows `Connecting...` while it joins the Wi-Fi, which takes a
+few seconds. If it cannot join, it shows `No Wi-Fi`, and stops.
+
+Once it is connected, the loop fetches the message every 10 seconds, clears
+the display, and writes the message on it.
+
+When the file is missing, `read_url()` returns `""`, so the display is
+blank. The Shell shows the status code, and the loop tries again 10 seconds
+later.
+
+Click Run. After a few seconds, the display shows `Hello from the web`.
+
+Now change the message on the server:
+
+```session
+anand@coc:~/public_html/esp32$ echo Class at 2 pm > message.txt
+```
+
+Within 10 seconds, the display shows `Class at 2 pm`. Anyone who can log in
+to the server, from anywhere, can now change what the board shows.
+
+## Longer messages
+
+The display shows two lines of 16 characters. A message longer than 16
+characters goes on to the second line. A newline in the file also starts the
+second line, so a file with two lines shows on the two lines of the display.
+Edit the file with `nano` on the server, and write:
+
+```text
+Class at 2 pm
+Room 204
+```
+
+Within 10 seconds, the display shows `Class at 2 pm` on the first line and
+`Room 204` on the second. After the second line, the text goes back to the
+first, and writes over it, so keep a message to 32 characters.
+
+::: {.callout-warning}
+If the board loses the Wi-Fi while the program runs, `urequests.get()` fails
+with an `OSError`, and the program stops. The display keeps the last
+message, so it looks as if the program is still running. Check the Shell,
+and run the program again.
+:::
+
+## Summary
+
+A board connected to Wi-Fi fetches a page with `urequests.get()`, and a
+program that fetches it in a loop shows the latest version, so the page
+changes what the board does.
+
+| Code or command | What it does |
+|-----------------|--------------|
+| `mkdir -p public_html/esp32`, on the server | makes the directory, with no error if it is already there |
+| `echo text > message.txt`, in `public_html/esp32` | puts the text on the web, at `https://coc.apucomputing.in/~username/esp32/message.txt` |
+| `import urequests` | the module for fetching URLs; built into MicroPython on the board |
+| `response = urequests.get(url)` | fetches the URL; the board must be connected to Wi-Fi first |
+| `response.status_code` | `200` if the page was found, `404` if there is nothing at that URL |
+| `response.text.strip()` | the text of the page, without the newline at its end |
+| `response.close()` | closes the connection to the server; the board can keep only a few open |
+| `wifi.read_url(url)` | from `wifi.py` on the board: returns the text of the page, or prints the status code and returns `""` |
+| `lcd.putstr(message)` | writes the message; past 16 characters, or at a newline, it goes on to the second line |
+| `OSError` from `urequests.get()` | the board could not reach the server, often because it lost the Wi-Fi; the program stops |
