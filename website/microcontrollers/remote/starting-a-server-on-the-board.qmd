@@ -1,0 +1,333 @@
+---
+title: "Starting a Server on the Board"
+unit: 3
+cluster: "Controlling the Board Remotely"
+---
+
+So far, we've run programs on the esp32 board and the board runs in isolation. It would be a lot more fun, if we could control the board remotely, either from another esp32 board or a laptop.
+
+For this, the board runs a **server**: a program that
+waits for messages from another computer, and replies to them.
+
+In this lesson, we'll learn how to:
+
+- save a `server` module to enable remote communication
+- write a program on an esp32 board that uses the server module to receive and respond to messages while it keeps doing its own work
+- send a message to the board from the unix shell using command `nc`
+- use the same module on the laptop, to send the board a message from
+  Python and read its reply
+
+## Servers and ports
+
+To make the remote control possible, we need to learn about some new concepts.
+We'll focus only on the important details needed to get started quickly.
+
+A few things that you need to understand before we get started.
+
+- ip address
+- port
+- socket
+- TCP/UDP
+
+Every computer, including the esp32 board (which is also a computer), on the network has a unique address called **ip address**. it looks something like `192.168.1.5`. It is made of 4 numbers, joined by dots.
+
+A computer on a network can run many servers at the same time, so the
+ip address alone does not say which one to reach. Each server waits on a
+**port**, a number from 1 to 65535. A web server waits on port 80 or 443.
+In our programs, we'll use port 5000.
+
+A program creates a *socket* to send or receive messages.
+
+There are two ways the sockets talk to each other - `TCP` and `UDP`. The TCP is more feature rich and also a bit complex to use. UDP is very simple and easy to get started. TCP is used for most applications on the internet, including the world wide web. UDP is typically used for simple applications that are not critical and security is not a big concern.
+
+We are going to use UDP.
+
+## A module for the server
+
+To make it easy to get started, we'll use a python module `server.py` that wraps all the complexity of socket communication with very simple functions that you can use from your code.
+
+Copy the following code and save it on the board, with **File → Save as** and **MicroPython device**, as
+`server.py`.
+
+```python
+"""server.py: A simple UDP socket server, to control the board remotely.
+
+This module provides functions both for the server and the client.
+
+The server uses the following functions:
+
+    start(port) - to start the server at the beginning of the program
+    receive() - to read the messages received
+    reply(client_address, response_text) - to send a response to each message received
+
+The client uses the following function:
+
+    send(server_address, message) - sends a message to the server and returns the response
+
+"""
+import socket
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+def start(port):
+    """Gets the socket ready to receive messages sent to the port.
+    """
+    sock.bind(("0.0.0.0", port))
+    sock.setblocking(False)
+
+def receive():
+    """Returns a list of messages received.
+
+    Each message is a tuple with (client_address, line).
+
+    When there are no messages an empty list is returned.
+    """
+    messages = []
+
+    # Read each message available
+    while True:
+        try:
+            data, client_address = sock.recvfrom(1024)
+        except OSError:
+            # nothing more to receive, break out of the loop
+            break
+        # The socket gives data in bytes; convert it into text, and strip
+        # spaces and newlines, if any
+        line = data.decode().strip()
+        message = (client_address, line)
+        messages.append(message)
+
+    return messages
+
+def reply(client_address, response_text):
+    """Sends a response to a client.
+    """
+    # Add a newline to make the output look better when used with unix tools like nc, and
+    # convert the text into bytes
+    data = (response_text + "\n").encode()
+    sock.sendto(data, client_address)
+
+def send(server_address, message):
+    """Sends the message to the server, and returns the response.
+
+    If no response comes within 2 seconds, prints a message, and
+    returns None.
+    """
+    # Create a new socket for sending this message and close it once a response is received.
+    client_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    client_sock.settimeout(2)
+    try:
+        data = message.encode()
+        client_sock.sendto(data, server_address)
+        response_data, sender = client_sock.recvfrom(1024)
+        response = response_data.decode().strip()
+    except OSError:
+        print("No response from", server_address[0], "port", server_address[1])
+        response = None
+    client_sock.close()
+    return response
+```
+
+The program has docstrings for all the functions explaining what they do.
+
+Here is a quick summary.
+
+When using server.py in the server:
+
+You call the `start` function at the beginning of your program, after connecting to the wifi, to start the server. It just means a socket is created and setup so that the program can receive messages.
+
+In a loop, you call `receive` function to receive any messages arrived and decide how to process them. For each message received, you send a response by calling the `reply` function.
+
+When using the server.py module in a client, you call the `send` function with the message that you want to send to the server and you'll get back the response the server sends.
+
+You'll understand them more clearly once you start using them.
+
+## The program
+
+Now, we'll write a program that allows controlling the onboard LED remotely.
+
+The program supports three remote commands:
+
+* `status` - to know whether the LED is _on_ or _off_
+* `on` - to turn on the led
+* `off` - to turn off the led
+
+
+```python
+from machine import Pin
+import time
+import server
+import wifi
+
+board_led = Pin(14, Pin.OUT)
+
+def status():
+    if board_led.value() == 1:
+        return "on"
+    else:
+        return "off"
+
+def handle(command):
+    """The handle function takes a command received from a remote machine and handles it.
+    """
+    # When the command received is "on", turn on the LED
+    if command == "on":
+        board_led.on()
+        return status()
+
+    # When the command received is "off", turn off the LED
+    if command == "off":
+        board_led.off()
+        return status()
+
+    # When the command received is "status", just return the current status
+    if command == "status":
+        return status()
+
+    # Send an error if the command is unknown
+    return "unknown command: " + command
+
+# Use your wifi network name and password in the next line
+ip = wifi.connect("MyPhone", "mypassword")
+print("Board address:", ip)
+
+# start the server
+server.start(5000)
+print("Waiting on port 5000")
+
+while True:
+    # In a loop, receive any messages arrived and respond to each one
+    messages = server.receive()
+    for client_address, line in messages:
+        print(client_address[0], "sent", line)
+        response = handle(line)
+        server.reply(client_address, response)
+
+    # sleep of 10ms after each iteration
+    time.sleep(0.01)
+```
+
+Click Run. The Shell shows:
+
+```text
+Board address: 192.168.43.57
+Waiting on port 5000
+```
+
+The address will be different in your case. Make a note of that.
+
+If the address is `None`, the board did not join the Wi-Fi, and the server
+waits on a network nobody can reach. Check the name and the password.
+
+## Sending a message with nc
+
+Once the server is running on the board, you can connect to it from any computer in the same network.
+
+We are going to use a command `nc`, short for netcat, used to send messages to a remote machine. If `nc` is not installed, install it with
+`sudo apt install netcat-openbsd`.
+
+Open a unix terminal on your laptop, or another laptop connected to the same network, and
+send `status`, with your board's address (remember to use the ip address that your board gave you):
+
+```session
+$ echo status | nc -u -w1 192.168.43.57 5000
+off
+```
+
+`-u` tells `nc` to use UDP. With UDP, `nc` cannot tell when the reply is
+complete, so `-w1` tells it to stop after one second with nothing more to
+read. The command takes that second every time.
+
+The Shell in Thonny shows who sent it, with the laptop's address:
+
+```text
+192.168.43.20 sent status
+```
+
+Turn the LED on:
+
+```session
+$ echo on | nc -u -w1 192.168.43.57 5000
+on
+```
+
+The board's LED lights.
+
+## Sending a message from Python
+
+`nc` is good for trying the server, but it takes a second each time. A
+Python program stops as soon as the response arrives. It uses `send()` from
+the same `server.py`, as the client.
+
+::: {.callout-important}
+Everything in this section runs on the **laptop**, not on the board. The
+Python here is the laptop's, in a terminal, not the Shell in Thonny.
+:::
+
+Make a directory on the laptop for the board's files:
+
+```session
+$ mkdir ~/esp32
+$ cd ~/esp32
+```
+
+Create a file `server.py` in `~/esp32` with contents of the same server.py file that you saved to the board. You could use _nano_ or _vscode_ for doing this.
+
+In the terminal, go to the directory, and start Python:
+
+```session
+$ python3
+```
+
+```session
+>>> import server
+```
+
+`send()` needs the server's address, a pair of its IP address and its
+port, as `receive()` gives the client's. Use your board's address from the
+Shell:
+
+```session
+>>> server_address = ("192.168.43.57", 5000)
+```
+
+```session
+>>> server.send(server_address, "status")
+'on'
+```
+
+```session
+>>> server.send(server_address, "off")
+'off'
+```
+
+The LED goes off.
+
+If you try to send a command the board does not understand, it responds with an error:
+
+```session
+>>> server.send(server_address, "hello")
+'unknown command: hello'
+```
+
+The `send` function sends the message to the server and waits for a response. If no response is received within 2 seconds, it returns None. This is what happens if the server is not running or the client is unable to access the server.
+
+
+## Summary
+
+A server on the board checks for messages on a port without waiting for
+them, so it can do other work in between. A client, such as Python on the
+laptop, sends it a command and reads the response. Both use the same
+`server.py`.
+
+| Code or command | What it does |
+|-----------------|--------------|
+| port | a number that says which server on a computer to reach |
+| UDP | sends one message at a time; it arrives whole or not at all, and a lost one gives no error |
+| `("192.168.43.57", 5000)` | an address for a socket: the IP address and the port |
+| `server.start(5000)` | on the server: gets ready to receive messages on port 5000 |
+| `messages = server.receive()` | on the server: a list of `(client_address, line)`, one for each message that has arrived; empty if none have; never waits |
+| `server.reply(client_address, response_text)` | on the server: sends the response text to the client |
+| `server.send(server_address, message)` | on the client: sends the message to the server and returns the response; after 2 seconds with no response, prints a message and returns `None` |
+| `time.sleep(0.01)` in the loop | checks for messages 100 times a second; other work goes in the same loop |
+| `echo status | nc -u -w1 192.168.43.57 5000` | from the shell: sends `status` to the board and prints the reply; takes a second |

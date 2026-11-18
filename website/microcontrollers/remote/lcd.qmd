@@ -1,0 +1,133 @@
+---
+title: "Remote LCD Display"
+unit: 3
+cluster: "Controlling the Board Remotely"
+---
+
+In the previous lesson, we've seen how to start a server on a esp32 board and receive messages. In this lesson, lets try to make a LCD display that could be controlled remotely.
+
+## What the board needs
+
+The board needs these files saved on it:
+
+- `lcd_api.py` and `machine_i2c_lcd.py`, from [Saving a Module on the Board](../display/saving-a-module-on-the-board.qmd)
+- `wifi.py`, from [Connecting to Wi-Fi](../internet/connecting-to-wifi.qmd)
+- `server.py`, from [Starting a Server on the Board](starting-a-server-on-the-board.qmd)
+
+Connect the display as in [Showing Text on an LCD](../display/showing-text-on-an-lcd.qmd): SDA to GPIO4 and SCL to
+GPIO5.
+
+## The program on the board
+
+```python
+from machine import I2C, Pin
+from machine_i2c_lcd import I2cLcd
+import time
+import server
+import wifi
+
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=100000)
+lcd = I2cLcd(i2c, 39, 2, 16)
+
+def show(message):
+    lcd.clear()
+    lcd.putstr(message)
+    return "showing " + message
+
+lcd.clear()
+lcd.putstr("Connecting...")
+
+# Use your wifi network name and password in the next line
+ip = wifi.connect("MyPhone", "mypassword")
+print("Board address:", ip)
+
+# Show the address on the display, so the laptop can find the board
+lcd.clear()
+if ip is None:
+    lcd.putstr("No Wi-Fi")
+else:
+    lcd.putstr(ip)
+
+server.start(5000)
+print("Waiting on port 5000")
+
+while True:
+    messages = server.receive()
+    for client_address, line in messages:
+        print(client_address[0], "sent", line)
+        response = show(line)
+        server.reply(client_address, response)
+
+    time.sleep(0.01)
+```
+
+Click Run. The display shows `Connecting...` while the board joins the
+Wi-Fi, and then its address:
+
+```text
+192.168.43.57
+```
+
+The address will be different in your case. Once the board shows it on the
+display, you don't need Thonny's Shell to find it.
+
+`show()` replies with what it showed, so the laptop sees the message the
+board got.
+
+## The program on the laptop
+
+::: {.callout-important}
+This program runs on the **laptop**, not on the board.
+:::
+
+On the laptop, keep a copy of `server.py` in the same directory as the
+program, as in [Starting a Server on the Board](starting-a-server-on-the-board.qmd). Save this program next to it
+as `remote_lcd.py`, with your board's address:
+
+```python
+import sys
+import server
+
+server_address = ("192.168.43.57", 5000)
+
+message = sys.argv[1]
+response = server.send(server_address, message)
+if response is not None:
+    print(response)
+```
+
+The message is the program's first command-line argument. If the board does
+not reply, `server.send()` prints why, and returns `None`, so the program
+prints nothing more.
+
+## Sending a message
+
+In the terminal on the laptop, put the message in double quotes, so the
+shell passes it to the program as one argument:
+
+```session
+$ python3 remote_lcd.py "Class at 2 pm"
+showing Class at 2 pm
+```
+
+The display shows `Class at 2 pm` straight away.
+
+Without the quotes, each word is a separate argument, and the program sends
+only the first one, `Class`.
+
+The display has 2 lines of 16 characters. A message longer than 16
+characters goes on to the second line. Keep it to 32.
+
+Any command's output can be the message, with `$(...)`. Show the time on
+the laptop:
+
+```session
+$ python3 remote_lcd.py "$(date +%H:%M)"
+showing 14:05
+```
+
+## Summary
+
+A server on the board can show each message it receives on the display,
+and a program on the laptop can send it a message given on the command
+line.

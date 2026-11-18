@@ -251,6 +251,10 @@ website:
           contents:
             - href: microcontrollers/internet/connecting-to-wifi.qmd
             - href: microcontrollers/internet/showing-a-message-from-the-web.qmd
+        - section: "Controlling the Board Remotely"
+          contents:
+            - href: microcontrollers/remote/starting-a-server-on-the-board.qmd
+            - href: microcontrollers/remote/lcd.qmd
 
 format:
   html:
